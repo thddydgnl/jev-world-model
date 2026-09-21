@@ -5,7 +5,8 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 
 - 연구 설계: [`아이디어.md`](아이디어.md) · 구현 설계: [`설계.md`](설계.md)
 - 실행 프로토콜(확증/탐색 구분): [`docs/protocol.md`](docs/protocol.md)
-- 한계: [`docs/limitations.md`](docs/limitations.md)
+- **주장 대장 — 논문 쓸 때 여기서 시작**: [`docs/claims.md`](docs/claims.md)
+- 한계(내부 기록, 직역 금지): [`docs/limitations.md`](docs/limitations.md)
 - 결과 요약: [`artifacts/mvp_b/RESULTS.md`](artifacts/mvp_b/RESULTS.md)
 
 ## 진행 상태
