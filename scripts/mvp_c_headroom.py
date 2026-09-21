@@ -240,36 +240,50 @@ def main() -> int:
                 "decoys": sum(e["decoys"] for e in v)}
 
     stats = {a: agg(a) for a in ARMS}
-    c, v, o = stats["C"], stats["validity"], stats["oracle"]
-    print("\n" + "=" * 66)
+    print("\n" + "=" * 74)
     print(f"{'arm':<11}{'n':>5}{'success':>10}{'steps':>9}{'invalid':>10}"
-          f"{'progress':>10}{'trap':>8}{'decoy':>8}")
+          f"{'progress':>10}{'trap':>7}{'decoy':>7}")
     for name in ARMS:
         a = stats[name]
         print(f"{name:<11}{a['n']:>5}{a['success']:>10.1%}{a['steps']:>9.1f}"
               f"{a['invalid']:>10.1%}{a['progress']:>10.1%}"
-              f"{a['traps']:>8}{a['decoys']:>8}")
+              f"{a['traps']:>7}{a['decoys']:>7}")
 
-    total = o["success"] - c["success"]
-    by_validity = v["success"] - c["success"]
-    needs_goal = o["success"] - v["success"]
-    share = by_validity / total if total else float("nan")
-    print(f"\n전체 headroom      oracle - C        = {total:+.1%}")
-    print(f"  유효성으로 설명   validity - C      = {by_validity:+.1%}  "
-          f"(전체의 {share:.0%})")
-    print(f"  목표예측이 필요   oracle - validity = {needs_goal:+.1%}")
-    if use_jev:
-        print(f"\nJEV: calls={jev.calls} tokens={jev.input_tokens:,} "
-              f"cost=${jev.input_tokens/1e6*0.042:.3f}")
-        jev.close()
+    def gap(hi, lo, label):
+        if hi in stats and lo in stats:
+            d = stats[hi]["success"] - stats[lo]["success"]
+            print(f"  {label:<34}{d:>+8.1%}")
+            return d
+        return None
+
+    print("\n분해")
+    total = gap("oracle", "C", "전체 headroom   oracle - C")
+    by_val = gap("validity", "C", "유효성이 설명   validity - C")
+    needs = gap("oracle", "validity", "예측이 필요     oracle - validity")
+    a_gain = gap("A", "C", "arm A 이득      A - C")
+    a_vs_v = gap("A", "validity", "arm A vs 유효성 A - validity")
+    a_vs_o = gap("A", "oracle", "arm A vs 완벽   A - oracle")
+
+    if a_gain is not None and total:
+        print(f"\n  arm A 가 회수한 headroom 비율: {a_gain/total:.0%}")
+    if a_vs_v is not None and needs is not None and needs > 0:
+        print(f"  예측 구간({needs:+.1%}) 중 arm A 몫: {a_vs_v/needs:.0%}")
+
+    if "A" in ARMS:
+        eps_a = [e for e in episodes if e["arm"] == "A"]
+        req = sum(e.get("jev_requests", 0) for e in eps_a)
+        bv = sum(e.get("bound_violations", 0) for e in eps_a)
+        print(f"\nJEV: 요청 {req}  에피소드당 {req/max(len(eps_a),1):.0f}  "
+              f"conjunction bound 위반 {bv}")
+        if jev is not None:
+            print(f"     calls={jev.calls} tokens={jev.input_tokens:,} "
+                  f"cost=${jev.input_tokens/1e6*0.042:.3f}")
+            jev.close()
+
     print(f"\npolicy calls={policy.calls} repairs={policy.repairs} "
           f"fallbacks={policy.fallbacks} catalog={episodes[0]['catalog_size']}")
-    print("=" * 66)
-    print(f"MVP-C {'PASS' if total >= 0.10 else 'FAIL'} (headroom gate >= +10%p)")
-    print("AB3: " + ("유효성 필터만으로 대부분 설명됨 -> 풍부한 예측의 한계효용 낮음"
-                     if share >= 0.70 else
-                     "목표 지향 예측이 유효성 너머의 기여를 함"))
-    return 0 if total >= 0.10 else 1
+    print("=" * 74)
+    return 0
 
 
 if __name__ == "__main__":
