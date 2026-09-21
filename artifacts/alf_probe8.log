@@ -1,0 +1,46 @@
+게임 풀: 3553개, 표본 8개
+
+[0] look_at_obj_in_light-AlarmClock-None-DeskLamp-30  최적 3 step, admissible 30
+     state0 d= 3 n= 30 | progress   1 neutral  29 detour   0 dead   0
+     state1 d= 2 n= 35 | progress   2 neutral   4 detour  29 dead   0
+     state2 d= 1 n= 35 | progress   1 neutral   5 detour  29 dead   0
+[1] pick_and_place_simple-Candle-None-Cabinet-418  최적 5 step, admissible 14
+     state0 d= 5 n= 14 | progress   1 neutral  13 detour   0 dead   0
+     state1 d= 4 n= 16 | progress   1 neutral   4 detour  11 dead   0
+     state2 d= 3 n= 16 | progress   3 neutral  12 detour   1 dead   0
+[2] pick_and_place_simple-SoapBottle-None-GarbageCan  최적 4 step, admissible 21
+     state0 d= 4 n= 21 | progress   6 neutral  15 detour   0 dead   0
+     state1 d= 3 n= 26 | progress   1 neutral   9 detour  16 dead   0
+     state2 d= 2 n= 26 | progress   2 neutral  20 detour   4 dead   0
+[3] pick_clean_then_place_in_recep-Kettle-None-Dinin  최적 6 step, admissible 43
+     state0 d= 6 n= 43 | progress   1 neutral  42 detour   0 dead   0
+     state1 d= 5 n= 52 | progress   1 neutral   4 detour  47 dead   0
+     state2 d= 4 n= 45 | progress   1 neutral  43 detour   1 dead   0
+[4] pick_cool_then_place_in_recep-Apple-None-Microwa  최적 7 step, admissible 42
+     state0 d= 7 n= 42 | progress   2 neutral  40 detour   0 dead   0
+     state1 d= 6 n= 54 | progress   1 neutral   5 detour  48 dead   0
+     state2 d= 5 n= 44 | progress   1 neutral  42 detour   1 dead   0
+[5] pick_cool_then_place_in_recep-Potato-None-Microw  최적 7 step, admissible 32
+     state0 d= 7 n= 32 | progress   3 neutral  29 detour   0 dead   0
+     state1 d= 6 n= 45 | progress   1 neutral   6 detour  38 dead   0
+     state2 d= 5 n= 34 | progress   1 neutral  32 detour   1 dead   0
+[6] pick_heat_then_place_in_recep-Potato-None-Garbag  최적 6 step, admissible 39
+     state0 d= 6 n= 39 | progress   2 neutral  37 detour   0 dead   0
+     state1 d= 5 n= 42 | progress   1 neutral   5 detour  36 dead   0
+     state2 d= 4 n= 41 | progress   1 neutral  39 detour   1 dead   0
+[7] pick_two_obj_and_place-Newspaper-None-ArmChair-2  최적 8 step, admissible 19
+     state0 d= 8 n= 19 | progress   2 neutral  17 detour   0 dead   0
+     state1 d= 7 n= 22 | progress   1 neutral   5 detour  16 dead   0
+     state2 d= 6 n= 21 | progress   1 neutral  19 detour   1 dead   0
+
+======================================================================
+상태 24개 / 유효행동 794개 / 3998초
+  progress     38  (  4.8%)  목표를 전진시킴
+  neutral     476  ( 59.9%)  거리 불변
+  detour      280  ( 35.3%)  유효하지만 멀어짐
+  dead          0  (  0.0%)  유효하지만 목표 파괴 (비가역)
+
+  유효하지만 전진 아님: 756/794 = 95.2%
+  -> 무작위로 유효 행동을 고르면 전진 확률 4.8%
+======================================================================
+비가역 행동 없음 -> TextWorld 와 같은 약점 가능성.

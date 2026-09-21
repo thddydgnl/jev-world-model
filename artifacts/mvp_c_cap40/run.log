@@ -1,0 +1,68 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 4/398 [00:00<00:10, 37.00it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 140.92it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 166.64it/s]Loading weights:  16%|█▌        | 64/398 [00:00<00:02, 166.08it/s]Loading weights:  20%|██        | 81/398 [00:00<00:01, 163.44it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 172.83it/s]Loading weights:  30%|███       | 120/398 [00:00<00:01, 167.45it/s]Loading weights:  34%|███▍      | 137/398 [00:00<00:01, 154.24it/s]Loading weights:  39%|███▉      | 157/398 [00:00<00:01, 163.41it/s]Loading weights:  44%|████▎     | 174/398 [00:01<00:01, 155.45it/s]Loading weights:  48%|████▊     | 191/398 [00:01<00:01, 158.65it/s]Loading weights:  53%|█████▎    | 212/398 [00:01<00:01, 165.96it/s]Loading weights:  58%|█████▊    | 229/398 [00:01<00:01, 163.83it/s]Loading weights:  62%|██████▏   | 246/398 [00:01<00:00, 163.53it/s]Loading weights:  67%|██████▋   | 267/398 [00:01<00:00, 170.10it/s]Loading weights:  72%|███████▏  | 285/398 [00:01<00:00, 171.32it/s]Loading weights:  76%|███████▌  | 303/398 [00:01<00:00, 164.90it/s]Loading weights:  81%|████████  | 323/398 [00:01<00:00, 169.52it/s]Loading weights:  86%|████████▌ | 343/398 [00:02<00:00, 172.75it/s]Loading weights:  91%|█████████ | 361/398 [00:02<00:00, 172.89it/s]Loading weights:  95%|█████████▌| 379/398 [00:02<00:00, 165.43it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 165.45it/s]
+loaded.
+  t000 r0  C=X(40)  validity=O(11)  oracle=O(30)  [1 sets]
+  t000 r1  C=X(40)  validity=X(40)  oracle=O(20)  [2 sets]
+  t000 r2  C=X(40)  validity=O(8)  oracle=O(11)  [3 sets]
+  t000 r3  C=X(40)  validity=O(12)  oracle=O(7)  [4 sets]
+  t001 r0  C=X(40)  validity=O(7)  oracle=O(7)  [5 sets]
+  t001 r1  C=X(40)  validity=O(5)  oracle=O(5)  [6 sets]
+  t001 r2  C=X(40)  validity=O(5)  oracle=O(5)  [7 sets]
+  t001 r3  C=X(40)  validity=O(4)  oracle=O(4)  [8 sets]
+  t002 r0  C=X(40)  validity=O(7)  oracle=O(10)  [9 sets]
+  t002 r1  C=X(40)  validity=O(8)  oracle=O(7)  [10 sets]
+  t002 r2  C=X(40)  validity=O(4)  oracle=O(5)  [11 sets]
+  t002 r3  C=X(40)  validity=O(6)  oracle=O(7)  [12 sets]
+  t003 r0  C=X(40)  validity=X(40)  oracle=X(40)  [13 sets]
+  t003 r1  C=X(40)  validity=O(34)  oracle=X(40)  [14 sets]
+  t003 r2  C=X(40)  validity=O(5)  oracle=O(5)  [15 sets]
+  t003 r3  C=X(40)  validity=X(40)  oracle=O(13)  [16 sets]
+  t004 r0  C=X(40)  validity=O(7)  oracle=O(7)  [17 sets]
+  t004 r1  C=X(40)  validity=O(6)  oracle=O(8)  [18 sets]
+  t004 r2  C=X(40)  validity=O(7)  oracle=O(7)  [19 sets]
+  t004 r3  C=X(40)  validity=X(40)  oracle=O(6)  [20 sets]
+  t005 r0  C=X(40)  validity=O(6)  oracle=O(6)  [21 sets]
+  t005 r1  C=X(40)  validity=O(6)  oracle=O(8)  [22 sets]
+  t005 r2  C=X(40)  validity=O(7)  oracle=O(6)  [23 sets]
+  t005 r3  C=X(40)  validity=O(7)  oracle=O(7)  [24 sets]
+  t006 r0  C=X(40)  validity=X(40)  oracle=X(40)  [25 sets]
+  t006 r1  C=X(40)  validity=X(40)  oracle=O(6)  [26 sets]
+  t006 r2  C=X(40)  validity=X(40)  oracle=O(6)  [27 sets]
+  t006 r3  C=X(40)  validity=X(40)  oracle=O(6)  [28 sets]
+  t007 r0  C=O(20)  validity=O(22)  oracle=O(12)  [29 sets]
+  t007 r1  C=O(18)  validity=O(7)  oracle=O(10)  [30 sets]
+  t007 r2  C=X(40)  validity=X(40)  oracle=O(10)  [31 sets]
+  t007 r3  C=X(40)  validity=X(40)  oracle=O(23)  [32 sets]
+  t008 r0  C=X(40)  validity=O(5)  oracle=O(5)  [33 sets]
+  t008 r1  C=X(40)  validity=O(7)  oracle=O(8)  [34 sets]
+  t008 r2  C=X(40)  validity=O(8)  oracle=O(9)  [35 sets]
+  t008 r3  C=X(40)  validity=O(7)  oracle=O(7)  [36 sets]
+  t009 r0  C=X(40)  validity=O(6)  oracle=O(6)  [37 sets]
+  t009 r1  C=X(40)  validity=O(6)  oracle=O(9)  [38 sets]
+  t009 r2  C=X(40)  validity=O(6)  oracle=O(5)  [39 sets]
+  t009 r3  C=X(40)  validity=O(6)  oracle=O(6)  [40 sets]
+  t010 r0  C=X(40)  validity=O(6)  oracle=O(6)  [41 sets]
+  t010 r1  C=X(40)  validity=O(7)  oracle=O(6)  [42 sets]
+  t010 r2  C=X(40)  validity=X(40)  oracle=O(7)  [43 sets]
+  t010 r3  C=X(40)  validity=X(40)  oracle=O(6)  [44 sets]
+  t011 r0  C=X(40)  validity=O(13)  oracle=O(8)  [45 sets]
+  t011 r1  C=O(34)  validity=O(12)  oracle=O(22)  [46 sets]
+  t011 r2  C=X(40)  validity=O(12)  oracle=O(8)  [47 sets]
+  t011 r3  C=X(40)  validity=O(12)  oracle=O(6)  [48 sets]
+
+==================================================================
+arm            n   success    steps   invalid  progress    trap   decoy
+C             48      6.2%     39.0     91.7%     36.1%       0       0
+validity      48     75.0%     16.3     19.3%     86.8%       0       0
+oracle        48     93.8%     10.6     30.1%     96.5%       0       0
+
+전체 headroom      oracle - C        = +87.5%
+  유효성으로 설명   validity - C      = +68.8%  (전체의 79%)
+  목표예측이 필요   oracle - validity = +18.8%
+
+policy calls=3164 repairs=0 fallbacks=0 catalog=40
+==================================================================
+MVP-C PASS (headroom gate >= +10%p)
+AB3: 유효성 필터만으로 대부분 설명됨 -> 풍부한 예측의 한계효용 낮음
