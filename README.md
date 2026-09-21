@@ -9,6 +9,22 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 - 한계(내부 기록, 직역 금지): [`docs/limitations.md`](docs/limitations.md)
 - 결과 요약: [`artifacts/mvp_b/RESULTS.md`](artifacts/mvp_b/RESULTS.md) · [`artifacts/mvp_c/RESULTS.md`](artifacts/mvp_c/RESULTS.md)
 
+## 자원 제약
+
+| 항목 | 값 |
+|---|---|
+| GPU 서버 | `kiis-mvf-gpu` (`yonghwi-racedreamer`) — RTX A5000 24GB ×2 |
+| **사용 기한** | **2026-09-30까지** (2026-09-21 기준 9일) |
+| 접속 | `ssh kiis-mvf-gpu` (Tailscale 중계 경유, ProxyJump 자동) |
+| 원격 작업 경로 | `~/jev-wm` (venv 포함) |
+| JEV API | `jev-1.13.0` 고정, 누적 $0.047 사용 |
+
+**GPU가 필요한 것:** Qwen3-4B policy 추론(arm C·A의 후보 생성), arm B의 QLoRA 학습.
+**필요 없는 것:** JEV API 호출, TextWorld 라벨링, 모든 intrinsic 분석 — 맥북에서 수행.
+
+9일 안에 arm B 학습(2~4주 소요)은 들어가지 않는다. GPU 창은 policy가 필요한
+closed-loop 실험에 쓰고, 기한 전에 연장 여부를 확인할 것.
+
 ## 진행 상태
 
 | 단계 | 상태 | 비고 |
@@ -17,7 +33,9 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 | Phase 0 TextWorld smoke | 완료 | 11/11 |
 | MVP-A 라벨 신뢰성 | 완료 | support 위반 0, 충돌 0, 교차검증 0 불일치 |
 | MVP-B JEV 예측력 | 완료 | 게이트 4/4 통과 + precondition 한계 발견 |
-| MVP-C oracle headroom | 완료 | +60.4%p, world 10승 2무 0패 |
+| MVP-C oracle headroom | 완료 | +66.7%p (3-arm 재실행 기준) |
+| AB3 validity-only | 완료 | **headroom의 97%가 단순 유효성** |
+| 함정 world 재측정 | 진행 중 | 비가역 `eat` 함정 도입 |
 | Phase 1+ 본 실험 | 미실행 | |
 
 ## 핵심 결과 (MVP-B)
