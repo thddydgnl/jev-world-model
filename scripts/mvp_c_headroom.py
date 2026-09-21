@@ -2,9 +2,15 @@
 
 Two closed-loop arms over identical worlds, goals, seeds and candidate sets:
 
-  C       follow the frozen policy's own top preference
-  oracle  score the SAME candidate prefixes by their TRUE endpoint and pick
-          the argmax under the common utility
+  C         follow the frozen policy's own top preference
+  validity  score by the TRUE invalid-command count and the policy prior only
+            (설계.md §20 "validity-only"); the goal terms are zeroed
+  oracle    score the SAME candidate prefixes by their FULL true endpoint
+
+validity sits between the other two on information, not on mechanism: it reads
+the same engine branch as oracle but is allowed to use only whether the
+commands execute. The oracle-minus-validity gap is the part of the headroom
+that needs an actual goal-directed forecast rather than a validity filter.
 
 The gap is the headroom a learned forecaster could conceivably capture. It is
 NOT an upper bound on achievable performance: the utility is myopic and the
@@ -25,10 +31,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import textworld
 from textworld import EnvInfos
 
-from agent.task import (goal_spec, goal_satisfied, goal_progress, static_catalog,
-                        utility, unique_prefixes, plan_prior)
+from agent.task import (goal_spec, trap_goal_spec, goal_satisfied, goal_progress,
+                        static_catalog, utility, unique_prefixes, plan_prior)
 from env.serialize import canonical_state
-from env.worlds import build_world
+from env.worlds import build_world, build_trap_world
 from forecast import render_facts
 
 INFOS = EnvInfos(facts=True, typed_entities=True, possible_admissible_commands=True,
@@ -38,16 +44,18 @@ N_WORLDS = 12          # all locked-door variants -> genuine 5-step dependency
 ROOTS_PER_WORLD = 4
 STEP_CAP = 15          # MVP scale; 설계.md §3.3 uses 30 for the main experiment
 K, H = 8, 2
+CAP = [15]          # mutable so --cap can override
+ARMS = ("C", "validity", "oracle")
 SEED = 20260921
 OUT = Path("artifacts/mvp_c")
 
 
 def run_episode(arm, env_root, game, meta, goal, policy, catalog, log):
     env = env_root.copy()
-    steps = invalid = 0
+    steps = invalid = traps = decoys = 0
     status = "cap"
     history: list[tuple[str, bool]] = []
-    for step in range(STEP_CAP):
+    for step in range(CAP[0]):
         facts = list(env.state["_facts"])
         if goal_satisfied(facts, goal):
             status = "success"
@@ -60,6 +68,7 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log):
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
         else:
+            goal_blind = (arm == "validity")
             best, chosen = None, None
             for prefix in unique_prefixes(plans, H):
                 branch = env.copy()
@@ -70,29 +79,36 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log):
                     branch.step(a)
                 end = list(branch.state["_facts"])
                 branch.close()
-                u = utility(conj=float(goal_satisfied(end, goal)),
-                            progress=goal_progress(end, goal),
-                            n_invalid=n_inv, h=len(prefix),
-                            prior=plan_prior(plans, prefix))
+                u = utility(
+                    conj=0.0 if goal_blind else float(goal_satisfied(end, goal)),
+                    progress=0.0 if goal_blind else goal_progress(end, goal),
+                    n_invalid=n_inv, h=len(prefix),
+                    prior=plan_prior(plans, prefix))
                 if best is None or u > best:
                     best, chosen = u, prefix
             action = chosen[0]
 
         was_valid = action in env.state["admissible_commands"]
+        is_trap = action in goal.get("trap_commands", [])
+        is_decoy = action in goal.get("decoy_commands", [])
+        traps += is_trap
+        decoys += is_decoy
         env.step(action)
         history.append((action, was_valid))
         steps += 1
         invalid += (not was_valid)
         log.append({"arm": arm, "world": meta["world_id"], "step": step,
                     "action": action, "valid": was_valid,
-                    "policy_status": pstatus, "prefix": list(chosen)})
+                    "policy_status": pstatus, "prefix": list(chosen),
+                    "trap": bool(is_trap), "decoy": bool(is_decoy)})
     else:
         if goal_satisfied(list(env.state["_facts"]), goal):
             status = "success"
     progress = goal_progress(list(env.state["_facts"]), goal)
     env.close()
     return {"arm": arm, "status": status, "success": status == "success",
-            "steps": steps, "invalid": invalid, "progress": progress}
+            "steps": steps, "invalid": invalid, "progress": progress,
+            "traps": traps, "decoys": decoys}
 
 
 def main() -> int:
@@ -101,6 +117,10 @@ def main() -> int:
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--worlds", type=int, default=N_WORLDS)
     ap.add_argument("--roots", type=int, default=ROOTS_PER_WORLD)
+    ap.add_argument("--trap", action="store_true",
+                    help="irreversible-trap worlds (eat the goal object)")
+    ap.add_argument("--cap", type=int, default=STEP_CAP)
+    ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
     from agent.policy import Policy
@@ -108,15 +128,21 @@ def main() -> int:
     policy = Policy(args.model, args.device, seed=SEED)
     print("loaded.", flush=True)
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    wdir = OUT / "worlds"; wdir.mkdir(exist_ok=True)
+    out = Path(args.out) if args.out else OUT
+    out.mkdir(parents=True, exist_ok=True)
+    wdir = out / "worlds"; wdir.mkdir(exist_ok=True)
     rng = random.Random(SEED)
     episodes, log = [], []
 
+    CAP[0] = args.cap
     for w in range(args.worlds):
-        idx = w * 3                      # idx % 3 == 0 -> locked door
-        game, path, meta = build_world(idx, wdir, rng)
-        goal = goal_spec(game, meta)
+        if args.trap:
+            game, path, meta = build_trap_world(w, wdir, rng)
+            goal = trap_goal_spec(game, meta)
+        else:
+            idx = w * 3                  # idx % 3 == 0 -> locked door
+            game, path, meta = build_world(idx, wdir, rng)
+            goal = goal_spec(game, meta)
         catalog = static_catalog(game)
         env = textworld.start(str(path), request_infos=INFOS); env.reset()
 
@@ -130,23 +156,27 @@ def main() -> int:
                 root.step(rng.choice(adm))
             if goal_satisfied(list(root.state["_facts"]), goal):
                 root.close(); continue          # already solved; skip
-            for arm in ("C", "oracle"):
+            for arm in ARMS:
                 res = run_episode(arm, root, game, meta, goal,
                                   policy, catalog, log)
                 res.update({"world_id": meta["world_id"], "root": r,
                             "catalog_size": len(catalog)})
                 episodes.append(res)
             root.close()
-            done = len(episodes)
-            print(f"  {meta['world_id']} r{r}  "
-                  f"C={'O' if episodes[-2]['success'] else 'X'}({episodes[-2]['steps']})  "
-                  f"oracle={'O' if episodes[-1]['success'] else 'X'}({episodes[-1]['steps']})  "
-                  f"[{done//2} pairs]", flush=True)
+            (out / "episodes.jsonl").write_text(
+                "\n".join(json.dumps(e) for e in episodes) + "\n")
+            (out / "steps.jsonl").write_text(
+                "\n".join(json.dumps(s) for s in log) + "\n")
+            recent = episodes[-len(ARMS):]
+            marks = "  ".join(
+                f"{e['arm']}={'O' if e['success'] else 'X'}({e['steps']})" for e in recent)
+            print(f"  {meta['world_id']} r{r}  {marks}  "
+                  f"[{len(episodes)//len(ARMS)} sets]", flush=True)
         env.close()
 
-    (OUT / "episodes.jsonl").write_text(
+    (out / "episodes.jsonl").write_text(
         "\n".join(json.dumps(e) for e in episodes) + "\n")
-    (OUT / "steps.jsonl").write_text(
+    (out / "steps.jsonl").write_text(
         "\n".join(json.dumps(s) for s in log) + "\n")
 
     def agg(arm):
@@ -156,21 +186,37 @@ def main() -> int:
                 "success": sum(e["success"] for e in v) / n,
                 "steps": sum(e["steps"] for e in v) / n,
                 "invalid": sum(e["invalid"] for e in v) / max(sum(e["steps"] for e in v), 1),
-                "progress": sum(e["progress"] for e in v) / n}
+                "progress": sum(e["progress"] for e in v) / n,
+                "traps": sum(e["traps"] for e in v),
+                "decoys": sum(e["decoys"] for e in v)}
 
-    c, o = agg("C"), agg("oracle")
-    gap = o["success"] - c["success"]
-    print("\n" + "=" * 62)
-    print(f"{'arm':<10}{'n':>5}{'success':>10}{'steps':>9}{'invalid':>10}{'progress':>10}")
-    for name, a in (("C", c), ("oracle", o)):
-        print(f"{name:<10}{a['n']:>5}{a['success']:>10.1%}{a['steps']:>9.1f}"
-              f"{a['invalid']:>10.1%}{a['progress']:>10.1%}")
-    print(f"\noracle headroom = {gap:+.1%}  (gate: >= +10%p)")
-    print(f"policy calls={policy.calls} repairs={policy.repairs} "
+    stats = {a: agg(a) for a in ARMS}
+    c, v, o = stats["C"], stats["validity"], stats["oracle"]
+    print("\n" + "=" * 66)
+    print(f"{'arm':<11}{'n':>5}{'success':>10}{'steps':>9}{'invalid':>10}"
+          f"{'progress':>10}{'trap':>8}{'decoy':>8}")
+    for name in ARMS:
+        a = stats[name]
+        print(f"{name:<11}{a['n']:>5}{a['success']:>10.1%}{a['steps']:>9.1f}"
+              f"{a['invalid']:>10.1%}{a['progress']:>10.1%}"
+              f"{a['traps']:>8}{a['decoys']:>8}")
+
+    total = o["success"] - c["success"]
+    by_validity = v["success"] - c["success"]
+    needs_goal = o["success"] - v["success"]
+    share = by_validity / total if total else float("nan")
+    print(f"\n전체 headroom      oracle - C        = {total:+.1%}")
+    print(f"  유효성으로 설명   validity - C      = {by_validity:+.1%}  "
+          f"(전체의 {share:.0%})")
+    print(f"  목표예측이 필요   oracle - validity = {needs_goal:+.1%}")
+    print(f"\npolicy calls={policy.calls} repairs={policy.repairs} "
           f"fallbacks={policy.fallbacks} catalog={episodes[0]['catalog_size']}")
-    print("=" * 62)
-    print(f"MVP-C {'PASS — WM이 기여할 여지 있음' if gap >= 0.10 else 'FAIL — 여지 부족'}")
-    return 0 if gap >= 0.10 else 1
+    print("=" * 66)
+    print(f"MVP-C {'PASS' if total >= 0.10 else 'FAIL'} (headroom gate >= +10%p)")
+    print("AB3: " + ("유효성 필터만으로 대부분 설명됨 -> 풍부한 예측의 한계효용 낮음"
+                     if share >= 0.70 else
+                     "목표 지향 예측이 유효성 너머의 기여를 함"))
+    return 0 if total >= 0.10 else 1
 
 
 if __name__ == "__main__":

@@ -154,3 +154,58 @@ def label(facts: list[Any], query: dict) -> str:
     if query["kind"] == "mode":
         return mode_of(facts, query["target"])
     return player_room(facts)
+
+
+# ---------------------------------------------------------------- trap worlds
+
+TRAP_NAMES = [
+    ("wooden box", "brass key", "oak table", "steel door", "red apple", "ripe pear", "workroom", "cellar"),
+    ("iron chest", "silver key", "pine shelf", "birch door", "green apple", "soft plum", "study", "pantry"),
+    ("tin crate", "copper key", "stone bench", "elm door", "gold apple", "dry fig", "atelier", "vault"),
+    ("glass case", "bronze key", "marble stand", "cedar door", "pink apple", "small date", "gallery", "annex"),
+]
+
+
+def build_trap_world(idx: int, out_dir: Path, rng: random.Random) -> tuple[Any, Path, dict]:
+    """Same skeleton as build_world, plus an IRREVERSIBLE trap.
+
+    `eat {food}` is admissible whenever the food is carried and permanently
+    removes it from the world (`eaten(f)`). The goal requires carrying the
+    apple, so eating it destroys the episode while remaining a perfectly
+    executable command. A validity filter cannot see the difference; only a
+    forecast of the endpoint can. The pear is a harmless decoy, so "never eat"
+    and "do not eat the goal object" are distinguishable.
+    """
+    box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n = TRAP_NAMES[idx % len(TRAP_NAMES)]
+    suffix = f" {idx // len(TRAP_NAMES) + 1}" if idx >= len(TRAP_NAMES) else ""
+    # Suffix every name here, including the door, so no use site has to
+    # remember to. Forgetting it for one name is how this broke twice.
+    box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n = (
+        n + suffix for n in (box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n))
+
+    m = GameMaker()
+    room_a = m.new_room(ra_n)
+    room_b = m.new_room(rb_n)
+    door = m.new_door(m.connect(room_a.east, room_b.west), name=door_n)
+    door.add_property("locked")
+
+    box = m.new(type="c", name=box_n); box.add_property("closed")
+    table = m.new(type="s", name=table_n)
+    key = m.new(type="k", name=key_n)
+    apple = m.new(type="f", name=apple_n)
+    pear = m.new(type="f", name=pear_n)
+
+    m.add_fact("match", key, door)
+    room_a.add(box, table, pear)
+    box.add(key)
+    table.add(apple)
+    m.set_player(room_a)
+    m.quests = []
+
+    game = m.build()
+    p = out_dir / f"trap_{idx:03d}.json"
+    game.save(str(p))
+    meta = {"world_id": f"t{idx:03d}", "box": box_n, "key": key_n, "table": table_n,
+            "door": door_n, "apple": apple_n, "pear": pear_n,
+            "room_a": ra_n, "room_b": rb_n, "trap": True}
+    return game, p, meta

@@ -32,6 +32,21 @@ def goal_spec(game: Any, meta: dict) -> dict[str, Any]:
     }
 
 
+def trap_goal_spec(game: Any, meta: dict) -> dict[str, Any]:
+    """Carry the apple through the door. `eat {apple}` stays executable and
+    permanently unsatisfiable-makes the first atom."""
+    ids = {info.name: vid for vid, info in game.infos.items() if info.name}
+    apple, door, room_b = ids[meta["apple"]], ids[meta["door"]], ids[meta["room_b"]]
+    return {
+        "id": "carry_apple_through",
+        "text": (f"Be located in the {meta['room_b']}, carrying the "
+                 f"{meta['apple']}, with the {meta['door']} open."),
+        "atoms": [("in", apple, "I"), ("open", door), ("at", "P", room_b)],
+        "trap_commands": [f"eat {meta['apple']}"],
+        "decoy_commands": [f"eat {meta['pear']}"],
+    }
+
+
 def _index(facts: list[Any]) -> set[tuple[str, ...]]:
     return {tuple([f.name] + [a.name for a in f.arguments]) for f in facts}
 
