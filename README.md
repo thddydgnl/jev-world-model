@@ -7,6 +7,7 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 - 실행 프로토콜(확증/탐색 구분): [`docs/protocol.md`](docs/protocol.md)
 - **주장 대장 — 논문 쓸 때 여기서 시작**: [`docs/claims.md`](docs/claims.md)
 - 한계(내부 기록, 직역 금지): [`docs/limitations.md`](docs/limitations.md)
+- **Arm A 설계(측정 기반 개정안)**: [`docs/arm_a_design.md`](docs/arm_a_design.md)
 - 결과 요약: [`artifacts/mvp_b/RESULTS.md`](artifacts/mvp_b/RESULTS.md) · [`artifacts/mvp_c/RESULTS.md`](artifacts/mvp_c/RESULTS.md)
 
 ## 자원 제약
@@ -33,6 +34,7 @@ closed-loop 실험에 쓰고, 기한 전에 연장 여부를 확인할 것.
 | Phase 0 TextWorld smoke | 완료 | 11/11 |
 | MVP-A 라벨 신뢰성 | 완료 | support 위반 0, 충돌 0, 교차검증 0 불일치 |
 | MVP-B JEV 예측력 | 완료 | 게이트 4/4 통과 + precondition 한계 발견 |
+| **MVP-B2 유효성 직접 질의** | 완료 | **91.6% / 92.2% — MVP-B 결론 수정** |
 | MVP-C oracle headroom | 완료 | +66.7%p (3-arm 재실행 기준) |
 | AB3 validity-only | 완료 | **headroom의 97%가 단순 유효성** |
 | 함정 world 재측정 | 진행 중 | 비가역 `eat` 함정 도입 |
