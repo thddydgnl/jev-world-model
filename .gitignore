@@ -16,7 +16,8 @@ artifacts/models/
 data/worlds/
 data/*.parquet
 *.jsonl
-!data/mvp_a/prefixes.jsonl        # 환경 정답 라벨 — JEV 출력 없음, 재현에 필수
+# 환경 정답 라벨 — JEV 출력 없음, 재현에 필수
+!data/mvp_a/prefixes.jsonl
 *.ckpt
 *.safetensors
 
