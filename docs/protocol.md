@@ -126,12 +126,14 @@ world 16개 이상, root 64개 이상. 층화 변수는 위 정의 그대로 사
 
 ## D. 이번 실행에서 하지 않은 것
 
-- MVP-C (oracle headroom 대비 C): 미실행. 따라서 **"WM이 Agent를 개선한다"는
-  어떤 주장도 현재 근거가 없다.** 본 실행은 intrinsic 예측 능력만 다룬다.
+- **Arm A (JEV를 planner에 연결)**: 미구현. MVP-C는 oracle과 정책만 비교했다.
+  따라서 **"JEV가 Agent를 개선한다"는 주장은 현재 근거가 없다.**
+- **Arm B (학습된 typed LLM)**: 미구현.
+- **validity-only arm (§19 AB3)**: 미실행. B3(여지의 대부분이 유효성)을
+  확증하려면 이게 필요하다.
 - h=3, h=4: 미검증.
-- Arm B (학습된 typed LLM), Arm C (No-WM policy): 미구현.
-- 통계적 추론: 현재 수치는 점추정이며 CI를 계산하지 않았다. world 8개는
-  world-clustered CI를 의미 있게 내기에 부족하다.
+- 통계적 추론: 현재 수치는 점추정이며 CI를 계산하지 않았다.
+  world 8개(MVP-A/B)·12개(MVP-C)는 world-clustered CI를 의미 있게 내기에 부족하다.
 
 ---
 
@@ -147,6 +149,10 @@ export TYPESAFE_API_KEY=...        # 또는 .env / Keychain
 .venv/bin/python scripts/mvp_b_jev.py
 .venv/bin/python scripts/mvp_b_analyze.py
 .venv/bin/python scripts/mvp_b_precondition.py
+
+# MVP-C는 GPU 필요 (Qwen3-4B). 랩 서버에서:
+#   rsync -az src scripts kiis-mvf-gpu:~/jev-wm/
+#   ssh kiis-mvf-gpu 'cd ~/jev-wm && HF_HOME=~/hf .venv/bin/python scripts/mvp_c_headroom.py'
 ```
 
 seed·설정·해시는 `artifacts/run_manifest.json`. 원시 요청/응답 448건은
