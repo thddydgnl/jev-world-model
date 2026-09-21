@@ -23,8 +23,16 @@ _ROOT = Path(__file__).resolve().parent.parent
 _RAW_DIR = _ROOT / "artifacts" / "jev_raw"
 
 
+PRICE_PER_INPUT_TOKEN = 0.042 / 1e6      # docs.typesafe.ai/models, 2026-09-20
+
+
 class JevError(RuntimeError):
     """Response could not be validated. Distinct from transport failure."""
+
+
+class BudgetExceeded(RuntimeError):
+    """Our own spend cap, not the provider's. Raised BEFORE a request so a run
+    stops at a known point instead of being cut mid-episode by a 402."""
 
 
 def _retry_delay(resp: httpx.Response, attempt: int) -> float:
@@ -86,8 +94,10 @@ def _validate(payload: dict[str, Any], out: dict[str, Any]) -> None:
 
 
 class JevClient:
-    def __init__(self, save_raw: bool = True, max_attempts: int = 4) -> None:
+    def __init__(self, save_raw: bool = True, max_attempts: int = 4,
+                 budget_usd: float | None = None) -> None:
         self._key = get_api_key()
+        self.budget_usd = budget_usd
         self._client = httpx.Client(timeout=httpx.Timeout(60.0, connect=10.0))
         self._save_raw = save_raw
         self._max_attempts = max_attempts
@@ -105,7 +115,15 @@ class JevClient:
     def __exit__(self, *exc: object) -> None:
         self.close()
 
+    @property
+    def spent_usd(self) -> float:
+        return self.input_tokens * PRICE_PER_INPUT_TOKEN
+
     def ask(self, state: Any, questions: dict[str, Any], tag: str = "") -> dict[str, Any]:
+        if self.budget_usd is not None and self.spent_usd >= self.budget_usd:
+            raise BudgetExceeded(
+                f"spend cap reached: ${self.spent_usd:.3f} of ${self.budget_usd:.2f} "
+                f"after {self.calls} calls")
         payload = {"model": PINNED_MODEL, "state": state, "questions": questions}
         for attempt in range(self._max_attempts):
             try:

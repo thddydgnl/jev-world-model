@@ -93,6 +93,12 @@ class RecursiveForecaster:
         self._cache: dict[tuple, tuple[dict, float]] = {}
         self.stats = Stats()
 
+    def reset_step_cache(self) -> None:
+        """Kept across planning steps on purpose: the key is (state fingerprint,
+        action), so a repeat of the same situation has the same answer and does
+        not need paying for twice."""
+        return
+
     @staticmethod
     def _fingerprint(canon: dict) -> str:
         return "|".join(",".join(r) for r in canon["dynamic_facts"])

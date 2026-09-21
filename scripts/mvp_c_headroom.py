@@ -68,9 +68,18 @@ def true_trajectory(env, game, prefix):
     return out
 
 
-def score_arm_a(fc, state, prefixes, plans, env=None, game=None):
-    """Arm A: identical planner, goal and utility; JEV supplies the terms."""
+def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
+    """JEV-backed arms: identical planner, goal and utility.
+
+    `failed` holds (state fingerprint, action) pairs this episode already
+    ATTEMPTED and watched fail. That is observed history, which 설계.md §3.5
+    lists as allowed online information — the policy already receives it — and
+    without it a confidently wrong validity judgement (0.91 on a command that
+    cannot run) loops forever, because the failed action is a no-op so the
+    state, and therefore the forecast, never changes.
+    """
     # The endpoint ablation must not issue validity requests at all.
+    fingerprint = "|".join(",".join(r) for r in state["dynamic_facts"])
     # The recursive arm asks validity inside its own rollout; the endpoint
     # ablation must not ask it at all.
     p_first = ({} if fc.mode in ("endpoint", "recursive")
@@ -86,8 +95,12 @@ def score_arm_a(fc, state, prefixes, plans, env=None, game=None):
         return prefix, utility(terms.conj, terms.progress, n_inv,
                                len(prefix), plan_prior(plans, prefix))
 
+    live = [p for p in prefixes
+            if failed is None or (fingerprint, p[0]) not in failed]
+    if not live:                       # everything tried and failed; keep going
+        live = list(prefixes)
     with ThreadPoolExecutor(max_workers=8) as pool:
-        scored = list(pool.map(one, prefixes))
+        scored = list(pool.map(one, live))
     return max(scored, key=lambda kv: kv[1])[0]
 
 
@@ -97,6 +110,7 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
     steps = invalid = traps = decoys = 0
     status = "cap"
     history: list[tuple[str, bool]] = []
+    failed: set[tuple[str, str]] = set()      # (state fingerprint, action)
     for step in range(CAP[0]):
         facts = list(env.state["_facts"])
         if goal_satisfied(facts, goal):
@@ -111,9 +125,9 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
         elif arm in JEV_ARMS:
-            fc._endpoint_cache.clear()
+            fc.reset_step_cache()
             chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans,
-                                 env=env, game=game)
+                                 env=env, game=game, failed=failed)
             action = chosen[0]
         else:
             goal_blind = (arm == "validity")
@@ -141,6 +155,8 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         is_decoy = action in goal.get("decoy_commands", [])
         traps += is_trap
         decoys += is_decoy
+        if not was_valid:
+            failed.add(("|".join(",".join(r) for r in state["dynamic_facts"]), action))
         env.step(action)
         history.append((action, was_valid))
         steps += 1
@@ -169,6 +185,8 @@ def main() -> int:
                     help="irreversible-trap worlds (eat the goal object)")
     ap.add_argument("--cap", type=int, default=STEP_CAP)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--budget", type=float, default=None,
+                    help="stop before exceeding this many USD of JEV input tokens")
     ap.add_argument("--policy-seed", type=int, default=SEED,
                     help="varies policy sampling while worlds/roots stay fixed")
     ap.add_argument("--arms", default="C,validity,oracle",
@@ -185,7 +203,7 @@ def main() -> int:
     if use_jev:
         from jev_client import JevClient
         from wm.jev_forecaster import JevForecaster
-        jev = JevClient(save_raw=True)
+        jev = JevClient(save_raw=True, budget_usd=args.budget)
         print("arm A enabled: JEV forecaster")
 
     from agent.policy import Policy
@@ -316,13 +334,13 @@ def main() -> int:
             print("\n오류 누적 (재귀 arm, 예측 상태 vs 실제 상태)")
             print(f"  {'depth':>6}{'n':>8}{'상태 완전일치':>14}{'변수 정확도':>13}{'beam 포함':>11}")
             depths = sorted({int(k) for d in drifts for k in d["n"]})
+            key = lambda d, sub, dep: d[sub].get(dep, d[sub].get(str(dep), 0))
             for dep in depths:
-                k = str(dep)
-                n = sum(d["n"].get(k, 0) for d in drifts)
-                ex = sum(d["exact"].get(k, 0) for d in drifts)
-                vo = sum(d["vars_ok"].get(k, 0) for d in drifts)
-                vt = sum(d["vars_tot"].get(k, 0) for d in drifts)
-                ib = sum(d["in_beam"].get(k, 0) for d in drifts)
+                n = sum(key(d, "n", dep) for d in drifts)
+                ex = sum(key(d, "exact", dep) for d in drifts)
+                vo = sum(key(d, "vars_ok", dep) for d in drifts)
+                vt = sum(key(d, "vars_tot", dep) for d in drifts)
+                ib = sum(key(d, "in_beam", dep) for d in drifts)
                 print(f"  {dep:>6}{n:>8}{ex/max(n,1):>14.1%}"
                       f"{vo/max(vt,1):>13.1%}{ib/max(n,1):>11.1%}")
             print(f"  모순 감지 {sum(d['contradictions'] for d in drifts)}  "

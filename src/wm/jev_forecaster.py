@@ -127,6 +127,11 @@ class JevForecaster:
         self._endpoint_cache: dict[tuple, GoalTerms] = {}
         self.stats = Stats()
 
+    def reset_step_cache(self) -> None:
+        """Endpoint answers are keyed by (state, actions) and the state changes
+        every planning step, so nothing here survives usefully."""
+        self._endpoint_cache.clear()
+
     # ------------------------------------------------------------- validity
     def validity(self, canon: dict, cmds: list[str], after: list[str]) -> dict[str, float]:
         """One request for many commands; they share the state and are
