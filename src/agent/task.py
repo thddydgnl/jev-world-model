@@ -96,3 +96,61 @@ def plan_prior(plans: list[list[str]], prefix: tuple[str, ...]) -> float:
     if best is None or len(plans) <= 1:
         return 0.0
     return 1.0 - best / (len(plans) - 1)
+
+
+# ------------------------------------------------- goal queries for arm A
+
+def goal_queries(game: Any, meta: dict, goal: dict) -> tuple[list[dict], dict]:
+    """Turn the goal atoms into typed questions with COMPLETE answer support.
+
+    Each atom becomes one Choice over every type-possible value, and
+    `true_options` marks which values satisfy it. Asking in this form reuses the
+    exact question family MVP-A verified at 0 support violations and MVP-B
+    scored 100% on for cleanly-executing sequences.
+    """
+    name_of = {vid: info.name for vid, info in game.infos.items() if info.name}
+    rooms = [vid for vid, info in game.infos.items() if info.type == "r"]
+    containers = [vid for vid, info in game.infos.items() if info.type == "c"]
+    supporters = [vid for vid, info in game.infos.items() if info.type == "s"]
+
+    def parent_options(label: str) -> dict[str, str]:
+        opts = {"inventory": f"The {label} is carried by the player."}
+        for r in rooms:
+            opts[f"at:{r}"] = f"The {label} is on the floor of the {name_of[r]}."
+        for c in containers:
+            opts[f"in:{c}"] = f"The {label} is inside the {name_of[c]}."
+        for s in supporters:
+            opts[f"on:{s}"] = f"The {label} is on top of the {name_of[s]}."
+        return opts
+
+    qs: list[dict] = []
+    for i, atom in enumerate(goal["atoms"]):
+        pred = atom[0]
+        if pred == "in" and atom[2] == "I":
+            label = name_of[atom[1]]
+            qs.append({"id": f"g{i}", "kind": "parent",
+                       "ask": (f"Where is the {label} located? Give its DIRECT "
+                               f"container, supporter, room floor, or the "
+                               f"player's inventory."),
+                       "options": parent_options(label),
+                       "true_options": ["inventory"]})
+        elif pred in ("open", "closed", "locked"):
+            label = name_of[atom[1]]
+            qs.append({"id": f"g{i}", "kind": "mode",
+                       "ask": f"Is the {label} open, closed but unlocked, or locked?",
+                       "options": {"open": f"The {label} is open.",
+                                   "closed_unlocked": f"The {label} is closed but not locked.",
+                                   "locked": f"The {label} is locked."},
+                       "true_options": [pred if pred != "closed" else "closed_unlocked"]})
+        elif pred == "at" and atom[1] == "P":
+            qs.append({"id": f"g{i}", "kind": "room",
+                       "ask": "Which room is the player in?",
+                       "options": {r: f"The player is in the {name_of[r]}." for r in rooms},
+                       "true_options": [atom[2]]})
+        else:
+            raise ValueError(f"No question form for goal atom {atom}")
+
+    conj = {"ask": (f"Is ALL of the following true at once? {goal['text']}"),
+            "options": {"yes": "Every listed condition holds.",
+                        "no": "At least one listed condition does not hold."}}
+    return qs, conj

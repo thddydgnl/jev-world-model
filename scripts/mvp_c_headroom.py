@@ -31,9 +31,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import textworld
 from textworld import EnvInfos
 
+from concurrent.futures import ThreadPoolExecutor
+
 from agent.task import (goal_spec, trap_goal_spec, goal_satisfied, goal_progress,
-                        static_catalog, utility, unique_prefixes, plan_prior)
-from env.serialize import canonical_state
+                        static_catalog, utility, unique_prefixes, plan_prior,
+                        goal_queries)
+from env.serialize import canonical_state, state_hash
 from env.worlds import build_world, build_trap_world
 from forecast import render_facts
 
@@ -45,12 +48,29 @@ ROOTS_PER_WORLD = 4
 STEP_CAP = 15          # MVP scale; 설계.md §3.3 uses 30 for the main experiment
 K, H = 8, 2
 CAP = [15]          # mutable so --cap can override
-ARMS = ("C", "validity", "oracle")
+ALL_ARMS = ("C", "validity", "oracle", "A")
+ARMS = ["C", "validity", "oracle"]
 SEED = 20260921
 OUT = Path("artifacts/mvp_c")
 
 
-def run_episode(arm, env_root, game, meta, goal, policy, catalog, log):
+def score_arm_a(fc, state, prefixes, plans):
+    """Arm A: identical planner, goal and utility; JEV supplies the terms."""
+    firsts = sorted({p[0] for p in prefixes})
+    p_first = fc.validity(state, firsts, [])
+    key = state_hash(state)
+
+    def one(prefix):
+        terms, n_inv = fc.score(state, key, prefix, p_first)
+        return prefix, utility(terms.conj, terms.progress, n_inv,
+                               len(prefix), plan_prior(plans, prefix))
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        scored = list(pool.map(one, prefixes))
+    return max(scored, key=lambda kv: kv[1])[0]
+
+
+def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None):
     env = env_root.copy()
     steps = invalid = traps = decoys = 0
     status = "cap"
@@ -67,6 +87,10 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log):
         if arm == "C":
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
+        elif arm == "A":
+            fc._endpoint_cache.clear()
+            chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans)
+            action = chosen[0]
         else:
             goal_blind = (arm == "validity")
             best, chosen = None, None
@@ -121,7 +145,22 @@ def main() -> int:
                     help="irreversible-trap worlds (eat the goal object)")
     ap.add_argument("--cap", type=int, default=STEP_CAP)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--arms", default="C,validity,oracle",
+                    help="comma list from C,validity,oracle,A")
     args = ap.parse_args()
+
+    global ARMS
+    ARMS = [a.strip() for a in args.arms.split(",") if a.strip()]
+    bad = set(ARMS) - set(ALL_ARMS)
+    if bad:
+        raise SystemExit(f"unknown arms: {sorted(bad)}")
+    use_jev = "A" in ARMS
+    jev = stack = None
+    if use_jev:
+        from jev_client import JevClient
+        from wm.jev_forecaster import JevForecaster
+        jev = JevClient(save_raw=True)
+        print("arm A enabled: JEV forecaster")
 
     from agent.policy import Policy
     print(f"loading {args.model} on {args.device} ...", flush=True)
@@ -143,6 +182,7 @@ def main() -> int:
             idx = w * 3                  # idx % 3 == 0 -> locked door
             game, path, meta = build_world(idx, wdir, rng)
             goal = goal_spec(game, meta)
+        gqs, conj_q = goal_queries(game, meta, goal) if use_jev else (None, None)
         catalog = static_catalog(game)
         env = textworld.start(str(path), request_infos=INFOS); env.reset()
 
@@ -157,8 +197,15 @@ def main() -> int:
             if goal_satisfied(list(root.state["_facts"]), goal):
                 root.close(); continue          # already solved; skip
             for arm in ARMS:
+                fc = None
+                if arm == "A":
+                    from wm.jev_forecaster import JevForecaster
+                    fc = JevForecaster(jev, gqs, conj_q)
                 res = run_episode(arm, root, game, meta, goal,
-                                  policy, catalog, log)
+                                  policy, catalog, log, fc)
+                if fc is not None:
+                    res["jev_requests"] = fc.stats.requests
+                    res["bound_violations"] = fc.stats.bound_violations
                 res.update({"world_id": meta["world_id"], "root": r,
                             "catalog_size": len(catalog)})
                 episodes.append(res)
@@ -209,6 +256,10 @@ def main() -> int:
     print(f"  유효성으로 설명   validity - C      = {by_validity:+.1%}  "
           f"(전체의 {share:.0%})")
     print(f"  목표예측이 필요   oracle - validity = {needs_goal:+.1%}")
+    if use_jev:
+        print(f"\nJEV: calls={jev.calls} tokens={jev.input_tokens:,} "
+              f"cost=${jev.input_tokens/1e6*0.042:.3f}")
+        jev.close()
     print(f"\npolicy calls={policy.calls} repairs={policy.repairs} "
           f"fallbacks={policy.fallbacks} catalog={episodes[0]['catalog_size']}")
     print("=" * 66)
