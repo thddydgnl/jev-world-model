@@ -1,0 +1,29 @@
+# --- secrets ---
+.env
+.env.*
+!.env.example
+*.key
+credentials.json
+
+# --- raw API responses (MCA: 보관 범위 확인 전까지 커밋 금지) ---
+artifacts/jev_raw/
+data/forecasts_raw/
+
+# --- large artifacts ---
+artifacts/models/
+data/worlds/
+data/*.parquet
+*.jsonl
+*.ckpt
+*.safetensors
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- macOS ---
+.DS_Store

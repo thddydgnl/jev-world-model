@@ -1,0 +1,64 @@
+{
+  "run_date": "2026-09-21",
+  "stages": [
+    "phase0_api_check",
+    "phase0_smoke",
+    "mvp_a_dataset",
+    "mvp_a_audit",
+    "mvp_b_jev",
+    "mvp_b_analyze",
+    "mvp_b_precondition"
+  ],
+  "model": {
+    "requested": "jev-1.13.0",
+    "returned": "jev-1.13.0",
+    "endpoint": "https://api.typesafe.ai/v1/systemone"
+  },
+  "config": {
+    "seed": 20260921,
+    "n_worlds": 8,
+    "roots_per_world": 4,
+    "sequences_per_root": 6,
+    "horizons": [
+      1,
+      2
+    ],
+    "questions_per_prefix": 5,
+    "concurrency": 8,
+    "schema_version": "tw_fo_cf_v1"
+  },
+  "counts": {
+    "roots": 32,
+    "prefixes": 384,
+    "labels": 1920,
+    "api_calls": 448,
+    "input_tokens": 1119380,
+    "raw_responses_archived": 448
+  },
+  "cost_usd": 0.047,
+  "data_hashes": {
+    "data/mvp_a/prefixes.jsonl": "098be4d6a22904d9",
+    "artifacts/mvp_b/predictions.jsonl": "8d892978d7f3fd81"
+  },
+  "code_hashes": {
+    "scripts/mvp_a_audit.py": "bacfbf8aa87d4fb4",
+    "scripts/mvp_a_dataset.py": "ee8b2663badda9c8",
+    "scripts/mvp_b_analyze.py": "8bbe2f9579391478",
+    "scripts/mvp_b_jev.py": "61f6794cc0dff853",
+    "scripts/mvp_b_precondition.py": "ba45e56da195ecca",
+    "scripts/phase0_api_check.py": "d711eb03cff9d8e1",
+    "scripts/phase0_smoke.py": "24110dbaaa1d1d99",
+    "src/config.py": "6931fbac634b73b5",
+    "src/env/__init__.py": "e3b0c44298fc1c14",
+    "src/env/serialize.py": "58a7ee2df0ef4b32",
+    "src/env/worlds.py": "08d91466dc280b55",
+    "src/forecast.py": "de9ccbf46d3be27a",
+    "src/jev_client.py": "2dd912a8d5ee3320"
+  },
+  "environment": {
+    "python": "3.12.12",
+    "textworld": "1.7.0",
+    "platform": "macOS-26.6.2-arm64",
+    "lockfile": "environment.lock"
+  }
+}
