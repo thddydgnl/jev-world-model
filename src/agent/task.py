@@ -261,6 +261,33 @@ def project_state(base: dict, values: dict[str, str], schema: list[dict]) -> dic
     return {**base, "player_room": player_room, "dynamic_facts": sorted(rows)}
 
 
+def read_schema_values(canon: dict, schema: list[dict]) -> dict[str, str]:
+    """Inverse of `project_state`: read each variable off a canonical state.
+    Used to compare a predicted state with the real one variable by variable."""
+    rows = {tuple(r) for r in canon["dynamic_facts"]}
+    out: dict[str, str] = {}
+    for q in schema:
+        if q["kind"] == "room":
+            v = next((r[2] for r in rows if r[0] == "at" and r[1] == "P"), None)
+        elif q["kind"] == "parent":
+            o = q["target"]
+            if ("eaten", o) in rows:
+                v = "gone"
+            else:
+                v = None
+                for r in rows:
+                    if len(r) == 3 and r[1] == o and r[0] in ("in", "on", "at"):
+                        v = "inventory" if r[2] == "I" else f"{r[0]}:{r[2]}"
+        else:
+            v = None
+            for pred, val in (("open", "open"), ("closed", "closed_unlocked"),
+                              ("locked", "locked")):
+                if (pred, q["target"]) in rows:
+                    v = val
+        out[q["id"]] = v
+    return out
+
+
 def goal_from_rows(rows: list[list[str]], goal: dict) -> tuple[bool, float]:
     """Score a goal against a reconstructed state — no extra model call."""
     have = {tuple(r) for r in rows}

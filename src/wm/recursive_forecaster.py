@@ -23,7 +23,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from agent.task import goal_from_rows, project_state
+from agent.task import goal_from_rows, project_state, read_schema_values
 from forecast import ROLLOUT_CONVENTION, render_facts
 from wm.jev_forecaster import INCLUDE_QUERY_CATALOG, validity_question
 
@@ -69,6 +69,16 @@ class Stats:
     branches: int = 0
     cache_hits: int = 0
     contradictions: int = 0
+    # Drift diagnostics, keyed by rollout depth (1-based). Written only when the
+    # runner supplies the true trajectory, read only by the analysis — never by
+    # `score`, so the truth cannot reach a planning decision.
+    depth_n: dict = field(default_factory=dict)
+    depth_exact: dict = field(default_factory=dict)
+    depth_vars_ok: dict = field(default_factory=dict)
+    depth_vars_tot: dict = field(default_factory=dict)
+    depth_in_beam: dict = field(default_factory=dict)
+    valid_n: int = 0
+    valid_ok: int = 0
 
 
 class RecursiveForecaster:
@@ -115,11 +125,31 @@ class RecursiveForecaster:
         self._cache[key] = (nxt, p_exec)
         return nxt, p_exec
 
-    def rollout(self, canon: dict, actions: tuple[str, ...]) -> tuple[list, float]:
-        """Beam over execution branches. Returns [(state, weight)] and E[invalid]."""
+    def _record_drift(self, depth: int, beam: list, truth: dict) -> None:
+        """Diagnostic only. Compares the rollout with the real trajectory."""
+        st = self.stats
+        st.depth_n[depth] = st.depth_n.get(depth, 0) + 1
+        top = max(beam, key=lambda kv: kv[1])[0]
+        if top["dynamic_facts"] == truth["dynamic_facts"]:
+            st.depth_exact[depth] = st.depth_exact.get(depth, 0) + 1
+        pv = read_schema_values(top, self.schema)
+        tv = read_schema_values(truth, self.schema)
+        ok = sum(1 for k in tv if pv.get(k) == tv[k])
+        st.depth_vars_ok[depth] = st.depth_vars_ok.get(depth, 0) + ok
+        st.depth_vars_tot[depth] = st.depth_vars_tot.get(depth, 0) + len(tv)
+        if any(s["dynamic_facts"] == truth["dynamic_facts"] for s, _ in beam):
+            st.depth_in_beam[depth] = st.depth_in_beam.get(depth, 0) + 1
+
+    def rollout(self, canon: dict, actions: tuple[str, ...],
+                truth: list[dict] | None = None) -> tuple[list, float]:
+        """Beam over execution branches. Returns [(state, weight)] and E[invalid].
+
+        `truth` is the real state after each action, supplied by the runner for
+        drift measurement. It is written to stats and never used for scoring.
+        """
         beam: list[tuple[dict, float]] = [(canon, 1.0)]
         n_invalid = 0.0
-        for a in actions:
+        for depth, a in enumerate(actions, start=1):
             self.stats.steps += 1
             nxt: list[tuple[dict, float]] = []
             fail_mass = 0.0
@@ -142,13 +172,16 @@ class RecursiveForecaster:
             total = sum(w for _, w in beam) or 1.0
             beam = [(s, w / total) for s, w in beam]
             self.stats.branches += len(beam)
+            if truth is not None and depth <= len(truth):
+                self._record_drift(depth, beam, truth[depth - 1])
         return beam, n_invalid
 
     def score(self, canon: dict, state_key: str, prefix: tuple[str, ...],
-              p_first: dict[str, float]) -> tuple[Any, float]:
+              p_first: dict[str, float],
+              truth: list[dict] | None = None) -> tuple[Any, float]:
         """Same signature as JevForecaster.score so the planner is unchanged."""
         from wm.jev_forecaster import GoalTerms
-        beam, n_invalid = self.rollout(canon, prefix)
+        beam, n_invalid = self.rollout(canon, prefix, truth)
         self._last_beam = beam
         conj = progress = 0.0
         for state, w in beam:

@@ -56,7 +56,19 @@ SEED = 20260921
 OUT = Path("artifacts/mvp_c")
 
 
-def score_arm_a(fc, state, prefixes, plans):
+def true_trajectory(env, game, prefix):
+    """Real canonical state after each action. DIAGNOSTIC ONLY — handed to the
+    recursive arm's drift counters, never to its scoring."""
+    b = env.copy()
+    out = []
+    for a in prefix:
+        b.step(a)
+        out.append(canonical_state(list(b.state["_facts"]), game))
+    b.close()
+    return out
+
+
+def score_arm_a(fc, state, prefixes, plans, env=None, game=None):
     """Arm A: identical planner, goal and utility; JEV supplies the terms."""
     # The endpoint ablation must not issue validity requests at all.
     # The recursive arm asks validity inside its own rollout; the endpoint
@@ -66,7 +78,11 @@ def score_arm_a(fc, state, prefixes, plans):
     key = state_hash(state)
 
     def one(prefix):
-        terms, n_inv = fc.score(state, key, prefix, p_first)
+        if fc.mode == "recursive" and env is not None:
+            terms, n_inv = fc.score(state, key, prefix, p_first,
+                                    truth=true_trajectory(env, game, prefix))
+        else:
+            terms, n_inv = fc.score(state, key, prefix, p_first)
         return prefix, utility(terms.conj, terms.progress, n_inv,
                                len(prefix), plan_prior(plans, prefix))
 
@@ -96,7 +112,8 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
             chosen = tuple(plans[0][:1])
         elif arm in JEV_ARMS:
             fc._endpoint_cache.clear()
-            chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans)
+            chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans,
+                                 env=env, game=game)
             action = chosen[0]
         else:
             goal_blind = (arm == "validity")
@@ -218,7 +235,15 @@ def main() -> int:
                                   policy, catalog, log, fc, root_idx=r)
                 if fc is not None:
                     res["jev_requests"] = fc.stats.requests
-                    res["bound_violations"] = fc.stats.bound_violations
+                    res["bound_violations"] = getattr(fc.stats, "bound_violations", 0)
+                    if arm == "R":
+                        s = fc.stats
+                        res["drift"] = {
+                            "n": s.depth_n, "exact": s.depth_exact,
+                            "vars_ok": s.depth_vars_ok, "vars_tot": s.depth_vars_tot,
+                            "in_beam": s.depth_in_beam,
+                            "contradictions": s.contradictions,
+                            "cache_hits": s.cache_hits}
                 res.update({"world_id": meta["world_id"], "root": r,
                             "catalog_size": len(catalog)})
                 episodes.append(res)
@@ -286,6 +311,22 @@ def main() -> int:
         bv = sum(e.get("bound_violations", 0) for e in eps_a)
         print(f"\nJEV: 요청 {req}  에피소드당 {req/max(len(eps_a),1):.0f}  "
               f"conjunction bound 위반 {bv}")
+        drifts = [e["drift"] for e in eps_a if "drift" in e]
+        if drifts:
+            print("\n오류 누적 (재귀 arm, 예측 상태 vs 실제 상태)")
+            print(f"  {'depth':>6}{'n':>8}{'상태 완전일치':>14}{'변수 정확도':>13}{'beam 포함':>11}")
+            depths = sorted({int(k) for d in drifts for k in d["n"]})
+            for dep in depths:
+                k = str(dep)
+                n = sum(d["n"].get(k, 0) for d in drifts)
+                ex = sum(d["exact"].get(k, 0) for d in drifts)
+                vo = sum(d["vars_ok"].get(k, 0) for d in drifts)
+                vt = sum(d["vars_tot"].get(k, 0) for d in drifts)
+                ib = sum(d["in_beam"].get(k, 0) for d in drifts)
+                print(f"  {dep:>6}{n:>8}{ex/max(n,1):>14.1%}"
+                      f"{vo/max(vt,1):>13.1%}{ib/max(n,1):>11.1%}")
+            print(f"  모순 감지 {sum(d['contradictions'] for d in drifts)}  "
+                  f"캐시 적중 {sum(d['cache_hits'] for d in drifts)}")
         if jev is not None:
             print(f"     calls={jev.calls} tokens={jev.input_tokens:,} "
                   f"cost=${jev.input_tokens/1e6*0.042:.3f}")
