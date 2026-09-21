@@ -7,7 +7,7 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 - 실행 프로토콜(확증/탐색 구분): [`docs/protocol.md`](docs/protocol.md)
 - **주장 대장 — 논문 쓸 때 여기서 시작**: [`docs/claims.md`](docs/claims.md)
 - 한계(내부 기록, 직역 금지): [`docs/limitations.md`](docs/limitations.md)
-- 결과 요약: [`artifacts/mvp_b/RESULTS.md`](artifacts/mvp_b/RESULTS.md)
+- 결과 요약: [`artifacts/mvp_b/RESULTS.md`](artifacts/mvp_b/RESULTS.md) · [`artifacts/mvp_c/RESULTS.md`](artifacts/mvp_c/RESULTS.md)
 
 ## 진행 상태
 
@@ -17,7 +17,7 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 | Phase 0 TextWorld smoke | 완료 | 11/11 |
 | MVP-A 라벨 신뢰성 | 완료 | support 위반 0, 충돌 0, 교차검증 0 불일치 |
 | MVP-B JEV 예측력 | 완료 | 게이트 4/4 통과 + precondition 한계 발견 |
-| MVP-C oracle headroom | **미실행** | GPU 필요 (Qwen3-4B policy) |
+| MVP-C oracle headroom | 완료 | +60.4%p, world 10승 2무 0패 |
 | Phase 1+ 본 실험 | 미실행 | |
 
 ## 핵심 결과 (MVP-B)
@@ -35,6 +35,18 @@ h=1 525건, h=2 320건 모두 100%). 오류는 거의 전부 **precondition 위�
 | 2 | 2 | 230 | 82.6% |
 
 사전 등록된 순서 교환 검사(`open→take` vs `take→open`)는 **0/18** 실패.
+
+## 핵심 결과 (MVP-C)
+
+| arm | success | invalid rate |
+|---|---:|---:|
+| C (정책 선호) | 35.4% | 85.7% |
+| oracle (실제 endpoint) | **95.8%** | 14.6% |
+
+headroom **+60.4%p**, world 단위 10승 2무 0패.
+**그런데 그 여지의 대부분이 행동 유효성이다** (유효 행동 선택률 C 14.3% vs
+oracle 85.4%) — 즉 **JEV의 약점과 과제의 병목이 같은 지점**이다.
+자세한 함의는 [`docs/claims.md`](docs/claims.md) B4.
 
 ## 구조
 
