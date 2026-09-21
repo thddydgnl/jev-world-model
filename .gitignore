@@ -5,8 +5,10 @@
 *.key
 credentials.json
 
-# --- raw API responses (MCA: 보관 범위 확인 전까지 커밋 금지) ---
+# --- JEV Output (MCA 공개 범위 확인 전까지 커밋 금지) ---
+# 환경 정답만 담은 data/mvp_a/prefixes.jsonl 은 아래에서 명시적으로 되살린다.
 artifacts/jev_raw/
+artifacts/mvp_b/predictions.jsonl
 data/forecasts_raw/
 
 # --- large artifacts ---
@@ -14,6 +16,7 @@ artifacts/models/
 data/worlds/
 data/*.parquet
 *.jsonl
+!data/mvp_a/prefixes.jsonl        # 환경 정답 라벨 — JEV 출력 없음, 재현에 필수
 *.ckpt
 *.safetensors
 
