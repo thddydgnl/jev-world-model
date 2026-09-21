@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import zlib
 from typing import Any
 
 PROMPT = """You control a deterministic text environment.
@@ -70,13 +71,22 @@ class Policy:
         self.repairs = 0
         self.fallbacks = 0
 
+    def set_context(self, world_id: str, root: int, arm: str, step: int) -> None:
+        """Pin the sampling seed to WHERE we are, not to how many calls have
+        happened. A global counter makes an arm's samples depend on which other
+        arms ran first, which showed up as ~7pp swings between otherwise
+        identical runs. Keyed this way, every arm sees the same randomness at
+        the same (world, root, step) and arms can be split across processes."""
+        key = f"{world_id}|{root}|{arm}|{step}"
+        self._ctx_seed = self.seed + (zlib.crc32(key.encode()) & 0x7FFFFFFF)
+
     def _generate(self, prompt: str) -> str:
         msgs = [{"role": "user", "content": prompt}]
         text = self.tok.apply_chat_template(
             msgs, tokenize=False, add_generation_prompt=True,
             enable_thinking=False)
         inputs = self.tok(text, return_tensors="pt").to(self.device)
-        self.torch.manual_seed(self.seed + self.calls)
+        self.torch.manual_seed(getattr(self, "_ctx_seed", self.seed + self.calls))
         with self.torch.no_grad():
             out = self.model.generate(
                 **inputs, max_new_tokens=self.max_new_tokens,

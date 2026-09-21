@@ -70,7 +70,8 @@ def score_arm_a(fc, state, prefixes, plans):
     return max(scored, key=lambda kv: kv[1])[0]
 
 
-def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None):
+def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
+                root_idx=0):
     env = env_root.copy()
     steps = invalid = traps = decoys = 0
     status = "cap"
@@ -81,6 +82,7 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None):
             status = "success"
             break
         state = canonical_state(facts, game, attempt_index=steps)
+        policy.set_context(meta["world_id"], root_idx, arm, step)
         plans, pstatus = policy.plans(render_facts(state), goal["text"], catalog,
                                       history, K, H)
 
@@ -202,7 +204,7 @@ def main() -> int:
                     from wm.jev_forecaster import JevForecaster
                     fc = JevForecaster(jev, gqs, conj_q)
                 res = run_episode(arm, root, game, meta, goal,
-                                  policy, catalog, log, fc)
+                                  policy, catalog, log, fc, root_idx=r)
                 if fc is not None:
                     res["jev_requests"] = fc.stats.requests
                     res["bound_violations"] = fc.stats.bound_violations
