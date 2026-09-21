@@ -48,7 +48,9 @@ ROOTS_PER_WORLD = 4
 STEP_CAP = 15          # MVP scale; 설계.md §3.3 uses 30 for the main experiment
 K, H = 8, 2
 CAP = [15]          # mutable so --cap can override
-ALL_ARMS = ("C", "validity", "oracle", "A")
+ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval")
+JEV_ARMS = ("A", "Aend", "Aval")
+JEV_MODE = {"A": "full", "Aend": "endpoint", "Aval": "validity"}
 ARMS = ["C", "validity", "oracle"]
 SEED = 20260921
 OUT = Path("artifacts/mvp_c")
@@ -56,8 +58,9 @@ OUT = Path("artifacts/mvp_c")
 
 def score_arm_a(fc, state, prefixes, plans):
     """Arm A: identical planner, goal and utility; JEV supplies the terms."""
-    firsts = sorted({p[0] for p in prefixes})
-    p_first = fc.validity(state, firsts, [])
+    # The endpoint ablation must not issue validity requests at all.
+    p_first = ({} if fc.mode == "endpoint"
+               else fc.validity(state, sorted({p[0] for p in prefixes}), []))
     key = state_hash(state)
 
     def one(prefix):
@@ -89,7 +92,7 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         if arm == "C":
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
-        elif arm == "A":
+        elif arm in JEV_ARMS:
             fc._endpoint_cache.clear()
             chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans)
             action = chosen[0]
@@ -147,6 +150,8 @@ def main() -> int:
                     help="irreversible-trap worlds (eat the goal object)")
     ap.add_argument("--cap", type=int, default=STEP_CAP)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--policy-seed", type=int, default=SEED,
+                    help="varies policy sampling while worlds/roots stay fixed")
     ap.add_argument("--arms", default="C,validity,oracle",
                     help="comma list from C,validity,oracle,A")
     args = ap.parse_args()
@@ -156,7 +161,7 @@ def main() -> int:
     bad = set(ARMS) - set(ALL_ARMS)
     if bad:
         raise SystemExit(f"unknown arms: {sorted(bad)}")
-    use_jev = "A" in ARMS
+    use_jev = any(a in JEV_ARMS for a in ARMS)
     jev = stack = None
     if use_jev:
         from jev_client import JevClient
@@ -166,7 +171,7 @@ def main() -> int:
 
     from agent.policy import Policy
     print(f"loading {args.model} on {args.device} ...", flush=True)
-    policy = Policy(args.model, args.device, seed=SEED)
+    policy = Policy(args.model, args.device, seed=args.policy_seed)
     print("loaded.", flush=True)
 
     out = Path(args.out) if args.out else OUT
@@ -200,9 +205,9 @@ def main() -> int:
                 root.close(); continue          # already solved; skip
             for arm in ARMS:
                 fc = None
-                if arm == "A":
+                if arm in JEV_ARMS:
                     from wm.jev_forecaster import JevForecaster
-                    fc = JevForecaster(jev, gqs, conj_q)
+                    fc = JevForecaster(jev, gqs, conj_q, mode=JEV_MODE[arm])
                 res = run_episode(arm, root, game, meta, goal,
                                   policy, catalog, log, fc, root_idx=r)
                 if fc is not None:
@@ -269,8 +274,8 @@ def main() -> int:
     if a_vs_v is not None and needs is not None and needs > 0:
         print(f"  예측 구간({needs:+.1%}) 중 arm A 몫: {a_vs_v/needs:.0%}")
 
-    if "A" in ARMS:
-        eps_a = [e for e in episodes if e["arm"] == "A"]
+    if use_jev:
+        eps_a = [e for e in episodes if e["arm"] in JEV_ARMS]
         req = sum(e.get("jev_requests", 0) for e in eps_a)
         bv = sum(e.get("bound_violations", 0) for e in eps_a)
         print(f"\nJEV: 요청 {req}  에피소드당 {req/max(len(eps_a),1):.0f}  "

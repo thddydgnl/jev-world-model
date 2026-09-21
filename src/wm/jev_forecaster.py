@@ -100,7 +100,17 @@ class Stats:
 class JevForecaster:
     """One instance per episode; caches within a planning step."""
 
-    def __init__(self, client, goal_queries: list[dict], conj_query: dict) -> None:
+    def __init__(self, client, goal_queries: list[dict], conj_query: dict,
+                 mode: str = "full") -> None:
+        """mode selects the ablation:
+          full      validity questions + endpoint questions (docs/arm_a_design.md)
+          endpoint  endpoint only, assuming every command executes — this is the
+                    original 설계.md formulation and what MVP-B measured
+          validity  validity only, goal terms zeroed — mirrors the engine-backed
+                    `validity` arm but with JEV supplying the judgement
+        """
+        assert mode in ("full", "endpoint", "validity")
+        self.mode = mode
         self.client = client
         self.goal_queries = goal_queries
         self.conj_query = conj_query
@@ -159,8 +169,18 @@ class JevForecaster:
     def score(self, canon: dict, state_key: str, prefix: tuple[str, ...],
               p_first: dict[str, float]) -> tuple[GoalTerms, float]:
         """Mix goal terms over execution patterns; return also E[invalid]."""
+        if self.mode == "endpoint":
+            # No validity questions: take the sequence at face value.
+            self.stats.patterns += 1
+            return self.endpoint(canon, state_key, prefix), 0.0
+
         p1 = p_first[prefix[0]]
         probs = [p1]
+
+        if self.mode == "validity":
+            if len(prefix) > 1:
+                probs.append(self.validity(canon, [prefix[1]], [prefix[0]])[prefix[1]])
+            return GoalTerms(0.0, 0.0), sum(1.0 - p for p in probs)
 
         if len(prefix) == 1:
             branches = [(p1, prefix), (1.0 - p1, ())]
