@@ -35,7 +35,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from agent.task import (goal_spec, trap_goal_spec, goal_satisfied, goal_progress,
                         static_catalog, utility, unique_prefixes, plan_prior,
-                        goal_queries)
+                        goal_queries, state_schema)
 from env.serialize import canonical_state, state_hash
 from env.worlds import build_world, build_trap_world
 from forecast import render_facts
@@ -48,8 +48,8 @@ ROOTS_PER_WORLD = 4
 STEP_CAP = 15          # MVP scale; 설계.md §3.3 uses 30 for the main experiment
 K, H = 8, 2
 CAP = [15]          # mutable so --cap can override
-ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval")
-JEV_ARMS = ("A", "Aend", "Aval")
+ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval", "R")
+JEV_ARMS = ("A", "Aend", "Aval", "R")
 JEV_MODE = {"A": "full", "Aend": "endpoint", "Aval": "validity"}
 ARMS = ["C", "validity", "oracle"]
 SEED = 20260921
@@ -59,7 +59,9 @@ OUT = Path("artifacts/mvp_c")
 def score_arm_a(fc, state, prefixes, plans):
     """Arm A: identical planner, goal and utility; JEV supplies the terms."""
     # The endpoint ablation must not issue validity requests at all.
-    p_first = ({} if fc.mode == "endpoint"
+    # The recursive arm asks validity inside its own rollout; the endpoint
+    # ablation must not ask it at all.
+    p_first = ({} if fc.mode in ("endpoint", "recursive")
                else fc.validity(state, sorted({p[0] for p in prefixes}), []))
     key = state_hash(state)
 
@@ -190,6 +192,7 @@ def main() -> int:
             game, path, meta = build_world(idx, wdir, rng)
             goal = goal_spec(game, meta)
         gqs, conj_q = goal_queries(game, meta, goal) if use_jev else (None, None)
+        schema = state_schema(game, meta) if use_jev else None
         catalog = static_catalog(game)
         env = textworld.start(str(path), request_infos=INFOS); env.reset()
 
@@ -205,7 +208,10 @@ def main() -> int:
                 root.close(); continue          # already solved; skip
             for arm in ARMS:
                 fc = None
-                if arm in JEV_ARMS:
+                if arm == "R":
+                    from wm.recursive_forecaster import RecursiveForecaster
+                    fc = RecursiveForecaster(jev, schema, goal)
+                elif arm in JEV_ARMS:
                     from wm.jev_forecaster import JevForecaster
                     fc = JevForecaster(jev, gqs, conj_q, mode=JEV_MODE[arm])
                 res = run_episode(arm, root, game, meta, goal,

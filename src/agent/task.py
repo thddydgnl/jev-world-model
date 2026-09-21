@@ -154,3 +154,115 @@ def goal_queries(game: Any, meta: dict, goal: dict) -> tuple[list[dict], dict]:
             "options": {"yes": "Every listed condition holds.",
                         "no": "At least one listed condition does not hold."}}
     return qs, conj
+
+
+# ------------------------------------------- full mutable state schema (A2)
+
+def state_schema(game: Any, meta: dict) -> list[dict]:
+    """Every mutable state variable, independent of any goal.
+
+    This is what separates a world model from a goal-conditioned scorer:
+    the questions describe the world, so the same predictions can be scored
+    against a different goal without re-querying (아이디어.md §4, criterion 3).
+    """
+    name_of = {vid: info.name for vid, info in game.infos.items() if info.name}
+    rooms = [v for v, i in game.infos.items() if i.type == "r"]
+    containers = [v for v, i in game.infos.items() if i.type == "c"]
+    supporters = [v for v, i in game.infos.items() if i.type == "s"]
+    portable = [v for v, i in game.infos.items() if i.type in ("o", "k", "f")]
+    edible = {v for v, i in game.infos.items() if i.type == "f"}
+    openable = containers + [v for v, i in game.infos.items() if i.type == "d"]
+
+    schema: list[dict] = [{
+        "id": "v_player", "kind": "room", "target": "P",
+        "ask": "Which room is the player in?",
+        "options": {r: f"The player is in the {name_of[r]}." for r in rooms},
+    }]
+    for o in portable:
+        label = name_of[o]
+        opts = {"inventory": f"The {label} is carried by the player."}
+        for r in rooms:
+            opts[f"at:{r}"] = f"The {label} is on the floor of the {name_of[r]}."
+        for c in containers:
+            opts[f"in:{c}"] = f"The {label} is inside the {name_of[c]}."
+        for s in supporters:
+            opts[f"on:{s}"] = f"The {label} is on top of the {name_of[s]}."
+        if o in edible:
+            # Eating removes the object from the world entirely. Without this
+            # option the ground truth falls outside the answer support, which
+            # 설계.md §24 requires to be 100%.
+            opts["gone"] = f"The {label} has been eaten and no longer exists."
+        schema.append({"id": f"v_par_{o}", "kind": "parent", "target": o,
+                       "ask": (f"Where is the {label} located? Give its DIRECT "
+                               f"container, supporter, room floor, or the "
+                               f"player's inventory."),
+                       "options": opts})
+    for x in openable:
+        label = name_of[x]
+        schema.append({"id": f"v_mode_{x}", "kind": "mode", "target": x,
+                       "ask": f"Is the {label} open, closed but unlocked, or locked?",
+                       "options": {"open": f"The {label} is open.",
+                                   "closed_unlocked": f"The {label} is closed but not locked.",
+                                   "locked": f"The {label} is locked."}})
+    return schema
+
+
+def schema_covers(schema: list[dict], row: list[str]) -> bool:
+    """Does some schema variable determine this fact?"""
+    parents = {q["target"] for q in schema if q["kind"] == "parent"}
+    modes = {q["target"] for q in schema if q["kind"] == "mode"}
+    if row[0] == "at" and row[1] == "P":
+        return True
+    if row[0] in ("in", "on", "at") and len(row) == 3 and row[1] in parents:
+        return True
+    if row[0] == "eaten" and row[1] in parents:
+        return True
+    if row[0] in ("open", "closed", "locked") and row[1] in modes:
+        return True
+    return False
+
+
+def project_state(base: dict, values: dict[str, str], schema: list[dict]) -> dict:
+    """Rebuild a canonical state from per-variable answers.
+
+    Facts the schema determines are replaced by the answers; facts it does not
+    cover are carried forward unchanged. That carry-forward is an assumption —
+    "what we did not ask about did not change" — and it is only sound while the
+    schema covers everything mutable, which tests/test_recursive_roundtrip.py
+    checks against the engine.
+
+    Beyond that, only the exclusivity already declared in the question design is
+    applied: one value per variable. No transition rule is used here — inserting
+    one would mean the researcher's simulator is producing the performance
+    (아이디어.md §7, candidate A2).
+    """
+    rows: list[list[str]] = [list(r) for r in base["dynamic_facts"]
+                             if not schema_covers(schema, list(r))]
+    player_room = base["player_room"]
+    for q in schema:
+        v = values.get(q["id"])
+        if v is None:
+            continue
+        if q["kind"] == "room":
+            player_room = v
+            rows.append(["at", "P", v])
+        elif q["kind"] == "parent":
+            o = q["target"]
+            if v == "gone":
+                rows.append(["eaten", o])
+            elif v == "inventory":
+                rows.append(["in", o, "I"])
+            else:
+                rel, _, host = v.partition(":")
+                rows.append([rel, o, host])
+        else:
+            pred = {"open": "open", "closed_unlocked": "closed", "locked": "locked"}[v]
+            rows.append([pred, q["target"]])
+    return {**base, "player_room": player_room, "dynamic_facts": sorted(rows)}
+
+
+def goal_from_rows(rows: list[list[str]], goal: dict) -> tuple[bool, float]:
+    """Score a goal against a reconstructed state — no extra model call."""
+    have = {tuple(r) for r in rows}
+    hits = [tuple(a) in have for a in goal["atoms"]]
+    return all(hits), sum(hits) / len(hits)

@@ -66,9 +66,16 @@ def endpoint_questions(goal_queries: list[dict], actions: list[str]) -> dict:
     return qs
 
 
+# 설계.md §7 puts the whole query catalog in the state so that arm A and arm B
+# see the same information — B reads every question in one forward pass. It
+# costs ~20% of each request's tokens. Arm B is deferred, so it is off; turn it
+# back on for any run that compares against B, and note that runs differ.
+INCLUDE_QUERY_CATALOG = False
+
+
 def build_state(canon: dict, goal_queries: list[dict], actions: list[str],
                 horizon: int) -> dict[str, Any]:
-    return {
+    state: dict[str, Any] = {
         "current_state": {
             "player_location": canon["player_room"],
             "entities": canon["entities"],
@@ -78,9 +85,12 @@ def build_state(canon: dict, goal_queries: list[dict], actions: list[str],
         "action_sequence": actions,
         "horizon": horizon,
         "rollout_convention": ROLLOUT_CONVENTION,
-        "query_catalog": [{"id": q["id"], "about": q["ask"], "options": q["options"]}
-                          for q in goal_queries],
     }
+    if INCLUDE_QUERY_CATALOG:
+        state["query_catalog"] = [
+            {"id": q["id"], "about": q["ask"], "options": q["options"]}
+            for q in goal_queries]
+    return state
 
 
 @dataclass
