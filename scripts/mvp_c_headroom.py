@@ -46,8 +46,10 @@ INFOS = EnvInfos(facts=True, typed_entities=True, possible_admissible_commands=T
 N_WORLDS = 12          # all locked-door variants -> genuine 5-step dependency
 ROOTS_PER_WORLD = 4
 STEP_CAP = 15          # MVP scale; 설계.md §3.3 uses 30 for the main experiment
-K, H = 8, 2
-CAP = [15]          # mutable so --cap can override
+K = 8
+H = 2
+CAP = [15]
+HORIZON = [2]      # mutable so --horizon can override          # mutable so --cap can override
 ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval", "R")
 JEV_ARMS = ("A", "Aend", "Aval", "R")
 JEV_MODE = {"A": "full", "Aend": "endpoint", "Aval": "validity"}
@@ -87,9 +89,9 @@ def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
     key = state_hash(state)
 
     def one(prefix):
-        if fc.mode == "recursive" and env is not None:
+        if truths is not None:
             terms, n_inv = fc.score(state, key, prefix, p_first,
-                                    truth=true_trajectory(env, game, prefix))
+                                    truth=truths[prefix])
         else:
             terms, n_inv = fc.score(state, key, prefix, p_first)
         return prefix, utility(terms.conj, terms.progress, n_inv,
@@ -99,6 +101,14 @@ def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
             if failed is None or (fingerprint, p[0]) not in failed]
     if not live:                       # everything tried and failed; keep going
         live = list(prefixes)
+
+    # env.copy() deep-copies shared engine state, so it cannot run inside the
+    # thread pool: eight workers cloning the same env raced and crashed with
+    # "dictionary changed size during iteration". Build the diagnostic
+    # trajectories serially first.
+    truths = None
+    if fc.mode == "recursive" and env is not None:
+        truths = {p: true_trajectory(env, game, p) for p in live}
     with ThreadPoolExecutor(max_workers=8) as pool:
         scored = list(pool.map(one, live))
     return max(scored, key=lambda kv: kv[1])[0]
@@ -119,20 +129,20 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         state = canonical_state(facts, game, attempt_index=steps)
         policy.set_context(meta["world_id"], root_idx, arm, step)
         plans, pstatus = policy.plans(render_facts(state), goal["text"], catalog,
-                                      history, K, H)
+                                      history, K, HORIZON[0])
 
         if arm == "C":
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
         elif arm in JEV_ARMS:
             fc.reset_step_cache()
-            chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans,
+            chosen = score_arm_a(fc, state, unique_prefixes(plans, HORIZON[0]), plans,
                                  env=env, game=game, failed=failed)
             action = chosen[0]
         else:
             goal_blind = (arm == "validity")
             best, chosen = None, None
-            for prefix in unique_prefixes(plans, H):
+            for prefix in unique_prefixes(plans, HORIZON[0]):
                 branch = env.copy()
                 n_inv = 0
                 for a in prefix:
@@ -185,6 +195,8 @@ def main() -> int:
                     help="irreversible-trap worlds (eat the goal object)")
     ap.add_argument("--cap", type=int, default=STEP_CAP)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--horizon", type=int, default=H,
+                    help="planning horizon H; prefixes run 1..H")
     ap.add_argument("--budget", type=float, default=None,
                     help="stop before exceeding this many USD of JEV input tokens")
     ap.add_argument("--policy-seed", type=int, default=SEED,
@@ -218,6 +230,7 @@ def main() -> int:
     episodes, log = [], []
 
     CAP[0] = args.cap
+    HORIZON[0] = args.horizon
     for w in range(args.worlds):
         if args.trap:
             game, path, meta = build_trap_world(w, wdir, rng)
