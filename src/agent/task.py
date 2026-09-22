@@ -69,11 +69,25 @@ def static_catalog(game: Any) -> list[str]:
 
 def utility(conj: float, progress: float, n_invalid: float, h: int,
             prior: float) -> float:
-    """설계.md §11. `conj` and `progress` are probabilities in [0,1]; for the
-    oracle arm they are one-hot readings of the true endpoint."""
+    """설계.md §11, with one change: the invalid term is a COUNT, not a rate.
+
+    §11 wrote it as -lambda * N_invalid / h. Dividing by the prefix length turns
+    it into a failure rate, which inverts the ranking the planner needs: a
+    4-step prefix containing 2 unexecutable commands scores -lambda*0.5 while a
+    1-step prefix containing 1 scores -lambda*1.0, so the prefix with more
+    failures looks better. Since only the first action is ever executed, what
+    matters is how much of the lookahead is expected to fail at all.
+
+    At H=4 the rate form let long prefixes win on the discount alone: arm R
+    dropped to 39.6% success with 22.7 steps per episode while its state
+    predictions stayed intact (beam containment 99.2% at depth 4).
+
+    `conj` and `progress` are probabilities in [0,1]; the oracle arm passes
+    one-hot readings of the true endpoint.
+    """
     return (conj
             + ALPHA * progress
-            - LAMBDA * (n_invalid / max(h, 1))
+            - LAMBDA * n_invalid
             - COST * h
             + BETA * prior)
 
