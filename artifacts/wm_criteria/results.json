@@ -1,0 +1,232 @@
+{
+  "condition2": {
+    "pairs": 18,
+    "exact": 14,
+    "single": 18,
+    "rows": [
+      {
+        "world": "w000",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w000",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w001",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w001",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w002",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "inventory"
+        ],
+        "both": false
+      },
+      {
+        "world": "w002",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w002",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w003",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "inventory"
+        ],
+        "both": false
+      },
+      {
+        "world": "w004",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w004",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w004",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w005",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w005",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w006",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "inventory"
+        ],
+        "both": false
+      },
+      {
+        "world": "w006",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "inventory"
+        ],
+        "both": false
+      },
+      {
+        "world": "w007",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w007",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      },
+      {
+        "world": "w007",
+        "gt": [
+          "inventory",
+          "in:c_0"
+        ],
+        "pred": [
+          "inventory",
+          "in:c_0"
+        ],
+        "both": true
+      }
+    ]
+  },
+  "condition3": {
+    "n": 18,
+    "calls": 80,
+    "extra": 0,
+    "agree_1": 18,
+    "agree_2": 18
+  }
+}

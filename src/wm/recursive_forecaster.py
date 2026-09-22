@@ -32,16 +32,36 @@ BEAM_K = 4          # states carried forward per step
 
 
 def step_questions(schema: list[dict], action: str) -> dict:
-    """One action, one state, every mutable variable. h=1 throughout."""
+    """One action, one state, every mutable variable. h=1 throughout.
+
+    Validity is NOT asked here. Measured on a case JEV should reject (take from
+    a closed container), the same validity question averaged 0.285 asked alone
+    and 0.576 bundled with these six — 10 samples each, difference +0.291
+    against a standard error of 0.028. Questions in one request are evaluated
+    independently, but they share the `state`, and a state carrying
+    `action_sequence` alongside six questions that all presuppose the command
+    ran frames the validity judgement toward "it ran".
+    """
     frame = (f"Starting from `current_state`, attempt exactly this one command: "
              f"`{action}`. Apply `rollout_convention`. Report the resulting "
              f"state AFTER the command, not the current state.")
-    qs = {q["id"]: {"type": "choice",
-                    "instructions": f"{frame} Question: {q['ask']}",
-                    "criteria": dict(q["options"])}
-          for q in schema}
-    qs["v_exec"] = validity_question(action, [])
-    return qs
+    return {q["id"]: {"type": "choice",
+                      "instructions": f"{frame} Question: {q['ask']}",
+                      "criteria": dict(q["options"])}
+            for q in schema}
+
+
+def validity_state(canon: dict) -> dict[str, Any]:
+    """Payload for the validity question alone: the current state and nothing
+    about any action being simulated."""
+    return {
+        "current_state": {
+            "player_location": canon["player_room"],
+            "entities": canon["entities"],
+            "facts_canonical": canon["dynamic_facts"] + canon["static_facts"],
+            "facts_readable": render_facts(canon),
+        },
+    }
 
 
 def build_state(canon: dict, schema: list[dict], action: str) -> dict[str, Any]:
@@ -112,7 +132,10 @@ class RecursiveForecaster:
 
         out = self.client.ask(build_state(canon, self.schema, action),
                               step_questions(self.schema, action), tag="R_step")
-        self.stats.requests += 1
+        vout = self.client.ask(validity_state(canon),
+                               {"v_exec": validity_question(action, [])},
+                               tag="R_valid")
+        self.stats.requests += 2
 
         values, top = {}, {}
         for q in self.schema:
@@ -120,7 +143,7 @@ class RecursiveForecaster:
             best = max(probs, key=probs.get)
             values[q["id"]] = best
             top[q["id"]] = probs[best]
-        p_exec = float(out["answers"]["v_exec"]["probabilities"]["executes"])
+        p_exec = float(vout["answers"]["v_exec"]["probabilities"]["executes"])
 
         nxt = project_state(canon, values, self.schema)
         # A variable whose argmax carries little mass means the marginals did not
