@@ -1,0 +1,73 @@
+arm A enabled: JEV forecaster
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   3%|▎         | 10/398 [00:00<00:03, 98.67it/s]Loading weights:   8%|▊         | 31/398 [00:00<00:02, 159.13it/s]Loading weights:  12%|█▏        | 49/398 [00:00<00:02, 166.87it/s]Loading weights:  18%|█▊        | 70/398 [00:00<00:01, 178.95it/s]Loading weights:  23%|██▎       | 91/398 [00:00<00:01, 180.88it/s]Loading weights:  28%|██▊       | 110/398 [00:00<00:01, 175.43it/s]Loading weights:  32%|███▏      | 128/398 [00:00<00:01, 162.47it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 164.25it/s]Loading weights:  41%|████      | 163/398 [00:00<00:01, 157.16it/s]Loading weights:  45%|████▌     | 180/398 [00:01<00:01, 155.95it/s]Loading weights:  51%|█████     | 201/398 [00:01<00:01, 165.12it/s]Loading weights:  55%|█████▍    | 218/398 [00:01<00:01, 163.29it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:01, 162.89it/s]Loading weights:  64%|██████▎   | 253/398 [00:01<00:00, 167.60it/s]Loading weights:  68%|██████▊   | 270/398 [00:01<00:00, 159.13it/s]Loading weights:  73%|███████▎  | 290/398 [00:01<00:00, 163.77it/s]Loading weights:  78%|███████▊  | 310/398 [00:01<00:00, 173.68it/s]Loading weights:  82%|████████▏ | 328/398 [00:01<00:00, 167.97it/s]Loading weights:  87%|████████▋ | 345/398 [00:02<00:00, 166.55it/s]Loading weights:  92%|█████████▏| 366/398 [00:02<00:00, 175.04it/s]Loading weights:  96%|█████████▋| 384/398 [00:02<00:00, 169.86it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 167.13it/s]
+loaded.
+condition 0fe479090329  split=dev  arms=['A_jev']
+  t000 r0  A_jev=O(10)  [1 sets]
+  t000 r1  A_jev=O(8)  [2 sets]
+  t000 r2  A_jev=O(7)  [3 sets]
+  t000 r3  A_jev=O(15)  [4 sets]
+  t001 r0  A_jev=O(11)  [5 sets]
+  t001 r1  A_jev=O(6)  [6 sets]
+  t001 r2  A_jev=O(6)  [7 sets]
+  t001 r3  A_jev=O(5)  [8 sets]
+  t002 r0  A_jev=O(6)  [9 sets]
+  t002 r1  A_jev=O(8)  [10 sets]
+  t002 r2  A_jev=O(5)  [11 sets]
+  t002 r3  A_jev=O(7)  [12 sets]
+  t003 r0  A_jev=O(7)  [13 sets]
+  t003 r1  A_jev=X(30)  [14 sets]
+  t003 r2  A_jev=O(4)  [15 sets]
+  t003 r3  A_jev=O(9)  [16 sets]
+  t004 r0  A_jev=O(7)  [17 sets]
+  t004 r1  A_jev=O(7)  [18 sets]
+  t004 r2  A_jev=O(7)  [19 sets]
+  t004 r3  A_jev=O(5)  [20 sets]
+  t005 r0  A_jev=O(6)  [21 sets]
+  t005 r1  A_jev=O(7)  [22 sets]
+  t005 r2  A_jev=O(8)  [23 sets]
+  t005 r3  A_jev=O(7)  [24 sets]
+  t006 r0  A_jev=X(30)  [25 sets]
+  t006 r1  A_jev=O(4)  [26 sets]
+  t006 r2  A_jev=O(7)  [27 sets]
+  t006 r3  A_jev=O(8)  [28 sets]
+  t007 r0  A_jev=O(13)  [29 sets]
+  t007 r1  A_jev=O(18)  [30 sets]
+  t007 r2  A_jev=X(30)  [31 sets]
+  t007 r3  A_jev=O(5)  [32 sets]
+  t008 r0  A_jev=O(5)  [33 sets]
+  t008 r1  A_jev=O(7)  [34 sets]
+  t008 r2  A_jev=O(8)  [35 sets]
+  t008 r3  A_jev=O(6)  [36 sets]
+  t009 r0  A_jev=O(7)  [37 sets]
+  t009 r1  A_jev=O(7)  [38 sets]
+  t009 r2  A_jev=O(5)  [39 sets]
+  t009 r3  A_jev=O(7)  [40 sets]
+  t010 r0  A_jev=O(6)  [41 sets]
+  t010 r1  A_jev=O(7)  [42 sets]
+  t010 r2  A_jev=O(12)  [43 sets]
+  t010 r3  A_jev=O(8)  [44 sets]
+  t011 r0  A_jev=O(8)  [45 sets]
+  t011 r1  A_jev=O(5)  [46 sets]
+  t011 r2  A_jev=X(30)  [47 sets]
+  t011 r3  A_jev=O(7)  [48 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+A_jev         48     91.7%      9.3     18.3%     95.8%      0      0
+
+분해
+
+JEV: 요청 6218  에피소드당 130  conjunction bound 위반 0
+
+오류 누적 (재귀 arm, 예측 상태 vs 실제 상태)
+   depth       n       상태 완전일치       변수 정확도    beam 포함
+       1    3476         94.8%        99.1%     100.0%
+       2    2049         87.5%        97.8%     100.0%
+  모순 감지 66  캐시 적중 3484
+     calls=6218 tokens=11,111,746 cost=$0.467
+
+policy calls=448 repairs=0 fallbacks=0 catalog=40
+==========================================================================
