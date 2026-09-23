@@ -31,3 +31,6 @@ venv/
 
 # --- macOS ---
 .DS_Store
+
+# --- server sync marker (scripts/sync_server.sh) ---
+REVISION

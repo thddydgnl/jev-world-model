@@ -23,7 +23,9 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import socket
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
@@ -37,8 +39,9 @@ from agent.task import (goal_spec, trap_goal_spec, goal_satisfied, goal_progress
                         static_catalog, utility, unique_prefixes, plan_prior,
                         goal_queries, state_schema)
 from env.serialize import canonical_state, state_hash
-from env.worlds import build_world, build_trap_world
+from env.worlds import SPLITS, build_world, build_trap_world, world_fingerprint
 from forecast import render_facts
+import runinfo
 
 INFOS = EnvInfos(facts=True, typed_entities=True, possible_admissible_commands=True,
                  last_action=True, admissible_commands=True)
@@ -50,9 +53,12 @@ K = 8
 H = 2
 CAP = [15]
 HORIZON = [2]      # mutable so --horizon can override          # mutable so --cap can override
-ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval", "R")
-JEV_ARMS = ("A", "Aend", "Aval", "R")
+ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval", "R", "A_jev")
+JEV_ARMS = ("A", "Aend", "Aval", "R", "A_jev")
 JEV_MODE = {"A": "full", "Aend": "endpoint", "Aval": "validity"}
+# A_jev is the recursive arm under its KIIS name (kiis2026f/실험계획.md §1); R is
+# kept so older run directories still mean what they meant.
+RECURSIVE_ARMS = ("R", "A_jev")
 ARMS = ["C", "validity", "oracle"]
 SEED = 20260921
 OUT = Path("artifacts/mvp_c")
@@ -127,7 +133,7 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
             status = "success"
             break
         state = canonical_state(facts, game, attempt_index=steps)
-        policy.set_context(meta["world_id"], root_idx, arm, step)
+        policy.set_context(meta["world_id"], root_idx, step)
         plans, pstatus = policy.plans(render_facts(state), goal["text"], catalog,
                                       history, K, HORIZON[0])
 
@@ -171,9 +177,9 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         history.append((action, was_valid))
         steps += 1
         invalid += (not was_valid)
-        log.append({"arm": arm, "world": meta["world_id"], "step": step,
-                    "action": action, "valid": was_valid,
-                    "policy_status": pstatus, "prefix": list(chosen),
+        log.append({"arm": arm, "world": meta["world_id"], "root": root_idx,
+                    "step": step, "action": action, "valid": was_valid,
+                    "policy_status": pstatus, "plans": plans, "prefix": list(chosen),
                     "trap": bool(is_trap), "decoy": bool(is_decoy)})
     else:
         if goal_satisfied(list(env.state["_facts"]), goal):
@@ -197,13 +203,19 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--horizon", type=int, default=H,
                     help="planning horizon H; prefixes run 1..H")
-    ap.add_argument("--budget", type=float, default=None,
-                    help="stop before exceeding this many USD of JEV input tokens")
+    ap.add_argument("--budget", type=float, default=3.0,
+                    help="stop before exceeding this many USD of JEV input tokens "
+                         "(this process only; the API returned 402 mid-run twice on 9/21)")
     ap.add_argument("--policy-seed", type=int, default=SEED,
                     help="varies policy sampling while worlds/roots stay fixed")
     ap.add_argument("--arms", default="C,validity,oracle",
-                    help="comma list from C,validity,oracle,A")
+                    help=f"comma list from {','.join(ALL_ARMS)}")
+    ap.add_argument("--split", default="dev", choices=SPLITS,
+                    help="trap-world names: dev = t000.. (developed on), "
+                         "test = held-out names (kiis2026f/실험계획.md §3)")
     args = ap.parse_args()
+    if args.split != "dev" and not args.trap:
+        raise SystemExit("--split applies to trap worlds only; add --trap")
 
     global ARMS
     ARMS = [a.strip() for a in args.arms.split(",") if a.strip()]
@@ -231,9 +243,32 @@ def main() -> int:
 
     CAP[0] = args.cap
     HORIZON[0] = args.horizon
+
+    # What this run is, written before the first episode so a crash still
+    # leaves it behind. Every episode carries config_hash; analyze_arms.py
+    # refuses to pool two of them.
+    cond = runinfo.condition(model=args.model, max_new_tokens=policy.max_new_tokens,
+                             k=K, h=HORIZON[0], cap=CAP[0], trap=args.trap)
+    config_hash = runinfo.digest(cond)
+    arm_hashes = {a: runinfo.arm_hash(a) for a in ARMS}
+    manifest = {"config_hash": config_hash, "condition": cond,
+                "run": {"arms": ARMS, "arm_hashes": arm_hashes, "split": args.split,
+                        "worlds": args.worlds, "roots": args.roots,
+                        "policy_seed": args.policy_seed, "budget_usd": args.budget,
+                        "host": socket.gethostname(),
+                        "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
+                "revision": runinfo.revision(), "world_fingerprints": {}}
+
+    def write_manifest():
+        (out / "run_manifest.json").write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
+
+    write_manifest()
+    print(f"condition {config_hash}  split={args.split}  arms={ARMS}", flush=True)
+
     for w in range(args.worlds):
         if args.trap:
-            game, path, meta = build_trap_world(w, wdir, rng)
+            game, path, meta = build_trap_world(w, wdir, rng, split=args.split)
             goal = trap_goal_spec(game, meta)
         else:
             idx = w * 3                  # idx % 3 == 0 -> locked door
@@ -243,6 +278,8 @@ def main() -> int:
         schema = state_schema(game, meta) if use_jev else None
         catalog = static_catalog(game)
         env = textworld.start(str(path), request_infos=INFOS); env.reset()
+        manifest["world_fingerprints"][meta["world_id"]] = world_fingerprint(game)
+        write_manifest()
 
         for r in range(args.roots):
             root = env.copy()
@@ -256,7 +293,7 @@ def main() -> int:
                 root.close(); continue          # already solved; skip
             for arm in ARMS:
                 fc = None
-                if arm == "R":
+                if arm in RECURSIVE_ARMS:
                     from wm.recursive_forecaster import RecursiveForecaster
                     fc = RecursiveForecaster(jev, schema, goal)
                 elif arm in JEV_ARMS:
@@ -267,7 +304,7 @@ def main() -> int:
                 if fc is not None:
                     res["jev_requests"] = fc.stats.requests
                     res["bound_violations"] = getattr(fc.stats, "bound_violations", 0)
-                    if arm == "R":
+                    if arm in RECURSIVE_ARMS:
                         s = fc.stats
                         res["drift"] = {
                             "n": s.depth_n, "exact": s.depth_exact,
@@ -276,7 +313,9 @@ def main() -> int:
                             "contradictions": s.contradictions,
                             "cache_hits": s.cache_hits}
                 res.update({"world_id": meta["world_id"], "root": r,
-                            "catalog_size": len(catalog)})
+                            "catalog_size": len(catalog), "split": args.split,
+                            "policy_seed": args.policy_seed,
+                            "config_hash": config_hash, "arm_hash": arm_hashes[arm]})
                 episodes.append(res)
             root.close()
             (out / "episodes.jsonl").write_text(
@@ -366,6 +405,15 @@ def main() -> int:
     print(f"\npolicy calls={policy.calls} repairs={policy.repairs} "
           f"fallbacks={policy.fallbacks} catalog={episodes[0]['catalog_size']}")
     print("=" * 74)
+
+    manifest["run"]["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    manifest["counts"] = {"episodes": len(episodes), "policy_calls": policy.calls,
+                          "policy_repairs": policy.repairs,
+                          "policy_fallbacks": policy.fallbacks,
+                          "jev_calls": jev.calls if jev else 0,
+                          "jev_input_tokens": jev.input_tokens if jev else 0,
+                          "jev_usd": round(jev.spent_usd, 4) if jev else 0.0}
+    write_manifest()
     return 0
 
 

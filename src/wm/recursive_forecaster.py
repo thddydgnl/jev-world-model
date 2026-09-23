@@ -83,6 +83,44 @@ def build_state(canon: dict, schema: list[dict], action: str) -> dict[str, Any]:
 
 
 @dataclass
+class StepPrediction:
+    """What one step backend says about (state, action)."""
+    values: dict[str, str]      # predicted value of every schema variable
+    top: dict[str, float]       # probability of that value; 1.0 when the backend gives none
+    p_exec: float               # probability the command executes
+    requests: int = 0           # model requests this prediction cost
+
+
+class TypedStep:
+    """One step asked as typed questions — the JEV style.
+
+    Validity goes in a request of its own, then every schema variable is asked
+    as a Choice over all its type-possible values and read by argmax. Any client
+    whose `ask(state, questions, tag)` returns the JEV response shape works here,
+    so a local model can stand in for the API without touching the rollout.
+    """
+
+    def __init__(self, client, schema: list[dict]) -> None:
+        self.client = client
+        self.schema = schema
+
+    def __call__(self, canon: dict, action: str) -> StepPrediction:
+        out = self.client.ask(build_state(canon, self.schema, action),
+                              step_questions(self.schema, action), tag="R_step")
+        vout = self.client.ask(validity_state(canon),
+                               {"v_exec": validity_question(action, [])},
+                               tag="R_valid")
+        values, top = {}, {}
+        for q in self.schema:
+            probs = out["answers"][q["id"]]["probabilities"]
+            best = max(probs, key=probs.get)
+            values[q["id"]] = best
+            top[q["id"]] = probs[best]
+        p_exec = float(vout["answers"]["v_exec"]["probabilities"]["executes"])
+        return StepPrediction(values, top, p_exec, requests=2)
+
+
+@dataclass
 class Stats:
     requests: int = 0
     steps: int = 0
@@ -102,12 +140,19 @@ class Stats:
 
 
 class RecursiveForecaster:
-    """One instance per episode. Caches on (state fingerprint, action)."""
+    """One instance per episode. Caches on (state fingerprint, action).
+
+    The rollout, beam and goal scoring live here once. How a single step is
+    predicted is the `step` backend: typed questions by default (JEV or any
+    client with the same response shape), or anything else that returns a
+    StepPrediction. Swapping it is the only thing that differs between the
+    world-model arms.
+    """
 
     mode = "recursive"
 
-    def __init__(self, client, schema: list[dict], goal: dict) -> None:
-        self.client = client
+    def __init__(self, client, schema: list[dict], goal: dict, step=None) -> None:
+        self.step = step if step is not None else TypedStep(client, schema)
         self.schema = schema
         self.goal = goal
         self._cache: dict[tuple, tuple[dict, float]] = {}
@@ -130,25 +175,14 @@ class RecursiveForecaster:
             self.stats.cache_hits += 1
             return self._cache[key]
 
-        out = self.client.ask(build_state(canon, self.schema, action),
-                              step_questions(self.schema, action), tag="R_step")
-        vout = self.client.ask(validity_state(canon),
-                               {"v_exec": validity_question(action, [])},
-                               tag="R_valid")
-        self.stats.requests += 2
+        pred = self.step(canon, action)
+        self.stats.requests += pred.requests
+        p_exec = pred.p_exec
 
-        values, top = {}, {}
-        for q in self.schema:
-            probs = out["answers"][q["id"]]["probabilities"]
-            best = max(probs, key=probs.get)
-            values[q["id"]] = best
-            top[q["id"]] = probs[best]
-        p_exec = float(vout["answers"]["v_exec"]["probabilities"]["executes"])
-
-        nxt = project_state(canon, values, self.schema)
+        nxt = project_state(canon, pred.values, self.schema)
         # A variable whose argmax carries little mass means the marginals did not
         # agree on one state. Counted, never patched.
-        if any(v < 0.5 for v in top.values()):
+        if any(v < 0.5 for v in pred.top.values()):
             self.stats.contradictions += 1
 
         self._cache[key] = (nxt, p_exec)

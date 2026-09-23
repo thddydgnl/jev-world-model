@@ -8,6 +8,8 @@ from "pattern-matches the action string".
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import random
 from pathlib import Path
 from typing import Any
@@ -166,7 +168,121 @@ TRAP_NAMES = [
 ]
 
 
-def build_trap_world(idx: int, out_dir: Path, rng: random.Random) -> tuple[Any, Path, dict]:
+# ---------------------------------------------------------------- KIIS splits
+
+# The dev worlds t000–t011 are TRAP_NAMES with numeric suffixes: four name sets,
+# all of them looked at while the pipeline was being fixed. Everything a result
+# is reported on uses the vocabulary below instead, split per slot into
+# train / val / test so that no test name is ever seen in training
+# (kiis2026f/실험계획.md §3). No word here occurs in TRAP_NAMES or NAME_POOL, so
+# the dev worlds share no vocabulary with any split either.
+TRAP_VOCAB: dict[str, list[str]] = {
+    "box": [  # container
+        "leather trunk", "walnut cabinet", "wicker hamper", "plastic bin",
+        "clay urn", "velvet coffer", "maple cupboard", "chrome locker",
+        "rattan basket", "ceramic jar", "lacquered dresser", "enamel canister",
+        "teak drawer", "black strongbox", "grey safe", "dented footlocker",
+        "carved bureau", "tall armoire", "zinc tub", "painted hutch",
+        "vinyl hatbox", "felt toybox", "rosewood casket", "cardboard carton"],
+    "key": [
+        "nickel key", "pewter key", "rusty key", "tiny key", "ornate key",
+        "skeleton key", "notched key", "crooked key", "twisted key", "slender key",
+        "tarnished key", "square key", "hollow key", "jagged key", "polished key",
+        "antique key", "spare key", "master key", "flat key", "bent key",
+        "stubby key", "chunky key", "gilded key", "platinum key"],
+    "table": [  # supporter
+        "writing desk", "kitchen counter", "granite pedestal", "window ledge",
+        "mahogany sideboard", "tiled worktop", "concrete plinth", "metal rack",
+        "folding trestle", "oval podium", "slate altar", "brick mantel",
+        "artist easel", "bar stool", "serving cart", "low platform",
+        "acrylic console", "bedside nightstand", "drafting board", "butcher block",
+        "round ottoman", "garden trolley", "reading lectern", "flat dais"],
+    "door": [
+        "arched door", "heavy door", "narrow door", "sliding door", "rusted door",
+        "frosted door", "studded door", "swinging door", "creaky door", "bolted door",
+        "reinforced door", "latticed door", "crimson door", "ivory door", "olive door",
+        "scarlet door", "amber door", "violet door", "indigo door", "charcoal door",
+        "screen door", "barn door", "garden door", "saloon door"],
+    "apple": [  # goal food
+        "juicy mango", "fresh peach", "sour lemon", "round melon", "dark cherry",
+        "sweet orange", "tart lime", "fuzzy kiwi", "plump grape", "crisp radish",
+        "yellow banana", "wild berry", "purple beet", "vine tomato", "seedless guava",
+        "spotted papaya", "bright apricot", "golden quince", "raw carrot",
+        "crunchy cucumber", "sticky lychee", "creamy avocado", "tangy grapefruit",
+        "baby turnip"],
+    "pear": [  # decoy food
+        "stale bread", "hard cheese", "salted nut", "toasted muffin", "sugar cookie",
+        "plain cracker", "brown egg", "cold sausage", "rye loaf", "honey cake",
+        "corn cob", "bean pod", "salty pretzel", "jelly donut", "rice ball",
+        "meat pie", "fish stick", "raisin bun", "chocolate truffle", "tofu cube",
+        "mint candy", "ham slice", "butter waffle", "garlic knot"],
+    "room": [
+        "kitchen", "bedroom", "library", "hallway", "parlor", "garage", "attic",
+        "basement", "workshop", "laundry", "nursery", "office", "studio", "foyer",
+        "lounge", "scullery", "cloakroom", "chapel", "conservatory", "armory",
+        "bakery", "greenhouse", "storeroom", "boathouse", "washroom", "den", "loft",
+        "porch", "sunroom", "playroom", "darkroom", "mudroom", "pavilion", "cabin",
+        "refectory", "observatory"],
+}
+VOCAB_SEED = 20260923
+SPLITS = ("dev", "train", "val", "test")
+SPLIT_PREFIX = {"dev": "t", "train": "tr", "val": "va", "test": "te"}
+
+
+def vocab_split(slot: str) -> dict[str, list[str]]:
+    """One slot's words, shuffled once and cut 60 / 10 / 30."""
+    words = list(TRAP_VOCAB[slot])
+    random.Random(f"kiis-vocab-{VOCAB_SEED}-{slot}").shuffle(words)
+    n_train = round(0.6 * len(words))
+    n_val = max(1, round(0.1 * len(words)))
+    return {"train": words[:n_train],
+            "val": words[n_train:n_train + n_val],
+            "test": words[n_train + n_val:]}
+
+
+def trap_names(split: str, idx: int) -> tuple[str, ...]:
+    """(box, key, table, door, apple, pear, room_a, room_b) for one world.
+
+    Drawn from the split's share of each slot, redrawn until no word is shared
+    between two names, so that no command can refer to two entities at once and
+    no name gives away another.
+    """
+    if split == "dev":
+        names = TRAP_NAMES[idx % len(TRAP_NAMES)]
+        # Suffix every name here, including the door, so no use site has to
+        # remember to. Forgetting it for one name is how this broke twice.
+        suffix = f" {idx // len(TRAP_NAMES) + 1}" if idx >= len(TRAP_NAMES) else ""
+        return tuple(n + suffix for n in names)
+    if split not in SPLITS:
+        raise ValueError(f"unknown split {split!r}")
+    pools = {slot: vocab_split(slot)[split] for slot in TRAP_VOCAB}
+    rng = random.Random(f"kiis-names-{VOCAB_SEED}-{split}-{idx}")
+    for _ in range(1000):
+        rooms = rng.sample(pools["room"], 2)
+        names = tuple(rng.choice(pools[s]) for s in
+                      ("box", "key", "table", "door", "apple", "pear")) + tuple(rooms)
+        tokens = [t for n in names for t in n.split()]
+        if len(tokens) == len(set(tokens)):
+            return names
+    raise RuntimeError(f"no clash-free names for {split} {idx}")
+
+
+def world_fingerprint(game: Any) -> str:
+    """Hash of what the engine and the models actually use: the initial facts
+    and every entity's id, name and type.
+
+    Not a file hash. TextWorld writes random flavour text (`desc`, `room_type`)
+    into the game file on every build, so two builds of the same world differ
+    byte for byte. None of that text reaches a model or changes a transition.
+    """
+    facts = sorted(str(f) for f in game.world.facts)
+    ents = sorted((vid, info.name or "", info.type or "") for vid, info in game.infos.items())
+    blob = json.dumps([facts, ents], ensure_ascii=False)
+    return hashlib.sha256(blob.encode()).hexdigest()[:16]
+
+
+def build_trap_world(idx: int, out_dir: Path, rng: random.Random,
+                     split: str = "dev") -> tuple[Any, Path, dict]:
     """Same skeleton as build_world, plus an IRREVERSIBLE trap.
 
     `eat {food}` is admissible whenever the food is carried and permanently
@@ -175,13 +291,10 @@ def build_trap_world(idx: int, out_dir: Path, rng: random.Random) -> tuple[Any, 
     executable command. A validity filter cannot see the difference; only a
     forecast of the endpoint can. The pear is a harmless decoy, so "never eat"
     and "do not eat the goal object" are distinguishable.
+
+    `split` picks the names only; the structure is the same in every split.
     """
-    box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n = TRAP_NAMES[idx % len(TRAP_NAMES)]
-    suffix = f" {idx // len(TRAP_NAMES) + 1}" if idx >= len(TRAP_NAMES) else ""
-    # Suffix every name here, including the door, so no use site has to
-    # remember to. Forgetting it for one name is how this broke twice.
-    box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n = (
-        n + suffix for n in (box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n))
+    box_n, key_n, table_n, door_n, apple_n, pear_n, ra_n, rb_n = trap_names(split, idx)
 
     m = GameMaker()
     room_a = m.new_room(ra_n)
@@ -203,9 +316,10 @@ def build_trap_world(idx: int, out_dir: Path, rng: random.Random) -> tuple[Any, 
     m.quests = []
 
     game = m.build()
-    p = out_dir / f"trap_{idx:03d}.json"
+    stem = f"trap_{idx:03d}" if split == "dev" else f"trap_{split}_{idx:03d}"
+    p = out_dir / f"{stem}.json"
     game.save(str(p))
-    meta = {"world_id": f"t{idx:03d}", "box": box_n, "key": key_n, "table": table_n,
-            "door": door_n, "apple": apple_n, "pear": pear_n,
-            "room_a": ra_n, "room_b": rb_n, "trap": True}
+    meta = {"world_id": f"{SPLIT_PREFIX[split]}{idx:03d}", "box": box_n, "key": key_n,
+            "table": table_n, "door": door_n, "apple": apple_n, "pear": pear_n,
+            "room_a": ra_n, "room_b": rb_n, "trap": True, "split": split}
     return game, p, meta

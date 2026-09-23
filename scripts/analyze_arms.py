@@ -29,7 +29,8 @@ DEFAULT_SOURCES = {
     "artifacts/seed1234": 1234,
 }
 B = 4000
-ORDER = ["C", "validity", "Aval", "Aend", "A", "oracle"]
+ORDER = ["C", "validity", "Aval", "Aend", "A", "R",
+         "A_jev", "B0_typed", "D0_gen", "B_typed", "D_gen", "oracle"]
 
 
 def load(sources: dict[str, int]) -> list[dict]:
@@ -42,7 +43,9 @@ def load(sources: dict[str, int]) -> list[dict]:
             if not line.strip():
                 continue
             e = json.loads(line)
-            e["seed"] = seed
+            # Runs since the KIIS runner record their own seed; the dir=seed
+            # mapping is only needed for older directories.
+            e["seed"] = e.get("policy_seed", seed)
             eps.append(e)
     return eps
 
@@ -93,6 +96,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sources", default=None,
                     help="dir=seed pairs, comma separated; default is the known runs")
+    ap.add_argument("--allow-mixed-config", action="store_true",
+                    help="pool runs whose condition hashes differ (never for a results table)")
     args = ap.parse_args()
     sources = DEFAULT_SOURCES
     if args.sources:
@@ -105,6 +110,15 @@ def main() -> int:
     if not eps:
         print("결과 디렉터리가 없습니다.")
         return 1
+    # Runs made before the condition hash existed carry none ("-"). Pooling
+    # them with hashed runs, or pooling two hashes, is how numbers from
+    # different conditions ended up in one table before (docs/protocol.md A.4).
+    hashes = sorted({e.get("config_hash") or "-" for e in eps})
+    print(f"조건 해시: {', '.join(hashes)}")
+    if len(hashes) > 1 and not args.allow_mixed_config:
+        print("조건 해시가 서로 다른 실행을 합칠 수 없습니다. "
+              "조건별로 나눠 분석하거나 --allow-mixed-config 를 명시하세요.")
+        return 2
     rng = random.Random(20260921)
     arms = [a for a in ORDER if any(e["arm"] == a for e in eps)]
     seeds = sorted({e["seed"] for e in eps})
@@ -132,8 +146,7 @@ def main() -> int:
         rs = [rate([e for e in eps if e["seed"] == s], a) for s in seeds]
         rs = [r for r in rs if r is not None]
         if len(rs) > 1:
-            print(f"    {a:<10} {min(rs):.1%} ~ {max(rs):.1%}   폭 {max(rs)-min(rs):+.1%p}"
-                  .replace("%p", "%p"))
+            print(f"    {a:<10} {min(rs):.1%} ~ {max(rs):.1%}   폭 {max(rs)-min(rs):+.1%}p")
 
     # ---------------------------------------------------- paired gaps
     print("\n" + "=" * 72)
@@ -145,7 +158,19 @@ def main() -> int:
              ("A", "Aend", "질문 분리의 기여"),
              ("A", "Aval", "endpoint 질문의 기여"),
              ("Aval", "validity", "JEV 유효성 오차의 비용"),
-             ("A", "C", "arm A − No-WM")]
+             ("A", "C", "arm A − No-WM"),
+             # KIIS 2026 fall (kiis2026f/실험계획.md §5)
+             ("A_jev", "C", "JEV 세계모델 − 기본 에이전트"),
+             ("B0_typed", "C", "타입화 Qwen − 기본 에이전트"),
+             ("D0_gen", "C", "생성형 Qwen − 기본 에이전트"),
+             ("B_typed", "C", "학습 타입화 − 기본 에이전트"),
+             ("D_gen", "C", "학습 생성형 − 기본 에이전트"),
+             ("B0_typed", "D0_gen", "타입화 − 생성형 (학습 없음)"),
+             ("B_typed", "D_gen", "타입화 − 생성형 (학습)"),
+             ("B_typed", "A_jev", "학습 타입화 LLM − JEV"),
+             ("A_jev", "B0_typed", "JEV − 학습 없는 Qwen (타입화)"),
+             ("A_jev", "validity", "JEV − 완벽한 유효성 필터"),
+             ("A_jev", "oracle", "JEV − 완벽한 예측기")]
     for hi, lo, label in pairs:
         if hi not in arms or lo not in arms:
             continue
