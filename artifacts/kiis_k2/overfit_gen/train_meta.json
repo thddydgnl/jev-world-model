@@ -1,0 +1,92 @@
+{
+ "args": {
+  "style": "gen",
+  "train": "data/kiis/transitions/train.jsonl",
+  "val": "data/kiis/transitions/val.jsonl",
+  "n": 32,
+  "overfit": true,
+  "epochs": 40,
+  "lr": 0.0002,
+  "micro_tokens": 8192,
+  "accum": 1,
+  "eval_n": 200,
+  "max_steps": null,
+  "eval_every": 5,
+  "stop_at": 0.95,
+  "seed": 0,
+  "model": "Qwen/Qwen3-4B",
+  "device": "cuda:0",
+  "out": "artifacts/kiis_k2/overfit_gen"
+ },
+ "lora": {
+  "r": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.05,
+  "target_modules": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ]
+ },
+ "data_sha": "81ba823a4f7e1a2c",
+ "n_transitions": 32,
+ "n_examples": 32,
+ "tokens_per_epoch": 61983,
+ "epochs": [
+  {
+   "epoch": 1,
+   "steps": 8,
+   "train_loss": 0.19126453180797398,
+   "seconds": 58.4,
+   "tokens_per_s": 1061.8
+  },
+  {
+   "epoch": 2,
+   "steps": 16,
+   "train_loss": 0.03399603260913864,
+   "seconds": 116.8,
+   "tokens_per_s": 1061.8
+  },
+  {
+   "epoch": 3,
+   "steps": 24,
+   "train_loss": 0.014335477084387094,
+   "seconds": 175.2,
+   "tokens_per_s": 1061.6
+  },
+  {
+   "epoch": 4,
+   "steps": 32,
+   "train_loss": 0.009225936562870629,
+   "seconds": 233.6,
+   "tokens_per_s": 1061.5
+  },
+  {
+   "epoch": 5,
+   "steps": 40,
+   "train_loss": 0.0037666955322492868,
+   "seconds": 292.1,
+   "tokens_per_s": 1060.9,
+   "eval": {
+    "transitions": 32,
+    "transition_acc": 0.96875,
+    "validity_balanced_acc": 1.0,
+    "var_acc_when_executes": 0.9916666666666667,
+    "parse_fail_rate": 0.03125
+   }
+  }
+ ],
+ "versions": {
+  "torch": "2.6.0+cu124",
+  "transformers": "5.17.0",
+  "peft": "0.21.0"
+ },
+ "gpu_hours": 0.118,
+ "tokens_per_s": 732.0,
+ "peak_mem_gb": 12.1,
+ "gpu": "NVIDIA RTX A5000"
+}

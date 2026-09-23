@@ -1,0 +1,116 @@
+{
+  "config_hash": "0fe479090329",
+  "condition": {
+    "env": {
+      "textworld": "1.7.0",
+      "structure": "trap",
+      "step_cap": 30,
+      "root_prefix": "0-2 random admissible commands, not look/inventory/examine"
+    },
+    "policy": {
+      "model": "Qwen/Qwen3-4B",
+      "dtype": "bfloat16",
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_new_tokens": 320,
+      "history": 10,
+      "schema_repairs": 1,
+      "seed_key": "world|root|step",
+      "prompt": "b2b238bb1a1f"
+    },
+    "candidates": {
+      "K": 8,
+      "H": 2,
+      "prefixes": "unique, lengths 1..H"
+    },
+    "utility": {
+      "alpha": 0.25,
+      "lambda": 0.1,
+      "cost": 0.01,
+      "beta": 0.05,
+      "invalid_term": "count"
+    },
+    "failure_memory": "drop prefixes whose first action already failed from the same state",
+    "rollout": {
+      "beam": 4,
+      "prune_w": 0.02,
+      "cache": "state fingerprint + action, whole episode"
+    },
+    "typed_questions": {
+      "step": "2f7376ee0bf2",
+      "validity": "4eab271e60b7",
+      "validity_request": "separate",
+      "query_catalog_in_state": false
+    },
+    "state_render": "5c7c810aa122",
+    "goal": "7d71c2424686",
+    "jev_model": "jev-1.13.0"
+  },
+  "run": {
+    "arms": [
+      "B_typed"
+    ],
+    "arm_hashes": {
+      "B_typed": "7a50763e9ea6"
+    },
+    "arm_configs": {
+      "B_typed": {
+        "world_model": "recursive one-step, typed",
+        "backend": "qwen, policy weights",
+        "readout": "next-token probability of the option letters",
+        "prompt": "6f7055a9dcdc",
+        "adapter": {
+          "weights_sha256": "0397da45cb82df7a",
+          "n_transitions": 16,
+          "data_sha": "81ba823a4f7e1a2c",
+          "lora": {
+            "r": 16,
+            "lora_alpha": 32,
+            "lora_dropout": 0.05,
+            "target_modules": [
+              "q_proj",
+              "k_proj",
+              "v_proj",
+              "o_proj",
+              "gate_proj",
+              "up_proj",
+              "down_proj"
+            ]
+          },
+          "epochs": 2
+        }
+      }
+    },
+    "split": "dev",
+    "worlds": 1,
+    "roots": 1,
+    "policy_seed": 20260921,
+    "budget_usd": 3.0,
+    "host": "yonghwi-racedreamer",
+    "started": "2026-09-23T16:19:05+0000",
+    "finished": "2026-09-23T16:21:32+0000"
+  },
+  "revision": {
+    "line": "3fa90d8bbcb500b279caa9e36886fb976c0c305c dirty_files=11 synced=2026-09-23T16:15:34Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "world_fingerprints": {
+    "t000": "a837582ee526e8af"
+  },
+  "counts": {
+    "episodes": 1,
+    "policy_calls": 21,
+    "policy_repairs": 0,
+    "policy_fallbacks": 0,
+    "jev_calls": 0,
+    "jev_input_tokens": 0,
+    "jev_usd": 0.0,
+    "wm_seconds": 92.5
+  }
+}

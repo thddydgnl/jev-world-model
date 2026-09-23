@@ -53,12 +53,16 @@ K = 8
 H = 2
 CAP = [15]
 HORIZON = [2]      # mutable so --horizon can override          # mutable so --cap can override
-ALL_ARMS = ("C", "validity", "oracle", "A", "Aend", "Aval", "R", "A_jev")
 JEV_ARMS = ("A", "Aend", "Aval", "R", "A_jev")
 JEV_MODE = {"A": "full", "Aend": "endpoint", "Aval": "validity"}
 # A_jev is the recursive arm under its KIIS name (kiis2026f/실험계획.md §1); R is
 # kept so older run directories still mean what they meant.
 RECURSIVE_ARMS = ("R", "A_jev")
+# Qwen world models on the policy's own weights: typed (B) and generative (D),
+# zero-shot (0) or with a LoRA adapter trained on engine transitions.
+LLM_ARMS = runinfo.LLM_ARMS
+ADAPTER_ARMS = runinfo.ADAPTER_ARMS
+ALL_ARMS = ("C", "validity", "oracle") + JEV_ARMS + LLM_ARMS
 ARMS = ["C", "validity", "oracle"]
 SEED = 20260921
 OUT = Path("artifacts/mvp_c")
@@ -130,6 +134,20 @@ def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
     return max(scored, key=lambda kv: kv[1])[0]
 
 
+def score_batched(fc, state, prefixes, plans, env=None, game=None, failed=None):
+    """LLM world-model arms: the same planner as score_arm_a, but every prefix
+    is rolled out together one depth at a time (RecursiveForecaster.score_many)
+    so the local model sees one batch per depth. Same failure memory, same
+    utility, same tie-break (first maximum in `live` order)."""
+    live = live_prefixes(prefixes, state, failed)
+    truths = ({p: true_trajectory(env, game, p) for p in live}
+              if env is not None else None)
+    results = fc.score_many(state, live, truths)
+    scored = [(p, utility(t.conj, t.progress, n_inv, len(p), plan_prior(plans, p)))
+              for p, (t, n_inv) in zip(live, results)]
+    return max(scored, key=lambda kv: kv[1])[0]
+
+
 def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
                 root_idx=0):
     env = env_root.copy()
@@ -150,6 +168,10 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         if arm == "C":
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
+        elif arm in LLM_ARMS:
+            chosen = score_batched(fc, state, unique_prefixes(plans, HORIZON[0]), plans,
+                                   env=env, game=game, failed=failed)
+            action = chosen[0]
         elif arm in JEV_ARMS:
             fc.reset_step_cache()
             chosen = score_arm_a(fc, state, unique_prefixes(plans, HORIZON[0]), plans,
@@ -224,6 +246,10 @@ def main() -> int:
     ap.add_argument("--split", default="dev", choices=SPLITS,
                     help="trap-world names: dev = t000.. (developed on), "
                          "test = held-out names (kiis2026f/실험계획.md §3)")
+    ap.add_argument("--adapter", default=None,
+                    help="LoRA adapter directory for B_typed or D_gen")
+    ap.add_argument("--wm-batch", type=int, default=8,
+                    help="prompts per forward for the Qwen world models")
     args = ap.parse_args()
     if args.split != "dev" and not args.trap:
         raise SystemExit("--split applies to trap worlds only; add --trap")
@@ -233,6 +259,12 @@ def main() -> int:
     bad = set(ARMS) - set(ALL_ARMS)
     if bad:
         raise SystemExit(f"unknown arms: {sorted(bad)}")
+    llm_arms = [a for a in ARMS if a in LLM_ARMS]
+    if any(a in ADAPTER_ARMS for a in llm_arms):
+        # One set of weights per process: an adapter arm must be its only LLM
+        # arm, or a zero-shot arm would silently run with the adapter on.
+        if len(llm_arms) != 1 or not args.adapter:
+            raise SystemExit("B_typed / D_gen: run alone among the LLM arms, with --adapter")
     use_jev = any(a in JEV_ARMS for a in ARMS)
     jev = stack = None
     if use_jev:
@@ -245,6 +277,21 @@ def main() -> int:
     print(f"loading {args.model} on {args.device} ...", flush=True)
     policy = Policy(args.model, args.device, seed=args.policy_seed)
     print("loaded.", flush=True)
+
+    scorer = judge = adapter = None
+    if llm_arms:
+        from wm.llm_backends import GenerativeStep, LlmJudgeClient, QwenScorer
+        from wm.recursive_forecaster import RecursiveForecaster, TypedStep
+        wm_model = policy.model
+        if args.adapter:
+            from peft import PeftModel
+            wm_model = PeftModel.from_pretrained(policy.model, args.adapter)
+            wm_model.eval()
+            policy.adapter_off = wm_model.disable_adapter
+            adapter = runinfo.adapter_info(args.adapter)
+            print(f"adapter {args.adapter} {adapter['weights_sha256']}", flush=True)
+        scorer = QwenScorer(wm_model, policy.tok, args.device, batch=args.wm_batch)
+        judge = LlmJudgeClient(scorer)
 
     out = Path(args.out) if args.out else OUT
     out.mkdir(parents=True, exist_ok=True)
@@ -261,14 +308,19 @@ def main() -> int:
     cond = runinfo.condition(model=args.model, max_new_tokens=policy.max_new_tokens,
                              k=K, h=HORIZON[0], cap=CAP[0], trap=args.trap)
     config_hash = runinfo.digest(cond)
-    arm_hashes = {a: runinfo.arm_hash(a) for a in ARMS}
+    arm_hashes = {a: runinfo.arm_hash(a, adapter if a in ADAPTER_ARMS else None)
+                  for a in ARMS}
     manifest = {"config_hash": config_hash, "condition": cond,
-                "run": {"arms": ARMS, "arm_hashes": arm_hashes, "split": args.split,
+                "run": {"arms": ARMS, "arm_hashes": arm_hashes,
+                        "arm_configs": {a: runinfo.arm_config(a, adapter if a in ADAPTER_ARMS else None)
+                                        for a in ARMS},
+                        "split": args.split,
                         "worlds": args.worlds, "roots": args.roots,
                         "policy_seed": args.policy_seed, "budget_usd": args.budget,
                         "host": socket.gethostname(),
                         "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
-                "revision": runinfo.revision(), "world_fingerprints": {}}
+                "revision": runinfo.revision(), "software": runinfo.software(),
+                "world_fingerprints": {}}
 
     def write_manifest():
         (out / "run_manifest.json").write_text(
@@ -286,7 +338,7 @@ def main() -> int:
             game, path, meta = build_world(idx, wdir, rng)
             goal = goal_spec(game, meta)
         gqs, conj_q = goal_queries(game, meta, goal) if use_jev else (None, None)
-        schema = state_schema(game, meta) if use_jev else None
+        schema = state_schema(game, meta) if (use_jev or llm_arms) else None
         catalog = static_catalog(game)
         env = textworld.start(str(path), request_infos=INFOS); env.reset()
         manifest["world_fingerprints"][meta["world_id"]] = world_fingerprint(game)
@@ -310,12 +362,23 @@ def main() -> int:
                 elif arm in JEV_ARMS:
                     from wm.jev_forecaster import JevForecaster
                     fc = JevForecaster(jev, gqs, conj_q, mode=JEV_MODE[arm])
+                elif arm in LLM_ARMS:
+                    step = (TypedStep(judge, schema) if arm.startswith("B")
+                            else GenerativeStep(scorer, schema))
+                    fc = RecursiveForecaster(None, schema, goal, step=step)
+                wm_t0 = scorer.seconds if scorer is not None else 0.0
                 res = run_episode(arm, root, game, meta, goal,
                                   policy, catalog, log, fc, root_idx=r)
-                if fc is not None:
+                if fc is not None and arm in LLM_ARMS:
+                    res["wm_requests"] = fc.stats.requests
+                    res["wm_seconds"] = round(scorer.seconds - wm_t0, 2)
+                    res["parse_failures"] = fc.stats.parse_failures
+                    if getattr(fc.step, "failed", None):
+                        res["parse_failure_examples"] = fc.step.failed[:5]
+                elif fc is not None:
                     res["jev_requests"] = fc.stats.requests
                     res["bound_violations"] = getattr(fc.stats, "bound_violations", 0)
-                    if arm in RECURSIVE_ARMS:
+                if fc is not None and (arm in RECURSIVE_ARMS or arm in LLM_ARMS):
                         s = fc.stats
                         res["drift"] = {
                             "n": s.depth_n, "exact": s.depth_exact,
@@ -413,6 +476,14 @@ def main() -> int:
                   f"cost=${jev.input_tokens/1e6*0.042:.3f}")
             jev.close()
 
+    for arm in llm_arms:
+        v = [e for e in episodes if e["arm"] == arm]
+        req = sum(e["wm_requests"] for e in v)
+        pf = sum(e["parse_failures"] for e in v)
+        sec = sum(e["wm_seconds"] for e in v)
+        print(f"\n{arm}: 세계모델 예측 {req}  파싱 실패 {pf} ({pf/max(req,1):.1%})  "
+              f"세계모델 GPU {sec/60:.1f}분 (에피소드당 {sec/max(len(v),1):.0f}초)")
+
     print(f"\npolicy calls={policy.calls} repairs={policy.repairs} "
           f"fallbacks={policy.fallbacks} catalog={episodes[0]['catalog_size']}")
     print("=" * 74)
@@ -423,7 +494,8 @@ def main() -> int:
                           "policy_fallbacks": policy.fallbacks,
                           "jev_calls": jev.calls if jev else 0,
                           "jev_input_tokens": jev.input_tokens if jev else 0,
-                          "jev_usd": round(jev.spent_usd, 4) if jev else 0.0}
+                          "jev_usd": round(jev.spent_usd, 4) if jev else 0.0,
+                          "wm_seconds": round(scorer.seconds, 1) if scorer else 0.0}
     write_manifest()
     return 0
 

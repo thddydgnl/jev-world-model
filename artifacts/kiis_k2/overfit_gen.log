@@ -1,0 +1,14 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+gen: 32 transitions -> 32 examples, tokens mean 1937 max 2036 total 61,983
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 4/398 [00:00<00:10, 37.98it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 142.21it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 172.37it/s]Loading weights:  16%|█▋        | 65/398 [00:00<00:01, 170.20it/s]Loading weights:  21%|██        | 83/398 [00:00<00:02, 152.31it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 157.78it/s]Loading weights:  30%|██▉       | 119/398 [00:00<00:01, 150.12it/s]Loading weights:  34%|███▍      | 135/398 [00:00<00:01, 151.59it/s]Loading weights:  38%|███▊      | 151/398 [00:01<00:01, 147.99it/s]Loading weights:  42%|████▏     | 168/398 [00:01<00:01, 149.85it/s]Loading weights:  46%|████▌     | 184/398 [00:01<00:01, 147.33it/s]Loading weights:  51%|█████     | 202/398 [00:01<00:01, 153.35it/s]Loading weights:  56%|█████▌    | 223/398 [00:01<00:01, 166.50it/s]Loading weights:  60%|██████    | 240/398 [00:01<00:00, 167.14it/s]Loading weights:  67%|██████▋   | 267/398 [00:01<00:00, 190.92it/s]Loading weights:  73%|███████▎  | 289/398 [00:01<00:00, 197.47it/s]Loading weights:  78%|███████▊  | 310/398 [00:01<00:00, 195.17it/s]Loading weights:  84%|████████▎ | 333/398 [00:01<00:00, 202.23it/s]Loading weights:  89%|████████▉ | 354/398 [00:02<00:00, 196.47it/s]Loading weights:  95%|█████████▌| 379/398 [00:02<00:00, 204.08it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 174.82it/s]
+trainable params 33,030,144
+  step 1/320 loss 0.2704 tok/s 1,019 mem 11.6GB
+epoch 1: {"epoch": 1, "steps": 8, "train_loss": 0.19126453180797398, "seconds": 58.4, "tokens_per_s": 1061.8}
+epoch 2: {"epoch": 2, "steps": 16, "train_loss": 0.03399603260913864, "seconds": 116.8, "tokens_per_s": 1061.8}
+  step 20/320 loss 0.0096 tok/s 1,062 mem 12.1GB
+epoch 3: {"epoch": 3, "steps": 24, "train_loss": 0.014335477084387094, "seconds": 175.2, "tokens_per_s": 1061.6}
+epoch 4: {"epoch": 4, "steps": 32, "train_loss": 0.009225936562870629, "seconds": 233.6, "tokens_per_s": 1061.5}
+  step 40/320 loss 0.0038 tok/s 1,061 mem 12.1GB
+epoch 5: {"epoch": 5, "steps": 40, "train_loss": 0.0037666955322492868, "seconds": 292.1, "tokens_per_s": 1060.9, "eval": {"transitions": 32, "transition_acc": 0.96875, "validity_balanced_acc": 1.0, "var_acc_when_executes": 0.9916666666666667, "parse_fail_rate": 0.03125}}
+reached 95% — stopping
+done: 7.1 min, 732 tok/s -> artifacts/kiis_k2/overfit_gen

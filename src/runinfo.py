@@ -51,25 +51,36 @@ def revision() -> dict[str, Any]:
     return {"source": "unknown"}
 
 
+_PROBE: tuple | None = None
+
+
+def _probe_world() -> tuple:
+    """Dev world t000's first state: the fixed input every probe renders on."""
+    global _PROBE
+    if _PROBE is None:
+        from agent.task import state_schema, static_catalog, trap_goal_spec
+        from env.serialize import canonical_state
+        from env.worlds import build_trap_world
+        with tempfile.TemporaryDirectory() as d:
+            game, path, meta = build_trap_world(0, Path(d), random.Random(0))
+            env = textworld.start(str(path), request_infos=EnvInfos(facts=True))
+            env.reset()
+            canon = canonical_state(list(env.state["_facts"]), game)
+            env.close()
+        _PROBE = (canon, state_schema(game, meta), trap_goal_spec(game, meta),
+                  static_catalog(game), meta)
+    return _PROBE
+
+
 def _probe_texts(k: int, h: int) -> dict[str, str]:
     """Render every model-facing text once, on dev world t000's first state."""
     from agent.policy import Policy
-    from agent.task import state_schema, static_catalog, trap_goal_spec
-    from env.serialize import canonical_state
-    from env.worlds import build_trap_world
     from forecast import render_facts
     from wm.jev_forecaster import validity_question
     from wm.recursive_forecaster import (build_state, step_questions,
                                          validity_state)
 
-    with tempfile.TemporaryDirectory() as d:
-        game, path, meta = build_trap_world(0, Path(d), random.Random(0))
-        env = textworld.start(str(path), request_infos=EnvInfos(facts=True))
-        env.reset()
-        canon = canonical_state(list(env.state["_facts"]), game)
-        env.close()
-    schema, goal = state_schema(game, meta), trap_goal_spec(game, meta)
-    catalog = static_catalog(game)
+    canon, schema, goal, catalog, meta = _probe_world()
     action = f"take {meta['key']} from {meta['box']}"
     facts = render_facts(canon)
     return {
@@ -141,5 +152,57 @@ ARM_CONFIG: dict[str, dict[str, Any]] = {
 }
 
 
-def arm_hash(arm: str) -> str:
-    return digest(ARM_CONFIG.get(arm, {"unregistered": arm}))
+LLM_ARMS = ("B0_typed", "B_typed", "D0_gen", "D_gen")
+ADAPTER_ARMS = ("B_typed", "D_gen")
+
+
+def _llm_config(arm: str) -> dict[str, Any]:
+    from wm import llm_backends as lb
+    canon, schema, _goal, _catalog, meta = _probe_world()
+    prompts = lb.probe_prompts(canon, schema, f"take {meta['key']} from {meta['box']}")
+    if arm.startswith("B"):
+        return {"world_model": "recursive one-step, typed", "backend": "qwen, policy weights",
+                "readout": "next-token probability of the option letters",
+                "prompt": digest(prompts["typed"])}
+    return {"world_model": "recursive one-step, generative", "backend": "qwen, policy weights",
+            "decoding": "greedy", "max_new_tokens": lb.GEN_MAX_NEW_TOKENS,
+            "retry": "one sample, T=0.7 top_p=0.9, seeded by state and action",
+            "on_parse_failure": "counted; treated as not executed",
+            "parser": lb.PARSER_VERSION, "prompt": digest(prompts["generative"])}
+
+
+def arm_config(arm: str, adapter: dict | None = None) -> dict[str, Any]:
+    """What an arm adds to the shared condition. LLM arms include their
+    rendered prompt and, for B and D, the adapter they were given."""
+    if arm in LLM_ARMS:
+        cfg = _llm_config(arm)
+        if arm in ADAPTER_ARMS:
+            if adapter is None:
+                raise ValueError(f"{arm} needs an adapter")
+            cfg["adapter"] = adapter
+        return cfg
+    return ARM_CONFIG.get(arm, {"unregistered": arm})
+
+
+def arm_hash(arm: str, adapter: dict | None = None) -> str:
+    return digest(arm_config(arm, adapter))
+
+
+def adapter_info(path: str) -> dict[str, Any]:
+    """Identity of a trained LoRA adapter: its weights' hash and how it was made."""
+    p = Path(path)
+    weights = p / "adapter_model.safetensors"
+    meta = json.loads((p / "train_meta.json").read_text()) if (p / "train_meta.json").exists() else {}
+    return {"weights_sha256": hashlib.sha256(weights.read_bytes()).hexdigest()[:16],
+            "n_transitions": meta.get("n_transitions"), "data_sha": meta.get("data_sha"),
+            "lora": meta.get("lora"), "epochs": len(meta.get("epochs", []))}
+
+
+def software() -> dict[str, str | None]:
+    out: dict[str, str | None] = {"textworld": textworld.__version__}
+    for name in ("torch", "transformers", "peft"):
+        try:
+            out[name] = __import__(name).__version__
+        except ImportError:
+            out[name] = None
+    return out

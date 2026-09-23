@@ -8,6 +8,7 @@ The same frozen weights, prompt, seed and decoding serve every arm.
 """
 from __future__ import annotations
 
+import contextlib
 import json
 import re
 import zlib
@@ -74,6 +75,10 @@ class Policy:
         self.calls = 0
         self.repairs = 0
         self.fallbacks = 0
+        # An LLM world model may put a LoRA adapter on these same weights; it
+        # sets this to the adapter's disable_adapter() so the policy always
+        # generates from the base model and every arm sees the same candidates.
+        self.adapter_off = contextlib.nullcontext
 
     def set_context(self, world_id: str, root: int, step: int) -> None:
         """Pin the sampling seed to WHERE we are, not to how many calls have
@@ -96,7 +101,7 @@ class Policy:
             enable_thinking=False)
         inputs = self.tok(text, return_tensors="pt").to(self.device)
         self.torch.manual_seed(getattr(self, "_ctx_seed", self.seed + self.calls))
-        with self.torch.no_grad():
+        with self.torch.no_grad(), self.adapter_off():
             out = self.model.generate(
                 **inputs, max_new_tokens=self.max_new_tokens,
                 do_sample=True, temperature=self.TEMPERATURE, top_p=self.TOP_P,

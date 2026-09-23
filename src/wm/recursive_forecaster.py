@@ -89,6 +89,7 @@ class StepPrediction:
     top: dict[str, float]       # probability of that value; 1.0 when the backend gives none
     p_exec: float               # probability the command executes
     requests: int = 0           # model requests this prediction cost
+    parse_failed: bool = False  # generative backends: no usable state came back
 
 
 class TypedStep:
@@ -97,19 +98,22 @@ class TypedStep:
     Validity goes in a request of its own, then every schema variable is asked
     as a Choice over all its type-possible values and read by argmax. Any client
     whose `ask(state, questions, tag)` returns the JEV response shape works here,
-    so a local model can stand in for the API without touching the rollout.
+    so a local model can stand in for the API without touching the rollout. A
+    client that also has `ask_many` gets a whole depth of the rollout at once.
     """
 
     def __init__(self, client, schema: list[dict]) -> None:
         self.client = client
         self.schema = schema
 
-    def __call__(self, canon: dict, action: str) -> StepPrediction:
-        out = self.client.ask(build_state(canon, self.schema, action),
-                              step_questions(self.schema, action), tag="R_step")
-        vout = self.client.ask(validity_state(canon),
-                               {"v_exec": validity_question(action, [])},
-                               tag="R_valid")
+    def requests(self, canon: dict, action: str) -> list[tuple[dict, dict, str]]:
+        """The two requests, as (state, questions, tag), in the order they are sent."""
+        return [(build_state(canon, self.schema, action),
+                 step_questions(self.schema, action), "R_step"),
+                (validity_state(canon),
+                 {"v_exec": validity_question(action, [])}, "R_valid")]
+
+    def assemble(self, out: dict, vout: dict) -> StepPrediction:
         values, top = {}, {}
         for q in self.schema:
             probs = out["answers"][q["id"]]["probabilities"]
@@ -119,6 +123,18 @@ class TypedStep:
         p_exec = float(vout["answers"]["v_exec"]["probabilities"]["executes"])
         return StepPrediction(values, top, p_exec, requests=2)
 
+    def __call__(self, canon: dict, action: str) -> StepPrediction:
+        (s1, q1, t1), (s2, q2, t2) = self.requests(canon, action)
+        out = self.client.ask(s1, q1, tag=t1)
+        vout = self.client.ask(s2, q2, tag=t2)
+        return self.assemble(out, vout)
+
+    def predict_batch(self, pairs: list[tuple[dict, str]]) -> list[StepPrediction]:
+        if not hasattr(self.client, "ask_many"):
+            return [self(c, a) for c, a in pairs]
+        outs = self.client.ask_many([r for c, a in pairs for r in self.requests(c, a)])
+        return [self.assemble(outs[2 * i], outs[2 * i + 1]) for i in range(len(pairs))]
+
 
 @dataclass
 class Stats:
@@ -127,6 +143,7 @@ class Stats:
     branches: int = 0
     cache_hits: int = 0
     contradictions: int = 0
+    parse_failures: int = 0
     # Drift diagnostics, keyed by rollout depth (1-based). Written only when the
     # runner supplies the true trajectory, read only by the analysis — never by
     # `score`, so the truth cannot reach a planning decision.
@@ -168,25 +185,51 @@ class RecursiveForecaster:
     def _fingerprint(canon: dict) -> str:
         return "|".join(",".join(r) for r in canon["dynamic_facts"])
 
+    def _store(self, key: tuple, canon: dict, pred: StepPrediction) -> tuple[dict, float]:
+        self.stats.requests += pred.requests
+        self.stats.parse_failures += pred.parse_failed
+        nxt = project_state(canon, pred.values, self.schema)
+        # A variable whose argmax carries little mass means the marginals did not
+        # agree on one state. Counted, never patched.
+        if any(v < 0.5 for v in pred.top.values()):
+            self.stats.contradictions += 1
+        self._cache[key] = (nxt, pred.p_exec)
+        return nxt, pred.p_exec
+
     def _advance(self, canon: dict, action: str) -> tuple[dict, float]:
         """Predicted next state and the probability the command executes."""
         key = (self._fingerprint(canon), action)
         if key in self._cache:
             self.stats.cache_hits += 1
             return self._cache[key]
+        return self._store(key, canon, self.step(canon, action))
 
-        pred = self.step(canon, action)
-        self.stats.requests += pred.requests
-        p_exec = pred.p_exec
-
-        nxt = project_state(canon, pred.values, self.schema)
-        # A variable whose argmax carries little mass means the marginals did not
-        # agree on one state. Counted, never patched.
-        if any(v < 0.5 for v in pred.top.values()):
-            self.stats.contradictions += 1
-
-        self._cache[key] = (nxt, p_exec)
-        return nxt, p_exec
+    def _advance_beam(self, beam: list, action: str) -> tuple[list, float]:
+        """One depth of the rollout: every beam state tries `action`; it runs
+        with probability p or leaves the state as it was. Returns the new beam
+        and the expected number of failures at this depth."""
+        self.stats.steps += 1
+        nxt: list[tuple[dict, float]] = []
+        fail_mass = 0.0
+        for state, w in beam:
+            s2, p = self._advance(state, action)
+            fail_mass += w * (1.0 - p)
+            if w * p > PRUNE_W:
+                nxt.append((s2, w * p))
+            if w * (1.0 - p) > PRUNE_W:
+                nxt.append((state, w * (1.0 - p)))
+        merged: dict[str, tuple[dict, float]] = {}
+        for state, w in nxt:
+            fp = self._fingerprint(state)
+            if fp in merged:
+                merged[fp] = (state, merged[fp][1] + w)
+            else:
+                merged[fp] = (state, w)
+        beam = sorted(merged.values(), key=lambda kv: -kv[1])[:BEAM_K]
+        total = sum(w for _, w in beam) or 1.0
+        beam = [(s, w / total) for s, w in beam]
+        self.stats.branches += len(beam)
+        return beam, fail_mass
 
     def _record_drift(self, depth: int, beam: list, truth: dict) -> None:
         """Diagnostic only. Compares the rollout with the real trajectory."""
@@ -213,42 +256,64 @@ class RecursiveForecaster:
         beam: list[tuple[dict, float]] = [(canon, 1.0)]
         n_invalid = 0.0
         for depth, a in enumerate(actions, start=1):
-            self.stats.steps += 1
-            nxt: list[tuple[dict, float]] = []
-            fail_mass = 0.0
-            for state, w in beam:
-                s2, p = self._advance(state, a)
-                fail_mass += w * (1.0 - p)
-                if w * p > PRUNE_W:
-                    nxt.append((s2, w * p))
-                if w * (1.0 - p) > PRUNE_W:
-                    nxt.append((state, w * (1.0 - p)))
+            beam, fail_mass = self._advance_beam(beam, a)
             n_invalid += fail_mass
-            merged: dict[str, tuple[dict, float]] = {}
-            for state, w in nxt:
-                fp = self._fingerprint(state)
-                if fp in merged:
-                    merged[fp] = (state, merged[fp][1] + w)
-                else:
-                    merged[fp] = (state, w)
-            beam = sorted(merged.values(), key=lambda kv: -kv[1])[:BEAM_K]
-            total = sum(w for _, w in beam) or 1.0
-            beam = [(s, w / total) for s, w in beam]
-            self.stats.branches += len(beam)
             if truth is not None and depth <= len(truth):
                 self._record_drift(depth, beam, truth[depth - 1])
         return beam, n_invalid
 
-    def score(self, canon: dict, state_key: str, prefix: tuple[str, ...],
-              p_first: dict[str, float],
-              truth: list[dict] | None = None) -> tuple[Any, float]:
-        """Same signature as JevForecaster.score so the planner is unchanged."""
+    def _goal_terms(self, beam: list):
         from wm.jev_forecaster import GoalTerms
-        beam, n_invalid = self.rollout(canon, prefix, truth)
-        self._last_beam = beam
         conj = progress = 0.0
         for state, w in beam:
             sat, prog = goal_from_rows(state["dynamic_facts"], self.goal)
             conj += w * float(sat)
             progress += w * prog
-        return GoalTerms(conj, progress), n_invalid
+        return GoalTerms(conj, progress)
+
+    def score(self, canon: dict, state_key: str, prefix: tuple[str, ...],
+              p_first: dict[str, float],
+              truth: list[dict] | None = None) -> tuple[Any, float]:
+        """Same signature as JevForecaster.score so the planner is unchanged."""
+        beam, n_invalid = self.rollout(canon, prefix, truth)
+        self._last_beam = beam
+        return self._goal_terms(beam), n_invalid
+
+    def score_many(self, canon: dict, prefixes: list[tuple[str, ...]],
+                   truths: dict | None = None) -> list[tuple[Any, float]]:
+        """`score` for every prefix at once, one rollout depth at a time.
+
+        All (state, action) pairs a depth needs are predicted together, which
+        is what makes a local model usable: one batched forward instead of one
+        per beam state. Each prefix then advances through `_advance_beam`
+        exactly as `rollout` would, so results match per-prefix `score`
+        (tests/test_batched_rollout.py). Returned in the order of `prefixes`.
+        """
+        beams = {p: [(canon, 1.0)] for p in prefixes}
+        n_inv = {p: 0.0 for p in prefixes}
+        for depth in range(1, max(len(p) for p in prefixes) + 1):
+            todo: dict[tuple, tuple[dict, str]] = {}
+            for p in prefixes:
+                if depth > len(p):
+                    continue
+                for state, _ in beams[p]:
+                    key = (self._fingerprint(state), p[depth - 1])
+                    if key not in self._cache and key not in todo:
+                        todo[key] = (state, p[depth - 1])
+            if todo:
+                pairs = list(todo.values())
+                if hasattr(self.step, "predict_batch"):
+                    preds = self.step.predict_batch(pairs)
+                else:
+                    preds = [self.step(c, a) for c, a in pairs]
+                for key, (state, _), pred in zip(todo, pairs, preds):
+                    self._store(key, state, pred)
+            for p in prefixes:
+                if depth > len(p):
+                    continue
+                beams[p], fail_mass = self._advance_beam(beams[p], p[depth - 1])
+                n_inv[p] += fail_mass
+                truth = truths.get(p) if truths else None
+                if truth is not None and depth <= len(truth):
+                    self._record_drift(depth, beams[p], truth[depth - 1])
+        return [(self._goal_terms(beams[p]), n_inv[p]) for p in prefixes]
