@@ -1,0 +1,74 @@
+arm A enabled: JEV forecaster
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 3/398 [00:00<00:13, 28.31it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 142.75it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 171.51it/s]Loading weights:  16%|█▋        | 65/398 [00:00<00:02, 164.13it/s]Loading weights:  21%|██        | 82/398 [00:00<00:02, 150.68it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 157.48it/s]Loading weights:  30%|██▉       | 118/398 [00:00<00:01, 146.84it/s]Loading weights:  34%|███▎      | 134/398 [00:00<00:01, 150.31it/s]Loading weights:  38%|███▊      | 150/398 [00:01<00:01, 135.81it/s]Loading weights:  42%|████▏     | 167/398 [00:01<00:01, 144.74it/s]Loading weights:  46%|████▌     | 182/398 [00:01<00:01, 131.62it/s]Loading weights:  51%|█████     | 201/398 [00:01<00:01, 143.75it/s]Loading weights:  54%|█████▍    | 216/398 [00:01<00:01, 140.97it/s]Loading weights:  59%|█████▊    | 233/398 [00:01<00:01, 146.60it/s]Loading weights:  62%|██████▏   | 248/398 [00:01<00:01, 144.77it/s]Loading weights:  67%|██████▋   | 267/398 [00:01<00:00, 152.83it/s]Loading weights:  71%|███████   | 283/398 [00:01<00:00, 152.66it/s]Loading weights:  75%|███████▌  | 300/398 [00:02<00:00, 157.23it/s]Loading weights:  79%|███████▉  | 316/398 [00:02<00:00, 155.97it/s]Loading weights:  84%|████████▎ | 333/398 [00:02<00:00, 159.40it/s]Loading weights:  88%|████████▊ | 349/398 [00:02<00:00, 155.97it/s]Loading weights:  92%|█████████▏| 366/398 [00:02<00:00, 159.23it/s]Loading weights:  96%|█████████▌| 382/398 [00:02<00:00, 157.47it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 150.69it/s]
+loaded.
+  t000 r0  R=X(30)  [1 sets]
+  t000 r1  R=O(12)  [2 sets]
+  t000 r2  R=X(30)  [3 sets]
+  t000 r3  R=O(13)  [4 sets]
+  t001 r0  R=X(30)  [5 sets]
+  t001 r1  R=X(30)  [6 sets]
+  t001 r2  R=X(30)  [7 sets]
+  t001 r3  R=O(9)  [8 sets]
+  t002 r0  R=X(30)  [9 sets]
+  t002 r1  R=X(30)  [10 sets]
+  t002 r2  R=O(4)  [11 sets]
+  t002 r3  R=X(30)  [12 sets]
+  t003 r0  R=X(30)  [13 sets]
+  t003 r1  R=X(30)  [14 sets]
+  t003 r2  R=O(7)  [15 sets]
+  t003 r3  R=X(30)  [16 sets]
+  t004 r0  R=O(13)  [17 sets]
+  t004 r1  R=O(14)  [18 sets]
+  t004 r2  R=O(17)  [19 sets]
+  t004 r3  R=O(6)  [20 sets]
+  t005 r0  R=X(30)  [21 sets]
+  t005 r1  R=X(30)  [22 sets]
+  t005 r2  R=X(30)  [23 sets]
+  t005 r3  R=X(30)  [24 sets]
+  t006 r0  R=X(30)  [25 sets]
+  t006 r1  R=X(30)  [26 sets]
+  t006 r2  R=X(30)  [27 sets]
+  t006 r3  R=X(30)  [28 sets]
+  t007 r0  R=X(30)  [29 sets]
+  t007 r1  R=X(30)  [30 sets]
+  t007 r2  R=X(30)  [31 sets]
+  t007 r3  R=O(6)  [32 sets]
+  t008 r0  R=O(7)  [33 sets]
+  t008 r1  R=O(24)  [34 sets]
+  t008 r2  R=O(16)  [35 sets]
+  t008 r3  R=O(6)  [36 sets]
+  t009 r0  R=O(14)  [37 sets]
+  t009 r1  R=X(30)  [38 sets]
+  t009 r2  R=X(30)  [39 sets]
+  t009 r3  R=X(30)  [40 sets]
+  t010 r0  R=X(30)  [41 sets]
+  t010 r1  R=X(30)  [42 sets]
+  t010 r2  R=X(30)  [43 sets]
+  t010 r3  R=X(30)  [44 sets]
+  t011 r0  R=X(30)  [45 sets]
+  t011 r1  R=X(30)  [46 sets]
+  t011 r2  R=X(30)  [47 sets]
+  t011 r3  R=X(30)  [48 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+R             48     31.2%     24.1     18.5%     55.6%      0      0
+
+분해
+
+JEV: 요청 6815  에피소드당 142  conjunction bound 위반 0
+
+오류 누적 (재귀 arm, 예측 상태 vs 실제 상태)
+   depth       n       상태 완전일치       변수 정확도    beam 포함
+       1   18197         95.7%        99.3%     100.0%
+       2   14678         71.7%        94.9%     100.0%
+       3   10249         69.0%        90.8%      99.8%
+       4    5256         67.9%        88.5%      99.5%
+  모순 감지 101  캐시 적중 56725
+     calls=6815 tokens=16,486,210 cost=$0.692
+
+policy calls=1171 repairs=13 fallbacks=1 catalog=40
+==========================================================================

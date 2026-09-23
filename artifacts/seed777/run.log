@@ -1,0 +1,65 @@
+arm A enabled: JEV forecaster
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 3/398 [00:00<00:14, 27.91it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 141.92it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 169.77it/s]Loading weights:  16%|█▋        | 65/398 [00:00<00:01, 167.25it/s]Loading weights:  21%|██        | 82/398 [00:00<00:01, 158.53it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 171.27it/s]Loading weights:  30%|███       | 120/398 [00:00<00:01, 160.79it/s]Loading weights:  34%|███▍      | 137/398 [00:00<00:01, 150.26it/s]Loading weights:  39%|███▉      | 157/398 [00:01<00:01, 156.06it/s]Loading weights:  43%|████▎     | 173/398 [00:01<00:01, 152.32it/s]Loading weights:  48%|████▊     | 190/398 [00:01<00:01, 156.82it/s]Loading weights:  52%|█████▏    | 206/398 [00:01<00:01, 157.38it/s]Loading weights:  56%|█████▌    | 223/398 [00:01<00:01, 160.83it/s]Loading weights:  60%|██████    | 240/398 [00:01<00:00, 159.58it/s]Loading weights:  65%|██████▍   | 257/398 [00:01<00:00, 159.72it/s]Loading weights:  69%|██████▉   | 276/398 [00:01<00:00, 168.21it/s]Loading weights:  74%|███████▎  | 293/398 [00:01<00:00, 161.19it/s]Loading weights:  78%|███████▊  | 312/398 [00:01<00:00, 163.69it/s]Loading weights:  84%|████████▎ | 333/398 [00:02<00:00, 162.69it/s]Loading weights:  89%|████████▉ | 355/398 [00:02<00:00, 171.80it/s]Loading weights:  94%|█████████▎| 373/398 [00:02<00:00, 170.00it/s]Loading weights:  98%|█████████▊| 391/398 [00:02<00:00, 160.26it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 161.08it/s]
+loaded.
+  t000 r0  validity=O(6)  oracle=X(30)  A=X(30)  [1 sets]
+  t000 r1  validity=O(12)  oracle=O(12)  A=O(27)  [2 sets]
+  t000 r2  validity=O(21)  oracle=O(11)  A=O(9)  [3 sets]
+  t000 r3  validity=O(9)  oracle=O(12)  A=O(6)  [4 sets]
+  t001 r0  validity=O(13)  oracle=O(14)  A=O(10)  [5 sets]
+  t001 r1  validity=O(5)  oracle=O(5)  A=O(5)  [6 sets]
+  t001 r2  validity=O(5)  oracle=O(5)  A=O(5)  [7 sets]
+  t001 r3  validity=O(4)  oracle=O(4)  A=O(4)  [8 sets]
+  t002 r0  validity=O(7)  oracle=O(7)  A=O(7)  [9 sets]
+  t002 r1  validity=O(7)  oracle=O(8)  A=O(9)  [10 sets]
+  t002 r2  validity=O(4)  oracle=O(4)  A=O(4)  [11 sets]
+  t002 r3  validity=O(7)  oracle=O(6)  A=O(7)  [12 sets]
+  t003 r0  validity=X(30)  oracle=O(11)  A=X(30)  [13 sets]
+  t003 r1  validity=X(30)  oracle=X(30)  A=X(30)  [14 sets]
+  t003 r2  validity=O(6)  oracle=O(4)  A=O(5)  [15 sets]
+  t003 r3  validity=O(7)  oracle=O(9)  A=X(30)  [16 sets]
+  t004 r0  validity=O(8)  oracle=O(6)  A=O(8)  [17 sets]
+  t004 r1  validity=O(6)  oracle=O(8)  A=O(8)  [18 sets]
+  t004 r2  validity=X(30)  oracle=O(7)  A=O(7)  [19 sets]
+  t004 r3  validity=X(30)  oracle=O(8)  A=O(6)  [20 sets]
+  t005 r0  validity=O(5)  oracle=O(5)  A=O(5)  [21 sets]
+  t005 r1  validity=O(9)  oracle=O(7)  A=O(7)  [22 sets]
+  t005 r2  validity=O(7)  oracle=O(7)  A=O(8)  [23 sets]
+  t005 r3  validity=O(7)  oracle=O(6)  A=O(6)  [24 sets]
+  t006 r0  validity=X(30)  oracle=X(30)  A=X(30)  [25 sets]
+  t006 r1  validity=X(30)  oracle=O(6)  A=O(6)  [26 sets]
+  t006 r2  validity=O(7)  oracle=O(8)  A=O(29)  [27 sets]
+  t006 r3  validity=X(30)  oracle=O(6)  A=O(7)  [28 sets]
+  t007 r0  validity=X(30)  oracle=O(20)  A=X(30)  [29 sets]
+  t007 r1  validity=O(11)  oracle=O(12)  A=O(11)  [30 sets]
+  t007 r2  validity=X(30)  oracle=O(8)  A=X(30)  [31 sets]
+  t007 r3  validity=X(30)  oracle=O(8)  A=X(30)  [32 sets]
+  t008 r0  validity=O(5)  oracle=O(5)  A=O(6)  [33 sets]
+  t008 r1  validity=O(7)  oracle=O(7)  A=O(7)  [34 sets]
+  t008 r2  validity=O(8)  oracle=O(10)  A=O(8)  [35 sets]
+  t008 r3  validity=O(7)  oracle=O(7)  A=O(13)  [36 sets]
+  t009 r0  validity=O(7)  oracle=O(7)  A=O(6)  [37 sets]
+  t009 r1  validity=O(6)  oracle=O(6)  A=O(7)  [38 sets]
+  t009 r2  validity=O(7)  oracle=O(7)  A=O(7)  [39 sets]
+  t009 r3  validity=O(6)  oracle=O(6)  A=O(7)  [40 sets]
+  t010 r0  validity=O(9)  oracle=O(6)  A=O(7)  [41 sets]
+  t010 r1  validity=O(8)  oracle=O(8)  A=O(12)  [42 sets]
+Traceback (most recent call last):
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 295, in <module>
+    raise SystemExit(main())
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 211, in main
+    res = run_episode(arm, root, game, meta, goal,
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 97, in run_episode
+    chosen = score_arm_a(fc, state, unique_prefixes(plans, H), plans)
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 63, in score_arm_a
+    else fc.validity(state, sorted({p[0] for p in prefixes}), []))
+  File "/home/yonghwi/jev-wm/src/wm/jev_forecaster.py", line 128, in validity
+    out = self.client.ask(st, qs, tag="A_valid")
+  File "/home/yonghwi/jev-wm/src/jev_client.py", line 127, in ask
+    r.raise_for_status()
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '402 Payment Required' for url 'https://api.typesafe.ai/v1/systemone'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
