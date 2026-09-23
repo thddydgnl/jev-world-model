@@ -119,6 +119,15 @@ def main() -> int:
         print("조건 해시가 서로 다른 실행을 합칠 수 없습니다. "
               "조건별로 나눠 분석하거나 --allow-mixed-config 를 명시하세요.")
         return 2
+    # Same rule per arm: an arm fixed mid-way (e.g. the K1 failure-memory fix
+    # for validity/oracle) must not be pooled with its own earlier runs.
+    per_arm = defaultdict(set)
+    for e in eps:
+        per_arm[e["arm"]].add(e.get("arm_hash") or "-")
+    mixed = {a: sorted(h) for a, h in per_arm.items() if len(h) > 1}
+    if mixed and not args.allow_mixed_config:
+        print(f"같은 arm 안에서 arm 해시가 섞여 있습니다: {mixed}")
+        return 2
     rng = random.Random(20260921)
     arms = [a for a in ORDER if any(e["arm"] == a for e in eps)]
     seeds = sorted({e["seed"] for e in eps})

@@ -76,18 +76,31 @@ def true_trajectory(env, game, prefix):
     return out
 
 
-def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
-    """JEV-backed arms: identical planner, goal and utility.
+def live_prefixes(prefixes, state, failed):
+    """The planner's failure memory, shared by every arm that plans.
 
     `failed` holds (state fingerprint, action) pairs this episode already
     ATTEMPTED and watched fail. That is observed history, which 설계.md §3.5
-    lists as allowed online information — the policy already receives it — and
-    without it a confidently wrong validity judgement (0.91 on a command that
-    cannot run) loops forever, because the failed action is a no-op so the
-    state, and therefore the forecast, never changes.
+    lists as allowed online information — the policy already receives it.
+    Prefixes whose first action already failed from this exact state are
+    dropped, unless every prefix has, in which case the episode keeps going.
+
+    Without it a planner loops on a no-op: a confidently wrong validity
+    judgement (0.91 on a command that cannot run) never changes, and even the
+    engine-backed oracle repeated a known-invalid `go east` up to nine times
+    whenever the policy prior and the lookahead outweighed the invalid penalty.
+    It was first added to the JEV arms only, which left the oracle planning
+    with less information than the arms it is the reference for (K1, 9/23).
     """
-    # The endpoint ablation must not issue validity requests at all.
+    if failed is None:
+        return list(prefixes)
     fingerprint = "|".join(",".join(r) for r in state["dynamic_facts"])
+    live = [p for p in prefixes if (fingerprint, p[0]) not in failed]
+    return live or list(prefixes)
+
+
+def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
+    """JEV-backed arms: identical planner, goal and utility."""
     # The recursive arm asks validity inside its own rollout; the endpoint
     # ablation must not ask it at all.
     p_first = ({} if fc.mode in ("endpoint", "recursive")
@@ -103,10 +116,7 @@ def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
         return prefix, utility(terms.conj, terms.progress, n_inv,
                                len(prefix), plan_prior(plans, prefix))
 
-    live = [p for p in prefixes
-            if failed is None or (fingerprint, p[0]) not in failed]
-    if not live:                       # everything tried and failed; keep going
-        live = list(prefixes)
+    live = live_prefixes(prefixes, state, failed)
 
     # env.copy() deep-copies shared engine state, so it cannot run inside the
     # thread pool: eight workers cloning the same env raced and crashed with
@@ -148,7 +158,8 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         else:
             goal_blind = (arm == "validity")
             best, chosen = None, None
-            for prefix in unique_prefixes(plans, HORIZON[0]):
+            for prefix in live_prefixes(unique_prefixes(plans, HORIZON[0]),
+                                        state, failed):
                 branch = env.copy()
                 n_inv = 0
                 for a in prefix:

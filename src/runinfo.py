@@ -126,8 +126,13 @@ def condition(*, model: str, max_new_tokens: int, k: int, h: int,
 # arm's hash only.
 ARM_CONFIG: dict[str, dict[str, Any]] = {
     "C": {"selector": "first action of the policy's top plan"},
-    "validity": {"selector": "utility with engine validity, goal terms zeroed"},
-    "oracle": {"selector": "utility with the engine's true endpoint"},
+    # The planner's failure memory (condition["failure_memory"]) reached these
+    # two only after K1 found them without it; the flag makes their hashes
+    # differ from the runs made before (kiis2026f/실험계획.md §11).
+    "validity": {"selector": "utility with engine validity, goal terms zeroed",
+                 "failure_memory": True},
+    "oracle": {"selector": "utility with the engine's true endpoint",
+               "failure_memory": True},
     "A_jev": {"world_model": "recursive one-step, typed", "backend": "jev"},
     "R": {"world_model": "recursive one-step, typed", "backend": "jev"},
     "A": {"world_model": "direct-horizon, execution-pattern mixture", "backend": "jev"},
