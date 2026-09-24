@@ -1,0 +1,46 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+gen: 6000 transitions -> 6000 examples, tokens mean 1944 max 2057 total 11,662,555
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 3/398 [00:00<00:14, 26.43it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 134.04it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 165.20it/s]Loading weights:  16%|█▌        | 64/398 [00:00<00:02, 166.71it/s]Loading weights:  20%|██        | 81/398 [00:00<00:01, 165.18it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 174.33it/s]Loading weights:  30%|███       | 120/398 [00:00<00:01, 173.58it/s]Loading weights:  35%|███▍      | 138/398 [00:00<00:01, 165.72it/s]Loading weights:  40%|███▉      | 158/398 [00:00<00:01, 171.28it/s]Loading weights:  45%|████▍     | 179/398 [00:01<00:01, 177.39it/s]Loading weights:  50%|████▉     | 198/398 [00:01<00:01, 179.94it/s]Loading weights:  55%|█████▍    | 217/398 [00:01<00:01, 179.67it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:00, 178.83it/s]Loading weights:  64%|██████▍   | 256/398 [00:01<00:00, 186.79it/s]Loading weights:  69%|██████▉   | 275/398 [00:01<00:00, 186.64it/s]Loading weights:  74%|███████▍  | 294/398 [00:01<00:00, 185.61it/s]Loading weights:  79%|███████▊  | 313/398 [00:01<00:00, 179.74it/s]Loading weights:  84%|████████▍ | 334/398 [00:01<00:00, 186.96it/s]Loading weights:  89%|████████▉ | 355/398 [00:02<00:00, 192.82it/s]Loading weights:  94%|█████████▍| 375/398 [00:02<00:00, 193.62it/s]Loading weights:  99%|█████████▉| 395/398 [00:02<00:00, 189.93it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 177.95it/s]
+trainable params 33,030,144
+  step 1/752 loss 0.3221 tok/s 1,554 mem 11.8GB
+  step 20/752 loss 0.1407 tok/s 1,517 mem 12.2GB
+  step 40/752 loss 0.0780 tok/s 1,497 mem 12.2GB
+  step 60/752 loss 0.0548 tok/s 1,484 mem 12.2GB
+  step 80/752 loss 0.0423 tok/s 1,498 mem 12.2GB
+  step 100/752 loss 0.0346 tok/s 1,495 mem 12.2GB
+  step 120/752 loss 0.0294 tok/s 1,494 mem 12.2GB
+  step 140/752 loss 0.0255 tok/s 1,495 mem 12.2GB
+  step 160/752 loss 0.0225 tok/s 1,490 mem 12.2GB
+  step 180/752 loss 0.0201 tok/s 1,491 mem 12.2GB
+  step 200/752 loss 0.0182 tok/s 1,492 mem 12.2GB
+  step 220/752 loss 0.0167 tok/s 1,492 mem 12.2GB
+  step 240/752 loss 0.0154 tok/s 1,490 mem 12.2GB
+  step 260/752 loss 0.0144 tok/s 1,486 mem 12.2GB
+  step 280/752 loss 0.0134 tok/s 1,484 mem 12.2GB
+  step 300/752 loss 0.0126 tok/s 1,486 mem 12.2GB
+  step 320/752 loss 0.0118 tok/s 1,488 mem 12.2GB
+  step 340/752 loss 0.0112 tok/s 1,488 mem 12.2GB
+  step 360/752 loss 0.0106 tok/s 1,489 mem 12.2GB
+epoch 1: {"epoch": 1, "steps": 376, "train_loss": 0.010198014466493396, "seconds": 7826.3, "tokens_per_s": 1490.2, "eval": {"transitions": 200, "transition_acc": 0.985, "validity_balanced_acc": 0.984375, "var_acc_when_executes": 0.9965277777777778, "parse_fail_rate": 0.0}}
+  step 380/752 loss 0.0006 tok/s 1,426 mem 12.2GB
+  step 400/752 loss 0.0006 tok/s 1,430 mem 12.2GB
+  step 420/752 loss 0.0005 tok/s 1,433 mem 12.2GB
+  step 440/752 loss 0.0004 tok/s 1,435 mem 12.2GB
+  step 460/752 loss 0.0004 tok/s 1,438 mem 12.2GB
+  step 480/752 loss 0.0003 tok/s 1,441 mem 12.2GB
+  step 500/752 loss 0.0003 tok/s 1,443 mem 12.2GB
+  step 520/752 loss 0.0003 tok/s 1,444 mem 12.2GB
+  step 540/752 loss 0.0002 tok/s 1,446 mem 12.2GB
+  step 560/752 loss 0.0002 tok/s 1,447 mem 12.2GB
+  step 580/752 loss 0.0002 tok/s 1,448 mem 12.2GB
+  step 600/752 loss 0.0002 tok/s 1,449 mem 12.2GB
+  step 620/752 loss 0.0002 tok/s 1,450 mem 12.2GB
+  step 640/752 loss 0.0002 tok/s 1,452 mem 12.2GB
+  step 660/752 loss 0.0002 tok/s 1,453 mem 12.2GB
+  step 680/752 loss 0.0002 tok/s 1,454 mem 12.2GB
+  step 700/752 loss 0.0002 tok/s 1,455 mem 12.2GB
+  step 720/752 loss 0.0001 tok/s 1,455 mem 12.2GB
+  step 740/752 loss 0.0001 tok/s 1,456 mem 12.2GB
+epoch 2: {"epoch": 2, "steps": 752, "train_loss": 0.00013643503816394508, "seconds": 16011.4, "tokens_per_s": 1456.8, "eval": {"transitions": 200, "transition_acc": 1.0, "validity_balanced_acc": 1.0, "var_acc_when_executes": 1.0, "parse_fail_rate": 0.0}}
+selected epoch 2 (val transition acc 1.000)
+done: 272.9 min, 1,425 tok/s -> artifacts/kiis_k3/D_gen

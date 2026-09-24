@@ -23,13 +23,19 @@ JEV의 typed 판단 출력이 **행동 조건부 미래 사실 예측기**로 �
 | 원격 작업 경로 | `~/jev-wm` (venv 포함) |
 | JEV API | `jev-1.13.0` 고정, 누적 $0.047 사용 |
 
-**GPU가 필요한 것:** Qwen3-4B policy 추론(arm C·A의 후보 생성), arm B의 QLoRA 학습.
-**필요 없는 것:** JEV API 호출, TextWorld 라벨링, 모든 intrinsic 분석 — 맥북에서 수행.
+**GPU가 필요한 것:** Qwen3-4B 정책·세계모델 추론, B·D의 LoRA 학습과 검증.
+**GPU 없이 가능한 것:** JEV API 호출, TextWorld 라벨링, 저장된 결과의 통계 분석.
 
-9일 안에 arm B 학습(2~4주 소요)은 들어가지 않는다. GPU 창은 policy가 필요한
-closed-loop 실험에 쓰고, 기한 전에 연장 여부를 확인할 것.
+초기에는 arm B 학습에 2~4주를 예상했지만, KIIS에서는 전이 6,000개·2 epoch LoRA로
+범위를 확정했고 **2026-09-24 B·D 학습을 모두 완료했다** (합계 18.484 GPU-h).
+최신 검증·진행 상태는 [`kiis2026f/README.md`](kiis2026f/README.md), 학습 기록은
+[`artifacts/kiis_k3/README.md`](artifacts/kiis_k3/README.md)를 따른다.
+위 GPU 사용 기한은 초기 기록이며, 연장 여부는 별도 확인이 필요하다.
 
-## 진행 상태
+## 초기 MVP 진행 기록
+
+아래 표와 결과는 KIIS 계획 이전 기록이다. 현재 단계의 완료 여부는
+[`kiis2026f/README.md`](kiis2026f/README.md)의 K0–K7 표기를 따른다.
 
 | 단계 | 상태 | 비고 |
 |---|---|---|

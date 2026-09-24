@@ -1,0 +1,61 @@
+{
+  "style": "gen",
+  "adapter": "artifacts/kiis_k3/D_gen",
+  "selected_epoch": 2,
+  "transitions": 200,
+  "val_sha256": "ad4f39959314db5fdb0398056637619b9833fd3b7ae652f631fae6c61415c765",
+  "subset_sha256": "3f42419a5b81ee79b9e4f5a395947045498dcb2aaea790dd0a1451323460691c",
+  "loss_definition": "token-weighted target CE; fixed options per validation example",
+  "script_sha256": "3654892706092be2e84d52fb38ef22a01368dbf57209c014aaedff2694a70bee",
+  "revision": {
+    "line": "ca988eacc7be7f708f95115149da92079a9247c0 dirty_files=0 synced=2026-09-23T16:43:26Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "results": {
+    "base": {
+      "target_token_ce": 0.23423391685596814,
+      "target_tokens": 24406,
+      "inference": {
+        "transitions": 200,
+        "transition_acc": 0.4,
+        "validity_balanced_acc": 0.6193910256410255,
+        "var_acc_when_executes": 0.8836805555555556,
+        "parse_fail_rate": 0.305
+      }
+    },
+    "epoch_1": {
+      "target_token_ce": 0.0005555287895028557,
+      "target_tokens": 24406,
+      "weights_sha256": "49ef219272ef58f0"
+    },
+    "epoch_2": {
+      "target_token_ce": 8.260164679419006e-05,
+      "target_tokens": 24406,
+      "weights_sha256": "16ee9b707f6b3f58"
+    },
+    "selected": {
+      "target_token_ce": 8.260164679419006e-05,
+      "target_tokens": 24406,
+      "inference": {
+        "transitions": 200,
+        "transition_acc": 1.0,
+        "validity_balanced_acc": 1.0,
+        "var_acc_when_executes": 1.0,
+        "parse_fail_rate": 0.0
+      },
+      "weights_sha256": "16ee9b707f6b3f58"
+    }
+  },
+  "gates": {
+    "accuracy_improves": true,
+    "val_loss_decreases": true,
+    "selected_weights_match": true,
+    "selection_accuracy_reproduced": true
+  }
+}

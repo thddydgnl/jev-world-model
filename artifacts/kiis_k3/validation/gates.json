@@ -1,0 +1,339 @@
+{
+  "gates": {
+    "training_files_synced": true,
+    "local_validation_inputs_match_server": true,
+    "validation_report_inputs": true,
+    "same_training_data_and_settings": true,
+    "planned_training_size": true,
+    "same_validation_subset": true,
+    "validation_gates": true,
+    "dev_manifests_finished": true,
+    "dev_episodes_completed": true,
+    "same_frozen_condition": true,
+    "same_dev_world": true,
+    "same_policy_seed": true,
+    "same_step0_candidates": true,
+    "selected_adapters_used": true
+  },
+  "training_files": {
+    "B_typed/README.md": true,
+    "B_typed/adapter_config.json": true,
+    "B_typed/adapter_model.safetensors": true,
+    "B_typed/epoch_1/README.md": true,
+    "B_typed/epoch_1/adapter_config.json": true,
+    "B_typed/epoch_1/adapter_model.safetensors": true,
+    "B_typed/epoch_2/README.md": true,
+    "B_typed/epoch_2/adapter_config.json": true,
+    "B_typed/epoch_2/adapter_model.safetensors": true,
+    "B_typed/train_meta.json": true,
+    "D_gen/README.md": true,
+    "D_gen/adapter_config.json": true,
+    "D_gen/adapter_model.safetensors": true,
+    "D_gen/epoch_1/README.md": true,
+    "D_gen/epoch_1/adapter_config.json": true,
+    "D_gen/epoch_1/adapter_model.safetensors": true,
+    "D_gen/epoch_2/README.md": true,
+    "D_gen/epoch_2/adapter_config.json": true,
+    "D_gen/epoch_2/adapter_model.safetensors": true,
+    "D_gen/train_meta.json": true
+  },
+  "source_files": {
+    "scripts/kiis_train_wm.py": true,
+    "scripts/kiis_validate_wm.py": true,
+    "scripts/mvp_c_headroom.py": true,
+    "src/runinfo.py": true,
+    "src/agent/policy.py": true,
+    "src/wm/llm_backends.py": true,
+    "src/wm/recursive_forecaster.py": true,
+    "data/kiis/transitions/train.jsonl": true,
+    "data/kiis/transitions/val.jsonl": true
+  },
+  "validation": {
+    "B_typed": {
+      "style": "typed",
+      "adapter": "artifacts/kiis_k3/B_typed",
+      "selected_epoch": 2,
+      "transitions": 200,
+      "val_sha256": "ad4f39959314db5fdb0398056637619b9833fd3b7ae652f631fae6c61415c765",
+      "subset_sha256": "3f42419a5b81ee79b9e4f5a395947045498dcb2aaea790dd0a1451323460691c",
+      "loss_definition": "token-weighted target CE; fixed options per validation example",
+      "script_sha256": "3654892706092be2e84d52fb38ef22a01368dbf57209c014aaedff2694a70bee",
+      "revision": {
+        "line": "ca988eacc7be7f708f95115149da92079a9247c0 dirty_files=0 synced=2026-09-23T16:43:26Z",
+        "source": "REVISION"
+      },
+      "software": {
+        "textworld": "1.7.0",
+        "torch": "2.6.0+cu124",
+        "transformers": "5.17.0",
+        "peft": "0.21.0"
+      },
+      "results": {
+        "base": {
+          "target_token_ce": 3.7644507410150307,
+          "target_tokens": 1400,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 0.52,
+            "validity_balanced_acc": 0.6318108974358975,
+            "var_acc_when_executes": 0.8611111111111112,
+            "parse_fail_rate": 0.0
+          }
+        },
+        "epoch_1": {
+          "target_token_ce": 0.0016174098068181817,
+          "target_tokens": 1400,
+          "weights_sha256": "8871f733f4f310bf"
+        },
+        "epoch_2": {
+          "target_token_ce": 0.0007091172799476807,
+          "target_tokens": 1400,
+          "weights_sha256": "b8b322c8ba8eb8d7"
+        },
+        "selected": {
+          "target_token_ce": 0.0007091172799476807,
+          "target_tokens": 1400,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 1.0,
+            "validity_balanced_acc": 1.0,
+            "var_acc_when_executes": 1.0,
+            "parse_fail_rate": 0.0
+          },
+          "weights_sha256": "b8b322c8ba8eb8d7"
+        }
+      },
+      "gates": {
+        "accuracy_improves": true,
+        "val_loss_decreases": true,
+        "selected_weights_match": true,
+        "selection_accuracy_reproduced": true
+      }
+    },
+    "D_gen": {
+      "style": "gen",
+      "adapter": "artifacts/kiis_k3/D_gen",
+      "selected_epoch": 2,
+      "transitions": 200,
+      "val_sha256": "ad4f39959314db5fdb0398056637619b9833fd3b7ae652f631fae6c61415c765",
+      "subset_sha256": "3f42419a5b81ee79b9e4f5a395947045498dcb2aaea790dd0a1451323460691c",
+      "loss_definition": "token-weighted target CE; fixed options per validation example",
+      "script_sha256": "3654892706092be2e84d52fb38ef22a01368dbf57209c014aaedff2694a70bee",
+      "revision": {
+        "line": "ca988eacc7be7f708f95115149da92079a9247c0 dirty_files=0 synced=2026-09-23T16:43:26Z",
+        "source": "REVISION"
+      },
+      "software": {
+        "textworld": "1.7.0",
+        "torch": "2.6.0+cu124",
+        "transformers": "5.17.0",
+        "peft": "0.21.0"
+      },
+      "results": {
+        "base": {
+          "target_token_ce": 0.23423391685596814,
+          "target_tokens": 24406,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 0.4,
+            "validity_balanced_acc": 0.6193910256410255,
+            "var_acc_when_executes": 0.8836805555555556,
+            "parse_fail_rate": 0.305
+          }
+        },
+        "epoch_1": {
+          "target_token_ce": 0.0005555287895028557,
+          "target_tokens": 24406,
+          "weights_sha256": "49ef219272ef58f0"
+        },
+        "epoch_2": {
+          "target_token_ce": 8.260164679419006e-05,
+          "target_tokens": 24406,
+          "weights_sha256": "16ee9b707f6b3f58"
+        },
+        "selected": {
+          "target_token_ce": 8.260164679419006e-05,
+          "target_tokens": 24406,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 1.0,
+            "validity_balanced_acc": 1.0,
+            "var_acc_when_executes": 1.0,
+            "parse_fail_rate": 0.0
+          },
+          "weights_sha256": "16ee9b707f6b3f58"
+        }
+      },
+      "gates": {
+        "accuracy_improves": true,
+        "val_loss_decreases": true,
+        "selected_weights_match": true,
+        "selection_accuracy_reproduced": true
+      }
+    }
+  },
+  "smoke_episodes": {
+    "B0_typed": {
+      "arm": "B0_typed",
+      "status": "success",
+      "success": true,
+      "steps": 14,
+      "invalid": 8,
+      "progress": 1.0,
+      "traps": 0,
+      "decoys": 0,
+      "wm_requests": 88,
+      "wm_seconds": 39.87,
+      "parse_failures": 0,
+      "drift": {
+        "n": {
+          "1": 116,
+          "2": 65
+        },
+        "exact": {
+          "1": 74,
+          "2": 11
+        },
+        "vars_ok": {
+          "1": 640,
+          "2": 300
+        },
+        "vars_tot": {
+          "1": 696,
+          "2": 390
+        },
+        "in_beam": {
+          "1": 74,
+          "2": 11
+        },
+        "contradictions": 0,
+        "cache_hits": 181
+      },
+      "world_id": "t000",
+      "root": 0,
+      "catalog_size": 40,
+      "split": "dev",
+      "policy_seed": 20260921,
+      "config_hash": "0fe479090329",
+      "arm_hash": "c44004aaef6b"
+    },
+    "B_typed": {
+      "arm": "B_typed",
+      "status": "success",
+      "success": true,
+      "steps": 20,
+      "invalid": 14,
+      "progress": 1.0,
+      "traps": 0,
+      "decoys": 0,
+      "wm_requests": 76,
+      "wm_seconds": 48.46,
+      "parse_failures": 0,
+      "drift": {
+        "n": {
+          "1": 139,
+          "2": 76
+        },
+        "exact": {
+          "1": 139,
+          "2": 76
+        },
+        "vars_ok": {
+          "1": 834,
+          "2": 456
+        },
+        "vars_tot": {
+          "1": 834,
+          "2": 456
+        },
+        "in_beam": {
+          "1": 139,
+          "2": 76
+        },
+        "contradictions": 0,
+        "cache_hits": 215
+      },
+      "world_id": "t000",
+      "root": 0,
+      "catalog_size": 40,
+      "split": "dev",
+      "policy_seed": 20260921,
+      "config_hash": "0fe479090329",
+      "arm_hash": "47a665fe8007"
+    },
+    "D_gen": {
+      "arm": "D_gen",
+      "status": "success",
+      "success": true,
+      "steps": 23,
+      "invalid": 8,
+      "progress": 1.0,
+      "traps": 0,
+      "decoys": 0,
+      "wm_requests": 51,
+      "wm_seconds": 120.82,
+      "parse_failures": 0,
+      "drift": {
+        "n": {
+          "1": 174,
+          "2": 97
+        },
+        "exact": {
+          "1": 161,
+          "2": 88
+        },
+        "vars_ok": {
+          "1": 1031,
+          "2": 569
+        },
+        "vars_tot": {
+          "1": 1044,
+          "2": 582
+        },
+        "in_beam": {
+          "1": 161,
+          "2": 88
+        },
+        "contradictions": 0,
+        "cache_hits": 271
+      },
+      "world_id": "t000",
+      "root": 0,
+      "catalog_size": 40,
+      "split": "dev",
+      "policy_seed": 20260921,
+      "config_hash": "0fe479090329",
+      "arm_hash": "7dbd9b64d0a5"
+    }
+  },
+  "step0_plans": [
+    [
+      "open steel door",
+      "go east"
+    ],
+    [
+      "take red apple",
+      "go east"
+    ],
+    [
+      "go east",
+      "open steel door"
+    ],
+    [
+      "open steel door",
+      "take red apple"
+    ],
+    [
+      "go east",
+      "take red apple"
+    ],
+    [
+      "take red apple",
+      "open steel door"
+    ]
+  ],
+  "gpu_hours": {
+    "B_typed": 13.936,
+    "D_gen": 4.548
+  }
+}

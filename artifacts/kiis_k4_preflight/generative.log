@@ -1,0 +1,18 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   4%|▎         | 14/398 [00:00<00:03, 123.90it/s]Loading weights:   9%|▉         | 36/398 [00:00<00:02, 177.40it/s]Loading weights:  14%|█▍        | 55/398 [00:00<00:01, 175.38it/s]Loading weights:  18%|█▊        | 73/398 [00:00<00:01, 167.18it/s]Loading weights:  23%|██▎       | 92/398 [00:00<00:01, 168.26it/s]Loading weights:  28%|██▊       | 111/398 [00:00<00:01, 174.29it/s]Loading weights:  32%|███▏      | 129/398 [00:00<00:01, 166.24it/s]Loading weights:  37%|███▋      | 147/398 [00:00<00:01, 162.64it/s]Loading weights:  41%|████▏     | 165/398 [00:00<00:01, 166.32it/s]Loading weights:  46%|████▌     | 182/398 [00:01<00:01, 154.59it/s]Loading weights:  51%|█████     | 201/398 [00:01<00:01, 160.88it/s]Loading weights:  55%|█████▍    | 218/398 [00:01<00:01, 158.10it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:01, 156.20it/s]Loading weights:  64%|██████▍   | 256/398 [00:01<00:00, 166.75it/s]Loading weights:  69%|██████▊   | 273/398 [00:01<00:00, 165.02it/s]Loading weights:  73%|███████▎  | 290/398 [00:01<00:00, 164.80it/s]Loading weights:  78%|███████▊  | 311/398 [00:01<00:00, 170.30it/s]Loading weights:  83%|████████▎ | 329/398 [00:02<00:00, 165.19it/s]Loading weights:  87%|████████▋ | 346/398 [00:02<00:00, 158.39it/s]Loading weights:  92%|█████████▏| 365/398 [00:02<00:00, 165.00it/s]Loading weights:  96%|█████████▌| 382/398 [00:02<00:00, 164.27it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 164.61it/s]
+loaded.
+adapter artifacts/kiis_k3/D_gen 16ee9b707f6b3f58
+condition 0fe479090329  split=dev  arms=['D_gen']
+  t000 r0  D_gen=O(23)  [1 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+D_gen          1    100.0%     23.0     34.8%    100.0%      0      0
+
+분해
+
+D_gen: 세계모델 예측 51  파싱 실패 0 (0.0%)  세계모델 GPU 3.6분 (에피소드당 216초)
+
+policy calls=23 repairs=0 fallbacks=0 catalog=40
+==========================================================================

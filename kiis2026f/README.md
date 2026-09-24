@@ -43,7 +43,7 @@ KIIS 이후 저널·큰 학회로 확장하는 계획은 [`../fullpaper/`](../fu
 - [x] K1 파일럿 (dev world) — 9/23, oracle 기준 1 episode 미달을 기록하고 조건 F 동결
 - [x] K2 LLM 세계모델 파이프라인 (타입화·생성형) — 9/24
 - [ ] 요약문 제출 (10/2)
-- [ ] K3 B·D 학습
+- [x] K3 B·D 학습·최종 검증 (9/24) — 같은 val 200개에서 B0 52% → B 100%, D0 40% → D 100%; dev 실행·정책 후보 일치 확인 ([결과](../artifacts/kiis_k3/README.md))
 - [ ] K4 본 실행 (closed-loop, 8 arm)
 - [ ] K5 k-step rollout 평가
 - [ ] K6 분석 — 표 1, 그림 2, 슬롯 채움
