@@ -1,0 +1,3 @@
+A_jev.rep1 t000: 1 rollouts  4s  requests=10
+A_jev.rep1 t001: 1 rollouts  6s  requests=20
+done A_jev.rep1: 8 rows, 6.1s, {'requests': 20, 'parse_failures': 0, 'cache_hits': 12, 'contradictions': 0}
