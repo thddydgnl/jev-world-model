@@ -1,0 +1,30 @@
+{
+  "model": "A_jev",
+  "repeat": 0,
+  "rollouts": 800,
+  "rollouts_file": "data/kiis/k5_rollouts.json",
+  "rows": 3200,
+  "arm_hash": "0e1a1a8eac4c",
+  "arm_config": {
+    "world_model": "recursive one-step, typed",
+    "backend": "jev"
+  },
+  "stats": {
+    "requests": 10274,
+    "parse_failures": 0,
+    "cache_hits": 5872,
+    "contradictions": 27
+  },
+  "seconds": 379.2,
+  "revision": {
+    "line": "5ce11f589af91a5118917094917bdbcbe3454276 dirty_files=0 synced=2026-09-25T15:54:16Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "jev_usd": 0.7487
+}

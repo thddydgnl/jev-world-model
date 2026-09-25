@@ -1,0 +1,25 @@
+A_jev.rep1 te000: 5 rollouts  9s  requests=54
+A_jev.rep1 te001: 4 rollouts  13s  requests=112
+A_jev.rep1 te002: 4 rollouts  15s  requests=160
+A_jev.rep1 te003: 4 rollouts  19s  requests=218
+A_jev.rep1 te004: 5 rollouts  22s  requests=256
+A_jev.rep1 te005: 4 rollouts  24s  requests=304
+A_jev.rep1 te006: 4 rollouts  28s  requests=360
+A_jev.rep1 te007: 4 rollouts  30s  requests=398
+A_jev.rep1 te008: 5 rollouts  34s  requests=466
+A_jev.rep1 te009: 4 rollouts  37s  requests=524
+A_jev.rep1 te010: 4 rollouts  40s  requests=566
+A_jev.rep1 te011: 4 rollouts  43s  requests=604
+A_jev.rep1 te012: 5 rollouts  47s  requests=678
+A_jev.rep1 te013: 4 rollouts  50s  requests=732
+A_jev.rep1 te014: 4 rollouts  53s  requests=790
+A_jev.rep1 te015: 4 rollouts  56s  requests=830
+A_jev.rep1 te016: 4 rollouts  60s  requests=892
+A_jev.rep1 te017: 4 rollouts  62s  requests=920
+A_jev.rep1 te018: 4 rollouts  66s  requests=970
+A_jev.rep1 te019: 4 rollouts  69s  requests=1030
+A_jev.rep1 te020: 4 rollouts  72s  requests=1058
+A_jev.rep1 te021: 4 rollouts  74s  requests=1102
+A_jev.rep1 te022: 4 rollouts  77s  requests=1144
+A_jev.rep1 te023: 4 rollouts  81s  requests=1198
+done A_jev.rep1: 400 rows, 80.6s, {'requests': 1198, 'parse_failures': 0, 'cache_hits': 640, 'contradictions': 6}

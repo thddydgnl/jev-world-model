@@ -1,0 +1,28 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 4/398 [00:00<00:11, 34.15it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 135.35it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 164.00it/s]Loading weights:  16%|█▌        | 64/398 [00:00<00:02, 163.30it/s]Loading weights:  20%|██        | 81/398 [00:00<00:01, 160.32it/s]Loading weights:  25%|██▌       | 100/398 [00:00<00:01, 169.01it/s]Loading weights:  30%|██▉       | 118/398 [00:00<00:01, 160.70it/s]Loading weights:  34%|███▍      | 135/398 [00:00<00:01, 160.38it/s]Loading weights:  38%|███▊      | 152/398 [00:00<00:01, 154.97it/s]Loading weights:  42%|████▏     | 169/398 [00:01<00:01, 152.12it/s]Loading weights:  47%|████▋     | 186/398 [00:01<00:01, 155.71it/s]Loading weights:  51%|█████     | 202/398 [00:01<00:01, 154.66it/s]Loading weights:  55%|█████▌    | 220/398 [00:01<00:01, 161.61it/s]Loading weights:  60%|█████▉    | 237/398 [00:01<00:01, 153.93it/s]Loading weights:  64%|██████▍   | 256/398 [00:01<00:00, 154.88it/s]Loading weights:  69%|██████▉   | 275/398 [00:01<00:00, 163.33it/s]Loading weights:  73%|███████▎  | 292/398 [00:01<00:00, 155.52it/s]Loading weights:  78%|███████▊  | 311/398 [00:01<00:00, 164.33it/s]Loading weights:  82%|████████▏ | 328/398 [00:02<00:00, 158.19it/s]Loading weights:  87%|████████▋ | 346/398 [00:02<00:00, 157.40it/s]Loading weights:  92%|█████████▏| 366/398 [00:02<00:00, 167.52it/s]Loading weights:  96%|█████████▌| 383/398 [00:02<00:00, 164.76it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 158.68it/s]
+te000: 34 rollouts
+te001: 34 rollouts
+te002: 34 rollouts
+te003: 34 rollouts
+te004: 34 rollouts
+te005: 34 rollouts
+te006: 34 rollouts
+te007: 34 rollouts
+te008: 34 rollouts
+te009: 34 rollouts
+te010: 34 rollouts
+te011: 34 rollouts
+te012: 34 rollouts
+te013: 34 rollouts
+te014: 34 rollouts
+te015: 34 rollouts
+te016: 32 rollouts
+te017: 32 rollouts
+te018: 32 rollouts
+te019: 32 rollouts
+te020: 32 rollouts
+te021: 32 rollouts
+te022: 32 rollouts
+te023: 32 rollouts
+800 rollouts -> data/kiis/k5_rollouts.json  policy repairs=0 fallbacks=0

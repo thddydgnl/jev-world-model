@@ -139,6 +139,7 @@ def start_paths(env, meta: dict, rng: random.Random, n: int) -> list[tuple[str, 
 def build(args) -> int:
     from agent.policy import Policy
     from forecast import render_facts
+    rev = runinfo.revision()      # at start: the code this process loaded
     policy = Policy(args.model, args.device, seed=POLICY_SEED)
     n_worlds = 24 if args.split == "test" else args.worlds
     per_world = [N_STARTS // n_worlds + (1 if i < N_STARTS % n_worlds else 0)
@@ -182,7 +183,7 @@ def build(args) -> int:
                 "policy": {"model": args.model, "k": POLICY_K, "h": POLICY_H, "seed": POLICY_SEED,
                            "calls": policy.calls, "repairs": policy.repairs,
                            "fallbacks": policy.fallbacks},
-                "revision": runinfo.revision(), "software": runinfo.software()}
+                "revision": rev, "software": runinfo.software()}
     out.write_text(json.dumps({"meta": meta_out, "rollouts": rollouts}) + "\n")
     print(f"{len(rollouts)} rollouts -> {out}  policy repairs={policy.repairs} "
           f"fallbacks={policy.fallbacks}")
@@ -215,6 +216,7 @@ def make_step(model: str, schema, ctx: dict):
 
 def evaluate(args) -> int:
     from wm.recursive_forecaster import RecursiveForecaster
+    rev = runinfo.revision()      # at start: the code this process loaded
     data = json.loads(Path(args.rollouts).read_text())
     rolls = data["rollouts"]
     if args.repeat:
@@ -313,7 +315,7 @@ def evaluate(args) -> int:
                 "arm_hash": runinfo.arm_hash(args.model, adapter),
                 "arm_config": runinfo.arm_config(args.model, adapter),
                 "stats": dict(stats), "seconds": round(time.time() - t0, 1),
-                "revision": runinfo.revision(), "software": runinfo.software()}
+                "revision": rev, "software": runinfo.software()}
     if "jev" in ctx:
         manifest["jev_usd"] = round(ctx["jev"].spent_usd, 4)
     (out / f"{name}.manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
