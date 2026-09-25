@@ -45,7 +45,9 @@ KIIS 이후 저널·큰 학회로 확장하는 계획은 [`../fullpaper/`](../fu
 - [ ] 요약문 제출 (10/2)
 - [x] K3 B·D 학습·최종 검증 (9/24) — 같은 val 200개에서 B0 52% → B 100%, D0 40% → D 100%; dev 실행·정책 후보 일치 확인 ([결과](../artifacts/kiis_k3/README.md))
 - [x] K4 본 실행 (closed-loop, 8 arm) — 9/26, 2,304 episode. A·B·D·oracle 모두 58.7%로 상한에 붙음; oracle 실패의 76%는 정책 후보 부족 ([결과](../artifacts/kiis_k4/README.md))
-- [ ] K5 k-step rollout 평가
+- [ ] K5 k-step rollout 평가 (v1) — 9/26 서버에서 실행 중
+- [ ] **v2 재실험** (9/26 결정, [실험계획.md](실험계획.md) §4 V): 과제 난이도·후보 생성을 세계모델 없는 arm으로 보정 → B·D 재학습 → K4v2·K5v2. 표 1·그림 2는 v2
+  - [ ] V0 구현 · [ ] V1 보정 (dev·val) · [ ] V2 동결 · [ ] V3 B·D 재학습 · [ ] V4 K4v2 · [ ] V5 K5v2
 - [ ] K6 분석 — 표 1, 그림 2, 슬롯 채움
 - [ ] K7 집필 → 최종 제출 (10/23)
 
