@@ -1,4 +1,4 @@
-"""V1 calibration (kiis2026f/실험계획.md §4 V1), run unattended on the GPU server.
+"""V1 calibration (kiis2026f/실험계획.md §4 V1) on the GPU server, started by hand.
 
 Configurations are tried in stages by lever count (P1 counts as one). Each runs
 the two world-model-free planners, validity and oracle, on dev (12 worlds x 1
@@ -157,17 +157,8 @@ def judge(by: dict) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--wait-for", default=None,
-                    help="directory whose DONE or FAILED file must exist before starting")
     ap.add_argument("--stages", type=int, default=len(STAGES))
     args = ap.parse_args()
-
-    if args.wait_for:
-        w = ROOT / args.wait_for
-        print(f"[{now()}] waiting for {w}/DONE or FAILED", flush=True)
-        while not ((w / "DONE").exists() or (w / "FAILED").exists()):
-            time.sleep(60)
-        print(f"[{now()}] {w} finished: {'DONE' if (w / 'DONE').exists() else 'FAILED'}", flush=True)
 
     if OUT.exists() and any(OUT.iterdir()):
         raise SystemExit(f"refusing to overwrite {OUT}")
