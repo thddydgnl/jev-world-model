@@ -1,0 +1,20 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:07<00:15,  7.70s/it]Fetching 3 files:  67%|██████▋   | 2/3 [01:25<00:48, 48.99s/it]Fetching 3 files: 100%|██████████| 3/3 [01:26<00:00, 26.82s/it]Fetching 3 files: 100%|██████████| 3/3 [01:26<00:00, 28.68s/it]
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|▏         | 5/398 [00:00<00:08, 46.93it/s]Loading weights:   7%|▋         | 27/398 [00:00<00:02, 142.37it/s]Loading weights:  12%|█▏        | 46/398 [00:00<00:02, 155.32it/s]Loading weights:  17%|█▋        | 66/398 [00:00<00:02, 162.58it/s]Loading weights:  21%|██        | 83/398 [00:00<00:01, 162.37it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 167.15it/s]Loading weights:  30%|██▉       | 119/398 [00:00<00:01, 159.53it/s]Loading weights:  34%|███▍      | 136/398 [00:00<00:01, 155.00it/s]Loading weights:  38%|███▊      | 152/398 [00:00<00:01, 156.40it/s]Loading weights:  42%|████▏     | 168/398 [00:01<00:01, 142.85it/s]Loading weights:  46%|████▌     | 183/398 [00:01<00:01, 135.96it/s]Loading weights:  51%|█████     | 201/398 [00:01<00:01, 143.05it/s]Loading weights:  54%|█████▍    | 216/398 [00:01<00:01, 137.28it/s]Loading weights:  58%|█████▊    | 231/398 [00:01<00:01, 139.43it/s]Loading weights:  62%|██████▏   | 246/398 [00:01<00:01, 135.49it/s]Loading weights:  66%|██████▋   | 264/398 [00:01<00:00, 140.48it/s]Loading weights:  70%|███████   | 279/398 [00:01<00:00, 142.97it/s]Loading weights:  75%|███████▍  | 297/398 [00:02<00:00, 144.55it/s]Loading weights:  79%|███████▊  | 313/398 [00:02<00:00, 146.42it/s]Loading weights:  84%|████████▎ | 333/398 [00:02<00:00, 160.71it/s]Loading weights:  88%|████████▊ | 350/398 [00:02<00:00, 151.19it/s]Loading weights:  92%|█████████▏| 366/398 [00:02<00:00, 153.56it/s]Loading weights:  96%|█████████▌| 382/398 [00:02<00:00, 148.75it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 148.33it/s]
+loaded.
+adapter /home/yonghwi/jev-wm/artifacts/kiis_k3/B_typed b8b322c8ba8eb8d7
+condition 0fe479090329  split=test  arms=['B_typed']
+  te000 r0  B_typed=X(30)  [1 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+B_typed        1      0.0%     30.0     96.7%     33.3%      0      0
+
+분해
+
+B_typed: 세계모델 예측 18  파싱 실패 0 (0.0%)  세계모델 GPU 0.4분 (에피소드당 24초)
+
+policy calls=30 repairs=0 fallbacks=0 catalog=40
+==========================================================================

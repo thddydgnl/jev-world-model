@@ -1,0 +1,54 @@
+{
+  "mode": "smoke",
+  "phase": "complete",
+  "started": "2026-09-24T14:26:11.447470+00:00",
+  "seeds": {
+    "20260921": {
+      "core": {
+        "pid": 251319,
+        "gpu": 0,
+        "started": "2026-09-24T14:26:11.448285+00:00",
+        "phase": "complete",
+        "finished": "2026-09-24T14:34:18.949525+00:00",
+        "exit_code": 0,
+        "episodes": 4,
+        "config_hash": "0fe479090329",
+        "revision": "fff42e3066ba073930775f28a868e33f6338d860 dirty_files=0 synced=2026-09-24T14:26:04Z"
+      },
+      "generative": {
+        "pid": 251320,
+        "gpu": 0,
+        "started": "2026-09-24T14:26:11.449344+00:00",
+        "phase": "complete",
+        "finished": "2026-09-24T14:34:18.950196+00:00",
+        "exit_code": 0,
+        "episodes": 1,
+        "config_hash": "0fe479090329",
+        "revision": "fff42e3066ba073930775f28a868e33f6338d860 dirty_files=0 synced=2026-09-24T14:26:04Z"
+      },
+      "zero_shot": {
+        "pid": 251321,
+        "gpu": 1,
+        "started": "2026-09-24T14:26:11.451115+00:00",
+        "phase": "complete",
+        "finished": "2026-09-24T14:34:18.950531+00:00",
+        "exit_code": 0,
+        "episodes": 2,
+        "config_hash": "0fe479090329",
+        "revision": "fff42e3066ba073930775f28a868e33f6338d860 dirty_files=0 synced=2026-09-24T14:26:04Z"
+      },
+      "typed": {
+        "pid": 251322,
+        "gpu": 1,
+        "started": "2026-09-24T14:26:11.452053+00:00",
+        "phase": "complete",
+        "finished": "2026-09-24T14:34:18.950809+00:00",
+        "exit_code": 0,
+        "episodes": 1,
+        "config_hash": "0fe479090329",
+        "revision": "fff42e3066ba073930775f28a868e33f6338d860 dirty_files=0 synced=2026-09-24T14:26:04Z"
+      }
+    }
+  },
+  "finished": "2026-09-24T14:34:18.951037+00:00"
+}

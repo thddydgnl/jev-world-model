@@ -1,0 +1,127 @@
+arm A enabled: JEV forecaster
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   2%|▏         | 9/398 [00:00<00:04, 86.23it/s]Loading weights:   8%|▊         | 33/398 [00:00<00:02, 169.02it/s]Loading weights:  13%|█▎        | 50/398 [00:00<00:02, 161.04it/s]Loading weights:  18%|█▊        | 70/398 [00:00<00:01, 170.14it/s]Loading weights:  23%|██▎       | 91/398 [00:00<00:01, 180.39it/s]Loading weights:  28%|██▊       | 110/398 [00:00<00:01, 179.84it/s]Loading weights:  32%|███▏      | 128/398 [00:00<00:01, 174.30it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 175.73it/s]Loading weights:  41%|████      | 164/398 [00:00<00:01, 168.45it/s]Loading weights:  45%|████▌     | 181/398 [00:01<00:01, 152.27it/s]Loading weights:  50%|█████     | 199/398 [00:01<00:01, 159.21it/s]Loading weights:  54%|█████▍    | 216/398 [00:01<00:01, 150.61it/s]Loading weights:  59%|█████▊    | 233/398 [00:01<00:01, 152.17it/s]Loading weights:  63%|██████▎   | 249/398 [00:01<00:00, 151.12it/s]Loading weights:  67%|██████▋   | 267/398 [00:01<00:00, 156.08it/s]Loading weights:  71%|███████   | 283/398 [00:01<00:00, 151.23it/s]Loading weights:  75%|███████▌  | 300/398 [00:01<00:00, 154.38it/s]Loading weights:  79%|███████▉  | 316/398 [00:01<00:00, 151.93it/s]Loading weights:  84%|████████▎ | 333/398 [00:02<00:00, 154.33it/s]Loading weights:  88%|████████▊ | 349/398 [00:02<00:00, 152.33it/s]Loading weights:  92%|█████████▏| 366/398 [00:02<00:00, 157.17it/s]Loading weights:  96%|█████████▌| 382/398 [00:02<00:00, 155.87it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 159.37it/s]
+loaded.
+condition 0fe479090329  split=test  arms=['C', 'validity', 'oracle', 'A_jev']
+  te000 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [1 sets]
+  te000 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [2 sets]
+  te000 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [3 sets]
+  te000 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [4 sets]
+  te001 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [5 sets]
+  te001 r1  C=X(30)  validity=O(11)  oracle=O(11)  A_jev=O(11)  [6 sets]
+  te001 r2  C=X(30)  validity=O(10)  oracle=O(10)  A_jev=O(10)  [7 sets]
+  te001 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [8 sets]
+  te002 r0  C=X(30)  validity=O(14)  oracle=O(14)  A_jev=O(10)  [9 sets]
+  te002 r1  C=X(30)  validity=O(9)  oracle=O(9)  A_jev=O(14)  [10 sets]
+  te002 r2  C=X(30)  validity=O(15)  oracle=O(15)  A_jev=O(15)  [11 sets]
+  te002 r3  C=X(30)  validity=O(10)  oracle=O(10)  A_jev=O(10)  [12 sets]
+  te003 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=O(30)  [13 sets]
+  te003 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [14 sets]
+  te003 r2  C=X(30)  validity=O(12)  oracle=O(12)  A_jev=O(12)  [15 sets]
+  te003 r3  C=X(30)  validity=X(30)  oracle=O(19)  A_jev=O(19)  [16 sets]
+  te004 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [17 sets]
+  te004 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [18 sets]
+  te004 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [19 sets]
+  te004 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [20 sets]
+  te005 r0  C=X(30)  validity=O(6)  oracle=O(6)  A_jev=O(6)  [21 sets]
+  te005 r1  C=X(30)  validity=O(9)  oracle=O(9)  A_jev=O(9)  [22 sets]
+  te005 r2  C=X(30)  validity=O(11)  oracle=O(11)  A_jev=O(8)  [23 sets]
+  te005 r3  C=X(30)  validity=O(11)  oracle=O(11)  A_jev=O(7)  [24 sets]
+  te006 r0  C=X(30)  validity=O(14)  oracle=O(14)  A_jev=O(14)  [25 sets]
+  te006 r1  C=X(30)  validity=O(25)  oracle=O(8)  A_jev=X(30)  [26 sets]
+  te006 r2  C=X(30)  validity=O(15)  oracle=O(15)  A_jev=X(30)  [27 sets]
+  te006 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [28 sets]
+  te007 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [29 sets]
+  te007 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [30 sets]
+  te007 r2  C=X(30)  validity=X(30)  oracle=O(23)  A_jev=O(23)  [31 sets]
+  te007 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [32 sets]
+  te008 r0  C=X(30)  validity=O(4)  oracle=O(4)  A_jev=O(4)  [33 sets]
+  te008 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [34 sets]
+  te008 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [35 sets]
+  te008 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [36 sets]
+  te009 r0  C=X(30)  validity=O(12)  oracle=O(12)  A_jev=O(12)  [37 sets]
+  te009 r1  C=X(30)  validity=O(17)  oracle=O(17)  A_jev=O(17)  [38 sets]
+  te009 r2  C=X(30)  validity=O(16)  oracle=O(24)  A_jev=O(24)  [39 sets]
+  te009 r3  C=X(30)  validity=O(12)  oracle=O(12)  A_jev=O(12)  [40 sets]
+  te010 r0  C=X(30)  validity=O(17)  oracle=O(17)  A_jev=O(17)  [41 sets]
+  te010 r1  C=X(30)  validity=O(10)  oracle=O(10)  A_jev=O(10)  [42 sets]
+  te010 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [43 sets]
+  te010 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [44 sets]
+  te011 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [45 sets]
+  te011 r1  C=X(30)  validity=O(12)  oracle=O(12)  A_jev=O(12)  [46 sets]
+  te011 r2  C=X(30)  validity=X(30)  oracle=O(27)  A_jev=O(27)  [47 sets]
+  te011 r3  C=X(30)  validity=O(12)  oracle=O(12)  A_jev=O(12)  [48 sets]
+  te012 r0  C=X(30)  validity=O(6)  oracle=O(6)  A_jev=O(6)  [49 sets]
+  te012 r1  C=X(30)  validity=O(28)  oracle=O(28)  A_jev=O(28)  [50 sets]
+  te012 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [51 sets]
+  te012 r3  C=X(30)  validity=O(5)  oracle=O(6)  A_jev=O(6)  [52 sets]
+  te013 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [53 sets]
+  te013 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [54 sets]
+  te013 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [55 sets]
+  te013 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [56 sets]
+  te014 r0  C=X(30)  validity=O(14)  oracle=O(14)  A_jev=O(14)  [57 sets]
+  te014 r1  C=X(30)  validity=O(5)  oracle=O(5)  A_jev=O(5)  [58 sets]
+  te014 r2  C=X(30)  validity=O(23)  oracle=O(23)  A_jev=O(23)  [59 sets]
+  te014 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=O(20)  [60 sets]
+  te015 r0  C=X(30)  validity=O(9)  oracle=O(9)  A_jev=O(9)  [61 sets]
+  te015 r1  C=X(30)  validity=O(8)  oracle=O(8)  A_jev=O(9)  [62 sets]
+  te015 r2  C=X(30)  validity=O(9)  oracle=O(9)  A_jev=O(9)  [63 sets]
+  te015 r3  C=X(30)  validity=O(9)  oracle=O(9)  A_jev=O(9)  [64 sets]
+  te016 r0  C=X(30)  validity=O(16)  oracle=O(9)  A_jev=O(6)  [65 sets]
+  te016 r1  C=X(30)  validity=O(23)  oracle=O(23)  A_jev=X(30)  [66 sets]
+  te016 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [67 sets]
+  te016 r3  C=X(30)  validity=X(30)  oracle=O(22)  A_jev=O(22)  [68 sets]
+  te017 r0  C=X(30)  validity=O(17)  oracle=O(25)  A_jev=O(23)  [69 sets]
+  te017 r1  C=X(30)  validity=O(5)  oracle=O(5)  A_jev=O(5)  [70 sets]
+  te017 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [71 sets]
+  te017 r3  C=X(30)  validity=O(16)  oracle=O(16)  A_jev=O(17)  [72 sets]
+  te018 r0  C=X(30)  validity=O(7)  oracle=O(7)  A_jev=O(7)  [73 sets]
+  te018 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [74 sets]
+  te018 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [75 sets]
+  te018 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=O(8)  [76 sets]
+  te019 r0  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [77 sets]
+  te019 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [78 sets]
+  te019 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [79 sets]
+  te019 r3  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [80 sets]
+  te020 r0  C=X(30)  validity=O(6)  oracle=O(6)  A_jev=O(6)  [81 sets]
+  te020 r1  C=X(30)  validity=O(7)  oracle=O(7)  A_jev=O(7)  [82 sets]
+  te020 r2  C=O(8)  validity=O(4)  oracle=O(4)  A_jev=O(4)  [83 sets]
+  te020 r3  C=X(30)  validity=O(9)  oracle=O(9)  A_jev=O(8)  [84 sets]
+  te021 r0  C=X(30)  validity=O(11)  oracle=O(11)  A_jev=O(12)  [85 sets]
+  te021 r1  C=X(30)  validity=O(6)  oracle=O(6)  A_jev=O(7)  [86 sets]
+  te021 r2  C=X(30)  validity=O(9)  oracle=O(10)  A_jev=O(12)  [87 sets]
+  te021 r3  C=X(30)  validity=O(21)  oracle=O(21)  A_jev=O(21)  [88 sets]
+  te022 r0  C=X(30)  validity=O(5)  oracle=O(5)  A_jev=O(5)  [89 sets]
+  te022 r1  C=X(30)  validity=O(7)  oracle=O(7)  A_jev=O(8)  [90 sets]
+  te022 r2  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [91 sets]
+  te022 r3  C=X(30)  validity=X(30)  oracle=O(7)  A_jev=O(10)  [92 sets]
+  te023 r0  C=O(18)  validity=O(6)  oracle=O(6)  A_jev=O(6)  [93 sets]
+  te023 r1  C=X(30)  validity=X(30)  oracle=X(30)  A_jev=X(30)  [94 sets]
+  te023 r2  C=X(30)  validity=X(30)  oracle=O(7)  A_jev=X(30)  [95 sets]
+  te023 r3  C=X(30)  validity=O(4)  oracle=O(4)  A_jev=O(4)  [96 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+C             96      2.1%     29.6     96.2%     15.3%      0      0
+validity      96     53.1%     20.1     72.1%     68.1%      0      0
+oracle        96     59.4%     19.2     73.7%     71.9%      0      0
+A_jev         96     58.3%     19.6     75.1%     71.2%      0      0
+
+분해
+  전체 headroom   oracle - C            +57.3%
+  유효성이 설명   validity - C              +51.0%
+  예측이 필요     oracle - validity         +6.2%
+
+JEV: 요청 7776  에피소드당 81  conjunction bound 위반 0
+
+오류 누적 (재귀 arm, 예측 상태 vs 실제 상태)
+   depth       n       상태 완전일치       변수 정확도    beam 포함
+       1    9896         95.8%        99.3%     100.0%
+       2    5208         94.0%        98.9%     100.0%
+  모순 감지 57  캐시 적중 12731
+     calls=7776 tokens=13,508,110 cost=$0.567
+
+policy calls=8504 repairs=0 fallbacks=0 catalog=40
+==========================================================================
