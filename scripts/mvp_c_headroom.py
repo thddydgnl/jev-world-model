@@ -39,7 +39,8 @@ from agent.task import (goal_spec, trap_goal_spec, goal_satisfied, goal_progress
                         static_catalog, utility, unique_prefixes, plan_prior,
                         goal_queries, state_schema)
 from env.serialize import canonical_state, state_hash
-from env.worlds import SPLITS, build_world, build_trap_world, world_fingerprint
+from env.worlds import (SPLITS, build_world, build_trap_world, build_trap_world_v2,
+                        parse_levers, world_fingerprint)
 from forecast import render_facts
 import runinfo
 
@@ -248,9 +249,21 @@ def main() -> int:
                          "test = held-out names (kiis2026f/실험계획.md §3)")
     ap.add_argument("--adapter", default=None,
                     help="LoRA adapter directory for B_typed or D_gen")
+    ap.add_argument("--v2", action="store_true",
+                    help="v2 trap worlds and candidate levers (kiis2026f/실험계획.md §4 V)")
+    ap.add_argument("--levers", default="", help="v2 task levers, e.g. T1,T2,T3")
+    ap.add_argument("--policy-hint", action="store_true", help="v2 candidate lever P1")
+    ap.add_argument("--policy-samples", type=int, default=1, help="v2 candidate lever P2")
     ap.add_argument("--wm-batch", type=int, default=8,
                     help="prompts per forward for the Qwen world models")
     args = ap.parse_args()
+    levers = parse_levers(args.levers)
+    if not args.v2 and (levers or args.policy_hint or args.policy_samples != 1):
+        raise SystemExit("--levers / --policy-hint / --policy-samples need --v2")
+    if args.v2:
+        if not args.trap:
+            raise SystemExit("--v2 applies to trap worlds; add --trap")
+        runinfo.configure_v2(levers, args.policy_hint, args.policy_samples)
     if args.split != "dev" and not args.trap:
         raise SystemExit("--split applies to trap worlds only; add --trap")
 
@@ -276,6 +289,7 @@ def main() -> int:
     from agent.policy import Policy
     print(f"loading {args.model} on {args.device} ...", flush=True)
     policy = Policy(args.model, args.device, seed=args.policy_seed)
+    policy.hint, policy.samples = args.policy_hint, args.policy_samples
     print("loaded.", flush=True)
 
     scorer = judge = adapter = None
@@ -331,7 +345,10 @@ def main() -> int:
 
     for w in range(args.worlds):
         if args.trap:
-            game, path, meta = build_trap_world(w, wdir, rng, split=args.split)
+            if args.v2:
+                game, path, meta = build_trap_world_v2(w, wdir, args.split, levers)
+            else:
+                game, path, meta = build_trap_world(w, wdir, rng, split=args.split)
             goal = trap_goal_spec(game, meta)
         else:
             idx = w * 3                  # idx % 3 == 0 -> locked door

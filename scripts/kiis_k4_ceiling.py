@@ -7,8 +7,9 @@ not depend on the policy seed), and every replayed step must reproduce the
 recorded validity, or the script stops.
 
 A "useful" action is one that is admissible now and belongs to the trap-world
-solution: open the box, take the key, unlock and open the door, take the goal
-object, go east — or go west when the agent stands in the far room without it.
+solution: open the box (and, in v2 with T3, the second container), take the key,
+unlock and open the door, take the goal object, go east — or head back to room
+A from the far room (without the object) or from the v2 side room.
 A capped episode is then
   trap      the goal object was eaten (no longer solvable)
   coverage  no candidate plan started with a useful action in the last 10 steps
@@ -32,7 +33,7 @@ import textworld
 from textworld import EnvInfos
 
 from agent.task import goal_satisfied, trap_goal_spec
-from env.worlds import build_trap_world, world_fingerprint
+from env.worlds import OPPOSITE, build_trap_world, build_trap_world_v2, world_fingerprint
 
 INFOS = EnvInfos(facts=True, typed_entities=True, possible_admissible_commands=True,
                  last_action=True, admissible_commands=True)
@@ -40,12 +41,17 @@ SEED = 20260921          # mvp_c_headroom.SEED: worlds and roots, not the policy
 TAIL = 10
 
 
-def roots(split: str, n_worlds: int, n_roots: int, tmp: Path, fingerprints: dict):
-    """(world_id, root) -> (root env, meta), consuming the RNG exactly as the runner."""
+def roots(split: str, n_worlds: int, n_roots: int, tmp: Path, fingerprints: dict,
+          levers: tuple | None = None):
+    """(world_id, root) -> (root env, meta, game), consuming the RNG exactly as
+    the runner. `levers` is None for v1 worlds, the v2 levers otherwise."""
     rng = random.Random(SEED)
     out = {}
     for w in range(n_worlds):
-        game, path, meta = build_trap_world(w, tmp, rng, split=split)
+        if levers is None:
+            game, path, meta = build_trap_world(w, tmp, rng, split=split)
+        else:
+            game, path, meta = build_trap_world_v2(w, tmp, split, levers)
         goal = trap_goal_spec(game, meta)
         fp = world_fingerprint(game)
         if fingerprints.get(meta["world_id"]) not in (None, fp):
@@ -61,15 +67,27 @@ def roots(split: str, n_worlds: int, n_roots: int, tmp: Path, fingerprints: dict
                 root.step(rng.choice(adm))
             if goal_satisfied(list(root.state["_facts"]), goal):
                 root.close(); continue
-            out[(meta["world_id"], r)] = (root, meta)
+            out[(meta["world_id"], r)] = (root, meta, game)
     return out
 
 
-def useful(adm: list[str], meta: dict) -> set[str]:
-    wanted = {f"open {meta['box']}", f"unlock {meta['door']} with {meta['key']}",
-              f"open {meta['door']}", "go east", "go west"}
+def useful(env, game, meta: dict) -> set[str]:
+    adm = env.state["admissible_commands"]
+    rid = next(f.arguments[1].name for f in env.state["_facts"]
+               if f.name == "at" and f.arguments[0].name == "P")
+    room = game.infos[rid].name
+    if room == meta["room_b"]:
+        wanted = {"go west"}
+    elif meta.get("room_c") and room == meta["room_c"]:
+        wanted = {f"go {OPPOSITE[meta['side']]}", f"open {meta['door2']}"}
+    else:
+        wanted = {f"open {meta['box']}", f"unlock {meta['door']} with {meta['key']}",
+                  f"open {meta['door']}", "go east"}
+        if meta.get("box2"):
+            wanted.add(f"open {meta['box2']}")
     return {a for a in adm
-            if a in wanted or a.startswith((f"take {meta['key']}", f"take {meta['apple']}"))}
+            if a in wanted or a.startswith((f"take {meta['key']} ", f"take {meta['apple']} "))
+            or a in (f"take {meta['key']}", f"take {meta['apple']}")}
 
 
 def main() -> int:
@@ -86,11 +104,13 @@ def main() -> int:
             run = Path(run)
             man = json.loads((run / "run_manifest.json").read_text())
             r = man["run"]
-            key = (r["split"], r["worlds"], r["roots"])
+            v2 = man["condition"].get("v2")
+            levers = tuple(v2["levers"]) if v2 else None
+            key = (r["split"], r["worlds"], r["roots"], levers)
             if key not in cache:
-                d = Path(tmp) / f"{r['split']}_{r['worlds']}_{r['roots']}"
+                d = Path(tmp) / f"{len(cache)}"
                 d.mkdir()
-                cache[key] = roots(*key, d, man["world_fingerprints"])
+                cache[key] = roots(*key[:3], d, man["world_fingerprints"], levers)
             base = cache[key]
             eps = [json.loads(l) for l in open(run / "episodes.jsonl")]
             steps = collections.defaultdict(list)
@@ -98,7 +118,7 @@ def main() -> int:
                 s = json.loads(l)
                 steps[(s["arm"], s["world"], s["root"])].append(s)
             for e in eps:
-                root, meta = base[(e["world_id"], e["root"])]
+                root, meta, game = base[(e["world_id"], e["root"])]
                 env = root.copy()
                 offered = []
                 for s in steps[(e["arm"], e["world_id"], e["root"])]:
@@ -106,7 +126,7 @@ def main() -> int:
                     if (s["action"] in adm) != s["valid"]:
                         raise SystemExit(f"replay mismatch {run} {e['arm']} "
                                          f"{e['world_id']}/{e['root']} step {s['step']}")
-                    u = useful(adm, meta)
+                    u = useful(env, game, meta)
                     firsts = {p[0] for p in s["plans"] if p}
                     offered.append((bool(firsts & u), s["action"] in u))
                     env.step(s["action"])
@@ -126,7 +146,7 @@ def main() -> int:
                                "kind": kind, "steps": len(offered),
                                "steps_offered": sum(o for o, _ in offered),
                                "steps_taken": sum(t for _, t in offered)})
-        for root, _ in (v for c in cache.values() for v in c.values()):
+        for root, _, _ in (v for c in cache.values() for v in c.values()):
             root.close()
 
     summary = collections.defaultdict(collections.Counter)

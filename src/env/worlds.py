@@ -323,3 +323,126 @@ def build_trap_world(idx: int, out_dir: Path, rng: random.Random,
             "table": table_n, "door": door_n, "apple": apple_n, "pear": pear_n,
             "room_a": ra_n, "room_b": rb_n, "trap": True, "split": split}
     return game, p, meta
+
+
+# ------------------------------------------------------------ v2 (KIIS V0)
+#
+# kiis2026f/실험계획.md §4 V. In v1 every world model reached the oracle's
+# ceiling: the world model's job was almost only "will this command run", and
+# the ceiling itself was set by the policy's candidates. v2 adds commands that
+# run but do not help, switched on one lever at a time during calibration:
+#   T1  a side room C behind a closed, unlocked second door; the decoy food moves there
+#   T2  a decoy key on the supporter that matches nothing
+#   T3  the goal food starts inside a second, closed container
+# The v1 builder above is untouched, so v1 worlds and their fingerprints stay valid.
+
+LEVERS = ("T1", "T2", "T3")
+V2_PREFIX = {"dev": "tv", "train": "trv", "val": "vav", "test": "tev"}
+# Extra dev names, one set per TRAP_NAMES entry: (box2, key2, door2, room_c).
+# None of these words is in TRAP_VOCAB or in the other dev names, apart from the
+# head nouns "key" and "door".
+V2_DEV_EXTRA = [
+    ("cork barrel", "dull key", "wicket gate", "porchway"),
+    ("canvas sack", "long key", "plank door", "landing"),
+    ("cloth bundle", "worn key", "mesh gate", "larder"),
+    ("linen bag", "odd key", "reed curtain", "lobby"),
+]
+# Words two names in one v2 world may share: two keys, possibly two doors.
+SHARED_HEADS = {"key", "door"}
+SIDE_EXITS = ("north", "south", "west")   # room C's side of room A; B is always east
+OPPOSITE = {"north": "south", "south": "north", "west": "east", "east": "west"}
+
+
+def parse_levers(text: str | None) -> tuple[str, ...]:
+    """'T1,T3' -> ('T1', 'T3'), in LEVERS order. Empty or None -> ()."""
+    got = {t.strip() for t in (text or "").split(",") if t.strip()}
+    bad = got - set(LEVERS)
+    if bad:
+        raise ValueError(f"unknown levers {sorted(bad)}")
+    return tuple(t for t in LEVERS if t in got)
+
+
+def trap_names_v2(split: str, idx: int) -> dict[str, str]:
+    """All names a v2 world may need, whichever levers are on, so switching a
+    lever never renames the rest of the world."""
+    if split == "dev":
+        base = trap_names("dev", idx)
+        suffix = f" {idx // len(TRAP_NAMES) + 1}" if idx >= len(TRAP_NAMES) else ""
+        extra = tuple(n + suffix for n in V2_DEV_EXTRA[idx % len(V2_DEV_EXTRA)])
+    else:
+        if split not in SPLITS:
+            raise ValueError(f"unknown split {split!r}")
+        pools = {slot: vocab_split(slot)[split] for slot in TRAP_VOCAB}
+        rng = random.Random(f"kiis-names-v2-{VOCAB_SEED}-{split}-{idx}")
+        for _ in range(5000):
+            rooms = rng.sample(pools["room"], 3)
+            boxes = rng.sample(pools["box"], 2)
+            keys = rng.sample(pools["key"], 2)
+            doors = rng.sample(pools["door"], 2)
+            base = (boxes[0], keys[0], rng.choice(pools["table"]), doors[0],
+                    rng.choice(pools["apple"]), rng.choice(pools["pear"]), rooms[0], rooms[1])
+            extra = (boxes[1], keys[1], doors[1], rooms[2])
+            tokens = [t for n in base + extra for t in n.split() if t not in SHARED_HEADS]
+            if len(tokens) == len(set(tokens)):
+                break
+        else:
+            raise RuntimeError(f"no clash-free v2 names for {split} {idx}")
+    keys = ("box", "key", "table", "door", "apple", "pear", "room_a", "room_b",
+            "box2", "key2", "door2", "room_c")
+    return dict(zip(keys, base + extra))
+
+
+def build_trap_world_v2(idx: int, out_dir: Path, split: str = "dev",
+                        levers: tuple[str, ...] = LEVERS) -> tuple[Any, Path, dict]:
+    """The v1 trap world plus the chosen levers. Goal and trap are unchanged:
+    carry the goal food into room B through the opened door; eating it is
+    executable and irreversible."""
+    n = trap_names_v2(split, idx)
+    side = SIDE_EXITS[idx % len(SIDE_EXITS)]
+
+    m = GameMaker()
+    room_a = m.new_room(n["room_a"])
+    room_b = m.new_room(n["room_b"])
+    door = m.new_door(m.connect(room_a.east, room_b.west), name=n["door"])
+    door.add_property("locked")
+
+    box = m.new(type="c", name=n["box"]); box.add_property("closed")
+    table = m.new(type="s", name=n["table"])
+    key = m.new(type="k", name=n["key"])
+    apple = m.new(type="f", name=n["apple"])
+    pear = m.new(type="f", name=n["pear"])
+    m.add_fact("match", key, door)
+    room_a.add(box, table)
+    box.add(key)
+
+    if "T1" in levers:
+        room_c = m.new_room(n["room_c"])
+        door2 = m.new_door(m.connect(getattr(room_a, side), getattr(room_c, OPPOSITE[side])),
+                           name=n["door2"])
+        door2.add_property("closed")
+        room_c.add(pear)
+    else:
+        room_a.add(pear)
+    if "T2" in levers:
+        table.add(m.new(type="k", name=n["key2"]))
+    if "T3" in levers:
+        box2 = m.new(type="c", name=n["box2"]); box2.add_property("closed")
+        room_a.add(box2)
+        box2.add(apple)
+    else:
+        table.add(apple)
+    m.set_player(room_a)
+    m.quests = []
+
+    game = m.build()
+    tag = "".join(t[1] for t in levers) or "0"
+    p = out_dir / f"trapv2_{split}_{idx:03d}_L{tag}.json"
+    game.save(str(p))
+    meta = {"world_id": f"{V2_PREFIX[split]}{idx:03d}", **{k: n[k] for k in (
+                "box", "key", "table", "door", "apple", "pear", "room_a", "room_b")},
+            "trap": True, "split": split, "version": 2, "levers": list(levers),
+            "side": side if "T1" in levers else None}
+    for lever, keys in (("T1", ("door2", "room_c")), ("T2", ("key2",)), ("T3", ("box2",))):
+        for k in keys:
+            meta[k] = n[k] if lever in levers else None
+    return game, p, meta

@@ -52,6 +52,16 @@ def revision() -> dict[str, Any]:
 
 
 _PROBE: tuple | None = None
+# v2 settings (kiis2026f/실험계획.md §4 V): None is v1. When set, the probe world
+# is the v2 dev world t000 with these levers, the policy prompt is rendered with
+# the hint if on, and the settings join the condition — so v1 hashes are untouched.
+_V2: dict | None = None
+
+
+def configure_v2(levers: tuple[str, ...], hint: bool, samples: int) -> None:
+    global _V2, _PROBE
+    _V2 = {"levers": list(levers), "policy_hint": bool(hint), "policy_samples": int(samples)}
+    _PROBE = None
 
 
 def _probe_world() -> tuple:
@@ -60,9 +70,12 @@ def _probe_world() -> tuple:
     if _PROBE is None:
         from agent.task import state_schema, static_catalog, trap_goal_spec
         from env.serialize import canonical_state
-        from env.worlds import build_trap_world
+        from env.worlds import build_trap_world, build_trap_world_v2
         with tempfile.TemporaryDirectory() as d:
-            game, path, meta = build_trap_world(0, Path(d), random.Random(0))
+            if _V2 is not None:
+                game, path, meta = build_trap_world_v2(0, Path(d), "dev", tuple(_V2["levers"]))
+            else:
+                game, path, meta = build_trap_world(0, Path(d), random.Random(0))
             env = textworld.start(str(path), request_infos=EnvInfos(facts=True))
             env.reset()
             canon = canonical_state(list(env.state["_facts"]), game)
@@ -86,7 +99,8 @@ def _probe_texts(k: int, h: int) -> dict[str, str]:
     return {
         "state_render": json.dumps(facts, ensure_ascii=False),
         "policy_prompt": Policy.render_prompt(facts, goal["text"], catalog,
-                                              [(action, False)], k, h),
+                                              [(action, False)], k, h,
+                                              hint=bool(_V2 and _V2["policy_hint"])),
         "typed_step": json.dumps([build_state(canon, schema, action),
                                   step_questions(schema, action)],
                                  sort_keys=True, ensure_ascii=False),
@@ -107,7 +121,7 @@ def condition(*, model: str, max_new_tokens: int, k: int, h: int,
     from wm.jev_forecaster import INCLUDE_QUERY_CATALOG
 
     texts = _probe_texts(k, h)
-    return {
+    cond = {
         "env": {"textworld": textworld.__version__,
                 "structure": "trap" if trap else "basic",
                 "step_cap": cap,
@@ -131,6 +145,10 @@ def condition(*, model: str, max_new_tokens: int, k: int, h: int,
         "goal": digest(texts["goal"]),
         "jev_model": PINNED_MODEL,
     }
+    if _V2 is not None:
+        cond["env"]["structure"] = "trap_v2"
+        cond["v2"] = dict(_V2)
+    return cond
 
 
 # What each arm adds on top of the shared condition. A change here changes that

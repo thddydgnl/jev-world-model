@@ -31,6 +31,22 @@ def solution_path(meta: dict, rng: random.Random) -> list[str]:
     return steps + ["go east"]
 
 
+def solution_path_v2(meta: dict, rng: random.Random) -> list[str]:
+    """solution_path for a v2 world (env.worlds.build_trap_world_v2). Side room
+    and decoy key are never needed; with T3 the goal food comes out of the
+    second container, which must be opened first."""
+    if meta.get("version") != 2:
+        return solution_path(meta, rng)
+    steps = [f"open {meta['box']}", f"take {meta['key']} from {meta['box']}",
+             f"unlock {meta['door']} with {meta['key']}", f"open {meta['door']}"]
+    if meta.get("box2"):
+        food = [f"open {meta['box2']}", f"take {meta['apple']} from {meta['box2']}"]
+    else:
+        food = [f"take {meta['apple']} from {meta['table']}"]
+    at = rng.randint(0, len(steps))
+    return steps[:at] + food + steps[at:] + ["go east"]
+
+
 def _walk(env, n: int, rng: random.Random) -> None:
     for _ in range(n):
         adm = [c for c in env.state["admissible_commands"] if not c.startswith(OBSERVE)]
@@ -48,7 +64,7 @@ def sample_states(env, meta: dict, rng: random.Random, n_walk: int, n_branch: in
         out.append(("walk", e))
     for _ in range(n_branch):
         e = env.copy()
-        path = solution_path(meta, rng)
+        path = solution_path_v2(meta, rng)
         for a in path[:rng.randint(0, len(path))]:
             e.step(a)
         _walk(e, rng.randint(0, 3), rng)

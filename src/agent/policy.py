@@ -43,6 +43,13 @@ listed.
 Output JSON only: {{"plans": [["cmd", "cmd"], ...]}}"""
 
 
+# v2 candidate lever P1 (kiis2026f/실험계획.md §4 V). General physics of the
+# environment, true in every world; no world's names or solution. Off in v1.
+AFFORDANCE_HINT = """NOTE: Closed containers and doors can be opened. A locked door or
+container must first be unlocked with the key that matches it. Objects can be
+inside closed containers and cannot be taken until the container is open."""
+
+
 def _extract_json(text: str) -> dict | None:
     m = re.search(r"\{.*\}", text, re.S)
     if not m:
@@ -79,6 +86,9 @@ class Policy:
         # sets this to the adapter's disable_adapter() so the policy always
         # generates from the base model and every arm sees the same candidates.
         self.adapter_off = contextlib.nullcontext
+        # v2 candidate levers, set by the runner; the defaults are v1.
+        self.hint = False          # P1: AFFORDANCE_HINT in the prompt
+        self.samples = 1           # P2: independent samples merged per step
 
     def set_context(self, world_id: str, root: int, step: int) -> None:
         """Pin the sampling seed to WHERE we are, not to how many calls have
@@ -92,6 +102,7 @@ class Policy:
         same state and the same prompt — noise in exactly the comparison the
         pairing is meant to make clean."""
         key = f"{world_id}|{root}|{step}"
+        self._ctx_key = key
         self._ctx_seed = self.seed + (zlib.crc32(key.encode()) & 0x7FFFFFFF)
 
     def _generate(self, prompt: str) -> str:
@@ -113,24 +124,57 @@ class Policy:
     @classmethod
     def render_prompt(cls, facts: list[str], goal: str, catalog: list[str],
                       history: list[tuple[str, bool]] | None = None,
-                      k: int = 8, h: int = 2) -> str:
+                      k: int = 8, h: int = 2, hint: bool = False) -> str:
         """The exact text the policy sees. Needs no model, so a run can record
         what its prompt was before any weights are loaded."""
         hist = history or []
         hist_txt = "\n".join(
             f'- "{a}" -> {"ok" if ok else "FAILED"}' for a, ok in hist[-cls.HISTORY:]
         ) or "- (nothing attempted yet)"
-        return PROMPT.format(facts="\n".join(f"- {f}" for f in facts),
+        text = PROMPT.format(facts="\n".join(f"- {f}" for f in facts),
                              goal=goal, catalog="\n".join(f"- {c}" for c in catalog),
                              history=hist_txt, k=k, h=h)
+        if hint:
+            text = text.replace("\nCURRENT FACTS:", f"\n{AFFORDANCE_HINT}\n\nCURRENT FACTS:", 1)
+        return text
 
     def plans(self, facts: list[str], goal: str, catalog: list[str],
               history: list[tuple[str, bool]] | None = None,
               k: int = 8, h: int = 2) -> tuple[list[list[str]], str]:
         """`history` is the episode's own past attempts and whether the engine
         accepted them — allowed online information per 설계.md §3.5, and
-        supplied identically to every arm."""
-        prompt = self.render_prompt(facts, goal, catalog, history, k, h)
+        supplied identically to every arm.
+
+        With `samples` > 1 (v2 lever P2) the same prompt is sampled again, each
+        extra sample seeded by the situation key and its index, and new plans
+        are appended after the first sample's. Sample 0 is exactly the
+        single-sample call, so v1 candidates are a prefix of the merged list."""
+        prompt = self.render_prompt(facts, goal, catalog, history, k, h, hint=self.hint)
+        plans, status = self._sample(prompt, catalog, k, h)
+        if self.samples > 1:
+            key = getattr(self, "_ctx_key", None)
+            seed0 = getattr(self, "_ctx_seed", None)
+            for i in range(1, self.samples):
+                if key is not None:
+                    self._ctx_seed = self.seed + (zlib.crc32(f"{key}#{i}".encode()) & 0x7FFFFFFF)
+                more, st = self._sample(prompt, catalog, k, h)
+                if status == "none":
+                    status = st
+                plans += [p for p in more if p not in plans]
+            if seed0 is not None:
+                self._ctx_seed = seed0
+
+        if not plans:
+            # Deterministic fallback; counted in the error rate, never dropped.
+            self.fallbacks += 1
+            status = "fallback"
+            plans = [[c] for c in catalog[:k]]
+        return plans[:k * self.samples], status
+
+    def _sample(self, prompt: str, catalog: list[str], k: int,
+                h: int) -> tuple[list[list[str]], str]:
+        """One sample: plans parsed from the reply (at most k), after at most one
+        schema repair. Status "none" when nothing usable came back."""
         status = "ok"
         raw = self._generate(prompt)
         data = _extract_json(raw)
@@ -151,10 +195,4 @@ class Policy:
                 seq = [str(c).strip() for c in p[:h] if str(c).strip() in allowed]
                 if seq and seq not in plans:
                     plans.append(seq)
-
-        if not plans:
-            # Deterministic fallback; counted in the error rate, never dropped.
-            self.fallbacks += 1
-            status = "fallback"
-            plans = [[c] for c in catalog[:k]]
-        return plans[:k], status
+        return plans[:k], (status if plans else "none")
