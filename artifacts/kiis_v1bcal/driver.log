@@ -1,0 +1,22 @@
+[2026-09-26T04:29:31+00:00] started P1k+P2/val on GPU0
+[2026-09-26T04:29:31+00:00] started P1k+T2+P2/val on GPU1
+[2026-09-26T04:29:31+00:00] started P1k+T3+P2/val on GPU0
+[2026-09-26T04:29:31+00:00] started P1k+P2/dev on GPU1
+[2026-09-26T05:15:03+00:00] finished P1k+P2/dev
+[2026-09-26T05:15:03+00:00] started P1k+T2+P2/dev on GPU1
+[2026-09-26T06:01:36+00:00] finished P1k+T2+P2/dev
+[2026-09-26T06:01:36+00:00] started P1k+T3+P2/dev on GPU1
+[2026-09-26T06:48:39+00:00] finished P1k+P2/val
+[2026-09-26T07:02:10+00:00] finished P1k+T3+P2/val
+[2026-09-26T07:04:10+00:00] finished P1k+T3+P2/dev
+[2026-09-26T07:21:11+00:00] finished P1k+T2+P2/val
+[2026-09-26T07:21:22+00:00] scored P1k+P2
+[2026-09-26T07:21:34+00:00] scored P1k+T2+P2
+[2026-09-26T07:21:46+00:00] scored P1k+T3+P2
+[2026-09-26T07:21:46+00:00] base P1k+P2
+[2026-09-26T07:21:46+00:00] chosen P1k+T3+P2
+[2026-09-26T07:21:46+00:00] started P1k+T3+P2/C/dev on GPU0
+[2026-09-26T07:21:46+00:00] started P1k+T3+P2/C/val on GPU1
+[2026-09-26T07:52:18+00:00] finished P1k+T3+P2/C/dev
+[2026-09-26T08:52:21+00:00] finished P1k+T3+P2/C/val
+[2026-09-26T08:52:31+00:00] done

@@ -1,0 +1,328 @@
+{
+ "plan": "kiis2026f/실험계획.md §4 V1b",
+ "started": "2026-09-26T04:29:31+00:00",
+ "phase": "done",
+ "criteria": {
+  "G1": [
+   0.75,
+   0.9
+  ],
+  "G2": 0.15,
+  "G3": 0.05,
+  "G4": 0.2,
+  "target": 0.8
+ },
+ "stages": {
+  "A": [
+   "P1k+P2",
+   "P1k+P2x3"
+  ],
+  "B": [
+   "base",
+   "base+T2 | base+T3",
+   "base+T2+T3",
+   "base+T1+T2+T3"
+  ]
+ },
+ "configs": {
+  "P1k+P2": {
+   "name": "P1k+P2",
+   "levers": [],
+   "hint": 2,
+   "samples": 2,
+   "n_levers": 2,
+   "step": "A",
+   "base": "P1k+P2",
+   "condition_hash": "83c831589532",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 49,
+     "coverage": 1,
+     "planner": 2,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.9166666666666666,
+      "val": 0.95
+     },
+     "rate": 0.9423076923076923
+    },
+    "validity": {
+     "n": 52,
+     "success": 36,
+     "coverage": 1,
+     "planner": 15,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.6666666666666666,
+      "val": 0.7
+     },
+     "rate": 0.6923076923076923
+    }
+   },
+   "oracle": 0.9423,
+   "validity": 0.6923,
+   "gap": 0.25,
+   "coverage_rate": 0.0192,
+   "G1": false,
+   "G2": true,
+   "G3": true,
+   "pass": false,
+   "used_for_decision": true
+  },
+  "P1k+T2+P2": {
+   "name": "P1k+T2+P2",
+   "levers": [
+    "T2"
+   ],
+   "hint": 2,
+   "samples": 2,
+   "n_levers": 3,
+   "step": "B1",
+   "base": "P1k+P2",
+   "condition_hash": "21a01c005121",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 43,
+     "coverage": 7,
+     "planner": 2,
+     "trap": 0,
+     "by_split": {
+      "dev": 1.0,
+      "val": 0.775
+     },
+     "rate": 0.8269230769230769
+    },
+    "validity": {
+     "n": 52,
+     "success": 42,
+     "coverage": 5,
+     "planner": 5,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.75,
+      "val": 0.825
+     },
+     "rate": 0.8076923076923077
+    }
+   },
+   "oracle": 0.8269,
+   "validity": 0.8077,
+   "gap": 0.0192,
+   "coverage_rate": 0.1346,
+   "G1": true,
+   "G2": false,
+   "G3": false,
+   "pass": false,
+   "used_for_decision": true
+  },
+  "P1k+T3+P2": {
+   "name": "P1k+T3+P2",
+   "levers": [
+    "T3"
+   ],
+   "hint": 2,
+   "samples": 2,
+   "n_levers": 3,
+   "step": "B1",
+   "base": "P1k+P2",
+   "condition_hash": "c7a604152a04",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 46,
+     "coverage": 2,
+     "planner": 4,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.9166666666666666,
+      "val": 0.875
+     },
+     "rate": 0.8846153846153846
+    },
+    "validity": {
+     "n": 52,
+     "success": 37,
+     "coverage": 2,
+     "planner": 13,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.5,
+      "val": 0.775
+     },
+     "rate": 0.7115384615384616
+    }
+   },
+   "oracle": 0.8846,
+   "validity": 0.7115,
+   "gap": 0.1731,
+   "coverage_rate": 0.0385,
+   "G1": true,
+   "G2": true,
+   "G3": true,
+   "pass": true,
+   "used_for_decision": true
+  }
+ },
+ "v1a": null,
+ "chosen": {
+  "name": "P1k+T3+P2",
+  "met_all_G1_G3": true,
+  "rule": "first passing stage on the base; oracle closest to 80%",
+  "C": 0.0769,
+  "G4": true
+ },
+ "log": [
+  {
+   "t": "2026-09-26T04:29:31+00:00",
+   "msg": "started P1k+P2/val on GPU0",
+   "pid": 292751
+  },
+  {
+   "t": "2026-09-26T04:29:31+00:00",
+   "msg": "started P1k+T2+P2/val on GPU1",
+   "pid": 292752
+  },
+  {
+   "t": "2026-09-26T04:29:31+00:00",
+   "msg": "started P1k+T3+P2/val on GPU0",
+   "pid": 292753
+  },
+  {
+   "t": "2026-09-26T04:29:31+00:00",
+   "msg": "started P1k+P2/dev on GPU1",
+   "pid": 292754
+  },
+  {
+   "t": "2026-09-26T05:15:03+00:00",
+   "msg": "finished P1k+P2/dev",
+   "exit": 0,
+   "minutes": 45.5
+  },
+  {
+   "t": "2026-09-26T05:15:03+00:00",
+   "msg": "started P1k+T2+P2/dev on GPU1",
+   "pid": 294061
+  },
+  {
+   "t": "2026-09-26T06:01:36+00:00",
+   "msg": "finished P1k+T2+P2/dev",
+   "exit": 0,
+   "minutes": 46.5
+  },
+  {
+   "t": "2026-09-26T06:01:36+00:00",
+   "msg": "started P1k+T3+P2/dev on GPU1",
+   "pid": 294940
+  },
+  {
+   "t": "2026-09-26T06:48:39+00:00",
+   "msg": "finished P1k+P2/val",
+   "exit": 0,
+   "minutes": 139.1
+  },
+  {
+   "t": "2026-09-26T07:02:10+00:00",
+   "msg": "finished P1k+T3+P2/val",
+   "exit": 0,
+   "minutes": 152.6
+  },
+  {
+   "t": "2026-09-26T07:04:10+00:00",
+   "msg": "finished P1k+T3+P2/dev",
+   "exit": 0,
+   "minutes": 62.6
+  },
+  {
+   "t": "2026-09-26T07:21:11+00:00",
+   "msg": "finished P1k+T2+P2/val",
+   "exit": 0,
+   "minutes": 171.7
+  },
+  {
+   "t": "2026-09-26T07:21:22+00:00",
+   "msg": "scored P1k+P2",
+   "oracle": 0.9423,
+   "validity": 0.6923,
+   "gap": 0.25,
+   "coverage_rate": 0.0192,
+   "G1": false,
+   "G2": true,
+   "G3": true,
+   "pass": false
+  },
+  {
+   "t": "2026-09-26T07:21:34+00:00",
+   "msg": "scored P1k+T2+P2",
+   "oracle": 0.8269,
+   "validity": 0.8077,
+   "gap": 0.0192,
+   "coverage_rate": 0.1346,
+   "G1": true,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  {
+   "t": "2026-09-26T07:21:46+00:00",
+   "msg": "scored P1k+T3+P2",
+   "oracle": 0.8846,
+   "validity": 0.7115,
+   "gap": 0.1731,
+   "coverage_rate": 0.0385,
+   "G1": true,
+   "G2": true,
+   "G3": true,
+   "pass": true
+  },
+  {
+   "t": "2026-09-26T07:21:46+00:00",
+   "msg": "base P1k+P2",
+   "met_G3": true
+  },
+  {
+   "t": "2026-09-26T07:21:46+00:00",
+   "msg": "chosen P1k+T3+P2",
+   "name": "P1k+T3+P2",
+   "met_all_G1_G3": true,
+   "rule": "first passing stage on the base; oracle closest to 80%"
+  },
+  {
+   "t": "2026-09-26T07:21:46+00:00",
+   "msg": "started P1k+T3+P2/C/dev on GPU0",
+   "pid": 296669
+  },
+  {
+   "t": "2026-09-26T07:21:46+00:00",
+   "msg": "started P1k+T3+P2/C/val on GPU1",
+   "pid": 296670
+  },
+  {
+   "t": "2026-09-26T07:52:18+00:00",
+   "msg": "finished P1k+T3+P2/C/dev",
+   "exit": 0,
+   "minutes": 30.5
+  },
+  {
+   "t": "2026-09-26T08:52:21+00:00",
+   "msg": "finished P1k+T3+P2/C/val",
+   "exit": 0,
+   "minutes": 90.6
+  },
+  {
+   "t": "2026-09-26T08:52:31+00:00",
+   "msg": "done",
+   "name": "P1k+T3+P2",
+   "met_all_G1_G3": true,
+   "rule": "first passing stage on the base; oracle closest to 80%",
+   "C": 0.0769,
+   "G4": true
+  }
+ ],
+ "base": {
+  "name": "P1k+P2",
+  "met_G3": true
+ },
+ "finished": "2026-09-26T08:52:31+00:00"
+}
