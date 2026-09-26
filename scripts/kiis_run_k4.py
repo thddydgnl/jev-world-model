@@ -8,6 +8,14 @@ used a test world; v2's uses dev (kiis2026f/실험계획.md §11).
 task and policy, plus C_fm, with the adapters retrained in V3. A v2 smoke may
 borrow other adapters (--smoke-adapters) to check the pipeline before V3; its
 B/D numbers then mean nothing and are labelled as such.
+
+--jobs runs a subset of the four jobs (and --gpu puts them all on one GPU), so
+jobs that do not need a model still training can start early, e.g. v2's
+zero_shot and generative on GPU1 while B trains on GPU0 (kiis2026f/실험계획.md
+§4 V4). Jobs are independent and seeded, so the order they run in does not
+change their results. A later subset adds its job directories next to the
+earlier ones; an existing job directory is never overwritten. --dry-run prints
+the plan and writes nothing.
 """
 from __future__ import annotations
 
@@ -57,6 +65,9 @@ def main() -> int:
     ap.add_argument("--version", choices=("v1", "v2"), default="v1")
     ap.add_argument("--smoke-adapters", default=None,
                     help="v2 smoke only: directory with B_typed/ and D_gen/ to borrow")
+    ap.add_argument("--jobs", default=None, help="comma list of job names (default: all four)")
+    ap.add_argument("--gpu", type=int, default=None, help="run every selected job on this GPU")
+    ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     smoke = args.mode == "smoke"
     v2 = args.version == "v2"
@@ -67,21 +78,38 @@ def main() -> int:
     if args.smoke_adapters:
         jobs = tuple((n, g, a, f"{args.smoke_adapters}/{a}" if ad else None)
                      for n, g, a, ad in jobs)
+    names = [j[0] for j in jobs]
+    selected = names if args.jobs is None else [x.strip() for x in args.jobs.split(",") if x.strip()]
+    unknown = set(selected) - set(names)
+    if unknown or not selected:
+        raise SystemExit(f"unknown or empty --jobs: {sorted(unknown)}; choose from {names}")
+    jobs = tuple(j for j in jobs if j[0] in selected)
+    if args.gpu is not None:
+        jobs = tuple((n, args.gpu, a, ad) for n, g, a, ad in jobs)
     split = "dev" if (v2 and smoke) else "test"
     name = "kiis_k4v2" if v2 else "kiis_k4"
     out = ROOT / "artifacts" / (f"{name}_smoke" if smoke else name)
-    if out.exists() and any(out.iterdir()):
-        raise SystemExit(f"refusing to overwrite existing K4 output: {out}")
+    seeds = SEEDS[:1] if smoke else SEEDS
+    label = "" if len(jobs) == len(names) else "_" + "+".join(j[0] for j in jobs)
+    status_path = out / f"launch_status{label}.json"
+    taken = [str(out / str(sd) / j[0]) for sd in seeds for j in jobs if (out / str(sd) / j[0]).exists()]
+    if taken or status_path.exists():
+        raise SystemExit(f"refusing to overwrite existing K4 output: {taken or status_path}")
+    if args.dry_run:
+        print(f"{out}  status {status_path.name}  split {split}  hash {config_hash}")
+        for sd in seeds:
+            for n, g, a, ad in jobs:
+                print(f"  seed {sd}  {n:<10} GPU{g}  arms {a}  adapter {ad}")
+        return 0
     out.mkdir(parents=True, exist_ok=True)
-    status_path = out / "launch_status.json"
     status = {"mode": args.mode, "version": args.version, "split": split,
-              "smoke_adapters": args.smoke_adapters, "phase": "running",
-              "started": now(), "seeds": {}}
+              "smoke_adapters": args.smoke_adapters, "jobs": [j[0] for j in jobs],
+              "gpu_override": args.gpu, "phase": "running", "started": now(), "seeds": {}}
     write_status(status_path, status)
 
-    for seed in SEEDS[:1] if smoke else SEEDS:
+    for seed in seeds:
         seed_dir = out / str(seed)
-        seed_dir.mkdir()
+        seed_dir.mkdir(exist_ok=True)
         processes: dict[str, tuple[subprocess.Popen, object, Path, int]] = {}
         status["seeds"][str(seed)] = {}
         for name, gpu, arms, adapter in jobs:
