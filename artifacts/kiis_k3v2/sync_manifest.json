@@ -1,0 +1,45 @@
+{
+  "source": "kiis-mvf-gpu:~/jev-wm/artifacts/kiis_k3v2",
+  "files": {
+    "D_gen/README.md": {
+      "bytes": 5180,
+      "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"
+    },
+    "D_gen/adapter_config.json": {
+      "bytes": 1169,
+      "sha256": "f1a7977df433b4faf44e426406327e5c047fc48906d99800ea95c740fafe6158"
+    },
+    "D_gen/adapter_model.safetensors": {
+      "bytes": 132187888,
+      "sha256": "b02fb959575db8fbeee93f65c0cc8a6ad03a9aac763eb192efa5ee2fcf00ae02"
+    },
+    "D_gen/epoch_1/README.md": {
+      "bytes": 5180,
+      "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"
+    },
+    "D_gen/epoch_1/adapter_config.json": {
+      "bytes": 1169,
+      "sha256": "f1a7977df433b4faf44e426406327e5c047fc48906d99800ea95c740fafe6158"
+    },
+    "D_gen/epoch_1/adapter_model.safetensors": {
+      "bytes": 132187888,
+      "sha256": "b41181f20a93ce3a8af3e7e89b44932a0252d93330a264ac4f06172e9dd0d34e"
+    },
+    "D_gen/epoch_2/README.md": {
+      "bytes": 5180,
+      "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"
+    },
+    "D_gen/epoch_2/adapter_config.json": {
+      "bytes": 1169,
+      "sha256": "f1a7977df433b4faf44e426406327e5c047fc48906d99800ea95c740fafe6158"
+    },
+    "D_gen/epoch_2/adapter_model.safetensors": {
+      "bytes": 132187888,
+      "sha256": "b02fb959575db8fbeee93f65c0cc8a6ad03a9aac763eb192efa5ee2fcf00ae02"
+    },
+    "D_gen/train_meta.json": {
+      "bytes": 1743,
+      "sha256": "d116dec95f2a65df68816bf8fd1224e793a48f9c9f9ccd255b369f09918c92ac"
+    }
+  }
+}

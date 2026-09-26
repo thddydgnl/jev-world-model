@@ -1,0 +1,18 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   2%|▏         | 9/398 [00:00<00:04, 88.74it/s]Loading weights:   9%|▉         | 36/398 [00:00<00:01, 181.51it/s]Loading weights:  15%|█▍        | 58/398 [00:00<00:01, 190.52it/s]Loading weights:  19%|█▉        | 77/398 [00:00<00:01, 184.17it/s]Loading weights:  24%|██▍       | 96/398 [00:00<00:01, 185.16it/s]Loading weights:  29%|██▉       | 115/398 [00:00<00:01, 180.25it/s]Loading weights:  34%|███▍      | 137/398 [00:00<00:01, 186.09it/s]Loading weights:  40%|███▉      | 159/398 [00:00<00:01, 188.35it/s]Loading weights:  45%|████▌     | 181/398 [00:00<00:01, 189.68it/s]Loading weights:  51%|█████     | 202/398 [00:01<00:01, 191.26it/s]Loading weights:  56%|█████▋    | 224/398 [00:01<00:00, 197.69it/s]Loading weights:  62%|██████▏   | 246/398 [00:01<00:00, 198.51it/s]Loading weights:  67%|██████▋   | 268/398 [00:01<00:00, 203.63it/s]Loading weights:  73%|███████▎  | 290/398 [00:01<00:00, 201.03it/s]Loading weights:  78%|███████▊  | 311/398 [00:01<00:00, 199.37it/s]Loading weights:  83%|████████▎ | 331/398 [00:01<00:00, 193.54it/s]Loading weights:  88%|████████▊ | 351/398 [00:01<00:00, 193.10it/s]Loading weights:  93%|█████████▎| 371/398 [00:01<00:00, 185.28it/s]Loading weights:  98%|█████████▊| 390/398 [00:02<00:00, 181.34it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 191.15it/s]
+loaded.
+condition c7a604152a04  split=dev  arms=['B0_typed']
+  tv000 r0  B0_typed=O(27)  [1 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+B0_typed       1    100.0%     27.0     74.1%    100.0%      0      0
+
+분해
+
+B0_typed: 세계모델 예측 138  파싱 실패 0 (0.0%)  세계모델 GPU 1.3분 (에피소드당 79초)
+
+policy calls=54 repairs=0 fallbacks=0 catalog=51
+==========================================================================

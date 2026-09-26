@@ -1,0 +1,11 @@
+{
+  "scripts/kiis_train_wm.py": "7711e23efedaabb2c76da2800d18ced3b895a12baa21779a0bffa041393f084a",
+  "scripts/kiis_validate_wm.py": "83c0bcfde1b28855319aab8faefcb970a6965bd7d93f00b081e82a234afc00e4",
+  "scripts/mvp_c_headroom.py": "51715be989eb3bb447b2cd5435dc73bc57966a4eebc849da8643ef0c89c0903d",
+  "src/runinfo.py": "b6284751703464b927d2f2883d6e9adc88da8ed66306714b49972ab67ef51654",
+  "src/agent/policy.py": "5a32fb5acce8e00ad5448e113001b99554051dd9e2d252fd7cfa06ed13210cc0",
+  "src/wm/llm_backends.py": "593316cdfa2b6dc80a35c2142bb139d5df934cd3be931c6a80f75168bb008bcb",
+  "src/wm/recursive_forecaster.py": "0878e355fe907cc19a7c3b969e588e8f34d85eb88d6cd9105db2902c7f0faa1f",
+  "data/kiis/transitions_v2/train.jsonl": "6b9f4934a6079c9c78a3203da2f3946aed22b7f68f2193547f82e2b5a0321024",
+  "data/kiis/transitions_v2/val.jsonl": "46e7fa264d3f87fe871417b59d8c6d237829a506b342d364a4b9dd1769b03cf0"
+}

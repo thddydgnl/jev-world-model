@@ -1,0 +1,52 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+typed: 6000 transitions -> 48000 examples, tokens mean 1017 max 1210 total 48,827,874
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 3/398 [00:00<00:14, 27.04it/s]Loading weights:   6%|▋         | 25/398 [00:00<00:02, 134.11it/s]Loading weights:  11%|█         | 42/398 [00:00<00:02, 143.96it/s]Loading weights:  15%|█▌        | 60/398 [00:00<00:02, 151.47it/s]Loading weights:  20%|██        | 81/398 [00:00<00:01, 164.11it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 172.64it/s]Loading weights:  30%|███       | 120/398 [00:00<00:01, 171.45it/s]Loading weights:  35%|███▍      | 138/398 [00:00<00:01, 164.98it/s]Loading weights:  40%|███▉      | 158/398 [00:00<00:01, 170.08it/s]Loading weights:  45%|████▍     | 179/398 [00:01<00:01, 176.16it/s]Loading weights:  50%|████▉     | 198/398 [00:01<00:01, 177.06it/s]Loading weights:  54%|█████▍    | 216/398 [00:01<00:01, 175.61it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:00, 178.47it/s]Loading weights:  64%|██████▍   | 256/398 [00:01<00:00, 185.64it/s]Loading weights:  69%|██████▉   | 275/398 [00:01<00:00, 185.74it/s]Loading weights:  74%|███████▍  | 294/398 [00:01<00:00, 184.12it/s]Loading weights:  79%|███████▊  | 313/398 [00:01<00:00, 177.48it/s]Loading weights:  84%|████████▍ | 334/398 [00:01<00:00, 183.95it/s]Loading weights:  89%|████████▉ | 355/398 [00:02<00:00, 189.97it/s]Loading weights:  94%|█████████▍| 375/398 [00:02<00:00, 191.18it/s]Loading weights:  99%|█████████▉| 395/398 [00:02<00:00, 187.00it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 175.01it/s]
+trainable params 33,030,144
+  step 1/3166 loss 0.3771 tok/s 1,597 mem 11.8GB
+  step 20/3166 loss 2.7250 tok/s 1,560 mem 12.2GB
+  step 40/3166 loss 1.5568 tok/s 1,560 mem 12.2GB
+  step 60/3166 loss 1.1342 tok/s 1,561 mem 12.2GB
+  step 80/3166 loss 0.9025 tok/s 1,565 mem 12.2GB
+  step 100/3166 loss 0.7535 tok/s 1,565 mem 12.2GB
+  step 120/3166 loss 0.6447 tok/s 1,560 mem 12.2GB
+  step 140/3166 loss 0.5666 tok/s 1,563 mem 12.2GB
+  step 160/3166 loss 0.5045 tok/s 1,564 mem 12.2GB
+  step 180/3166 loss 0.4608 tok/s 1,564 mem 12.2GB
+  step 200/3166 loss 0.4181 tok/s 1,566 mem 12.2GB
+  step 220/3166 loss 0.3863 tok/s 1,567 mem 12.2GB
+  step 240/3166 loss 0.3586 tok/s 1,568 mem 12.2GB
+  step 260/3166 loss 0.3351 tok/s 1,568 mem 12.2GB
+  step 280/3166 loss 0.3123 tok/s 1,568 mem 12.2GB
+  step 300/3166 loss 0.2938 tok/s 1,567 mem 12.2GB
+  step 320/3166 loss 0.2759 tok/s 1,567 mem 12.2GB
+  step 340/3166 loss 0.2615 tok/s 1,566 mem 12.2GB
+  step 360/3166 loss 0.2479 tok/s 1,565 mem 12.2GB
+  step 380/3166 loss 0.2356 tok/s 1,566 mem 12.2GB
+  step 400/3166 loss 0.2249 tok/s 1,565 mem 12.2GB
+  step 420/3166 loss 0.2158 tok/s 1,565 mem 12.2GB
+  step 440/3166 loss 0.2074 tok/s 1,565 mem 12.2GB
+  step 460/3166 loss 0.1992 tok/s 1,566 mem 12.2GB
+  step 480/3166 loss 0.1918 tok/s 1,565 mem 12.2GB
+  step 500/3166 loss 0.1842 tok/s 1,565 mem 12.2GB
+  step 520/3166 loss 0.1783 tok/s 1,565 mem 12.2GB
+  step 540/3166 loss 0.1718 tok/s 1,565 mem 12.2GB
+  step 560/3166 loss 0.1662 tok/s 1,566 mem 12.2GB
+  step 580/3166 loss 0.1608 tok/s 1,565 mem 12.2GB
+  step 600/3166 loss 0.1560 tok/s 1,566 mem 12.2GB
+  step 620/3166 loss 0.1524 tok/s 1,566 mem 12.2GB
+  step 640/3166 loss 0.1477 tok/s 1,566 mem 12.2GB
+  step 660/3166 loss 0.1435 tok/s 1,567 mem 12.2GB
+  step 680/3166 loss 0.1393 tok/s 1,566 mem 12.2GB
+  step 700/3166 loss 0.1356 tok/s 1,566 mem 12.2GB
+  step 720/3166 loss 0.1322 tok/s 1,566 mem 12.2GB
+  step 740/3166 loss 0.1291 tok/s 1,566 mem 12.2GB
+  step 760/3166 loss 0.1260 tok/s 1,566 mem 12.2GB
+  step 780/3166 loss 0.1228 tok/s 1,566 mem 12.2GB
+  step 800/3166 loss 0.1202 tok/s 1,566 mem 12.2GB
+  step 820/3166 loss 0.1173 tok/s 1,566 mem 12.2GB
+  step 840/3166 loss 0.1146 tok/s 1,566 mem 12.2GB
+  step 860/3166 loss 0.1124 tok/s 1,566 mem 12.2GB
+  step 880/3166 loss 0.1101 tok/s 1,566 mem 12.2GB
+  step 900/3166 loss 0.1080 tok/s 1,566 mem 12.2GB
+  step 920/3166 loss 0.1058 tok/s 1,566 mem 12.2GB
+  step 940/3166 loss 0.1036 tok/s 1,566 mem 12.2GB
