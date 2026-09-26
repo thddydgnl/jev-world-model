@@ -63,7 +63,7 @@ RECURSIVE_ARMS = ("R", "A_jev")
 # zero-shot (0) or with a LoRA adapter trained on engine transitions.
 LLM_ARMS = runinfo.LLM_ARMS
 ADAPTER_ARMS = runinfo.ADAPTER_ARMS
-ALL_ARMS = ("C", "validity", "oracle") + JEV_ARMS + LLM_ARMS
+ALL_ARMS = ("C", "C_fm", "validity", "oracle") + JEV_ARMS + LLM_ARMS
 ARMS = ["C", "validity", "oracle"]
 SEED = 20260921
 OUT = Path("artifacts/mvp_c")
@@ -102,6 +102,12 @@ def live_prefixes(prefixes, state, failed):
     fingerprint = "|".join(",".join(r) for r in state["dynamic_facts"])
     live = [p for p in prefixes if (fingerprint, p[0]) not in failed]
     return live or list(prefixes)
+
+
+def c_fm_prefix(plans, state, failed):
+    """Arm C_fm: the first plan, in the policy's order, whose first action has
+    not already failed from this state; the top plan if every one has."""
+    return live_prefixes(unique_prefixes(plans, 1), state, failed)[0]
 
 
 def score_arm_a(fc, state, prefixes, plans, env=None, game=None, failed=None):
@@ -169,6 +175,13 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         if arm == "C":
             action = plans[0][0]
             chosen = tuple(plans[0][:1])
+        elif arm == "C_fm":
+            # C plus the planner's failure memory and nothing else: the first
+            # plan whose first action has not already failed from this state.
+            # Separates what the world models add from what remembering
+            # observed failures adds (kiis2026f/실험계획.md §4 V2).
+            chosen = c_fm_prefix(plans, state, failed)
+            action = chosen[0]
         elif arm in LLM_ARMS:
             chosen = score_batched(fc, state, unique_prefixes(plans, HORIZON[0]), plans,
                                    env=env, game=game, failed=failed)

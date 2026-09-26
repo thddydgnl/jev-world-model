@@ -165,6 +165,9 @@ def condition(*, model: str, max_new_tokens: int, k: int, h: int,
 # arm's hash only.
 ARM_CONFIG: dict[str, dict[str, Any]] = {
     "C": {"selector": "first action of the policy's top plan"},
+    # V2 (9/26): C with the failure memory every planning arm has, nothing else.
+    "C_fm": {"selector": "first action of the first plan whose first action has not "
+                         "failed from this state", "failure_memory": True},
     # The planner's failure memory (condition["failure_memory"]) reached these
     # two only after K1 found them without it; the flag makes their hashes
     # differ from the runs made before (kiis2026f/실험계획.md §11).

@@ -33,8 +33,8 @@ from textworld import EnvInfos
 import runinfo
 from agent.task import read_schema_values, state_schema, static_catalog, trap_goal_spec
 from env.serialize import canonical_state
-from env.transitions import OBSERVE, solution_path
-from env.worlds import build_trap_world, world_fingerprint
+from env.transitions import OBSERVE, solution_path_v2
+from env.worlds import build_trap_world, build_trap_world_v2, world_fingerprint
 
 INFOS = EnvInfos(facts=True, typed_entities=True, possible_admissible_commands=True,
                  admissible_commands=True)
@@ -47,17 +47,32 @@ POLICY_K, POLICY_H = 8, 4
 POLICY_SEED = 20260921
 MODELS = ("A_jev", "B0_typed", "B_typed", "D0_gen", "D_gen")
 REPEAT_EVERY = 8          # rollouts with index % 8 == 0 (100 of 800) for JEV repeats
+# v2 (kiis2026f/실험계획.md §4 V2): world sets from worlds_manifest_v2.json, named
+# "v2:<set>" (v2:test, v2:x1, v2:dev). The policy that writes the H=4 sequences and
+# the probe behind every arm hash are condition F2's.
+F2 = {"levers": ("T3",), "hint": 2, "samples": 2}
 
 
 # ------------------------------------------------------------------ worlds
 
-def worlds(split: str, n: int, tmp: Path):
-    ref = {w["world_id"]: w["fingerprint"] for w in
-           json.loads((ROOT / "kiis2026f/worlds_manifest.json").read_text())["worlds"][split]}
+def world_set_info(world_set: str) -> tuple[str, tuple | None, dict]:
+    """(split, levers or None for v1, world_id -> fingerprint) of a world set."""
+    if world_set.startswith("v2:"):
+        s = json.loads((ROOT / "kiis2026f/worlds_manifest_v2.json").read_text())["sets"][world_set[3:]]
+        return s["split"], tuple(s["levers"]), {w["world_id"]: w["fingerprint"] for w in s["worlds"]}
+    ref = json.loads((ROOT / "kiis2026f/worlds_manifest.json").read_text())["worlds"][world_set]
+    return world_set, None, {w["world_id"]: w["fingerprint"] for w in ref}
+
+
+def worlds(world_set: str, n: int, tmp: Path):
+    split, levers, ref = world_set_info(world_set)
     for i in range(n):
-        game, path, meta = build_trap_world(i, tmp, random.Random(0), split=split)
+        if levers is None:
+            game, path, meta = build_trap_world(i, tmp, random.Random(0), split=split)
+        else:
+            game, path, meta = build_trap_world_v2(i, tmp, split, levers)
         if world_fingerprint(game) != ref[meta["world_id"]]:
-            raise SystemExit(f"{meta['world_id']} differs from worlds_manifest.json")
+            raise SystemExit(f"{meta['world_id']} differs from the worlds manifest")
         env = textworld.start(str(path), request_infos=INFOS)
         env.reset()
         yield game, meta, env
@@ -116,7 +131,7 @@ def start_paths(env, meta: dict, rng: random.Random, n: int) -> list[tuple[str, 
             source, walk = "walk", rng.randint(0, 8)
         else:
             source = "branch"
-            sol = solution_path(meta, rng)
+            sol = solution_path_v2(meta, rng)
             path = sol[:rng.randint(0, len(sol))]
             walk = rng.randint(0, 3)
         e = replay(env, path)
@@ -140,22 +155,28 @@ def build(args) -> int:
     from agent.policy import Policy
     from forecast import render_facts
     rev = runinfo.revision()      # at start: the code this process loaded
+    world_set = args.world_set or args.split
+    v2 = world_set.startswith("v2:")
+    smoke = world_set.split(":")[-1].endswith("dev")       # v2:dev, v2:x1dev, v1 dev
     policy = Policy(args.model, args.device, seed=POLICY_SEED)
-    n_worlds = 24 if args.split == "test" else args.worlds
-    per_world = [N_STARTS // n_worlds + (1 if i < N_STARTS % n_worlds else 0)
-                 for i in range(n_worlds)]
+    if v2:
+        policy.hint, policy.samples = F2["hint"], F2["samples"]
+    n_worlds = args.worlds if smoke else len(world_set_info(world_set)[2])
+    total = args.starts_total
+    per_world = [total // n_worlds + (1 if i < total % n_worlds else 0) for i in range(n_worlds)]
     rollouts = []
     with tempfile.TemporaryDirectory() as d:
-        for i, (game, meta, env) in enumerate(worlds(args.split, n_worlds, Path(d))):
+        for i, (game, meta, env) in enumerate(worlds(world_set, n_worlds, Path(d))):
             schema = state_schema(game, meta)
             goal = trap_goal_spec(game, meta)
             catalog = static_catalog(game)
-            rng = random.Random(f"kiis-k5-{meta['world_id']}")
-            n = per_world[i] if args.split == "test" else args.starts
+            rng = random.Random(f"kiis-k5-{world_set}-{meta['world_id']}" if v2
+                                else f"kiis-k5-{meta['world_id']}")
+            n = args.starts if smoke else per_world[i]
             for j, (source, path) in enumerate(start_paths(env, meta, rng, n)):
                 start = replay(env, path)
                 canon = canonical_state(list(start.state["_facts"]), game)
-                policy.set_context(meta["world_id"], f"k5-{j}", 0)
+                policy.set_context(meta["world_id"], f"k5-{world_set}-{j}" if v2 else f"k5-{j}", 0)
                 plans, status = policy.plans(render_facts(canon), goal["text"], catalog,
                                              [], POLICY_K, POLICY_H)
                 plan = next((p for p in plans if len(p) == DEPTH), plans[0])
@@ -178,9 +199,12 @@ def build(args) -> int:
                   flush=True)
     out = Path(args.out) if args.out else ROLLOUTS
     out.parent.mkdir(parents=True, exist_ok=True)
+    split, levers, _ = world_set_info(world_set)
     meta_out = {"note": "scripts/kiis_k5_rollout.py build; engine truth and policy plans only",
-                "split": args.split, "depth": DEPTH, "p_valid": P_VALID,
+                "split": split, "world_set": world_set, "levers": list(levers) if levers else None,
+                "depth": DEPTH, "p_valid": P_VALID,
                 "policy": {"model": args.model, "k": POLICY_K, "h": POLICY_H, "seed": POLICY_SEED,
+                           "hint": policy.hint, "samples": policy.samples,
                            "calls": policy.calls, "repairs": policy.repairs,
                            "fallbacks": policy.fallbacks},
                 "revision": rev, "software": runinfo.software()}
@@ -218,6 +242,9 @@ def evaluate(args) -> int:
     from wm.recursive_forecaster import RecursiveForecaster
     rev = runinfo.revision()      # at start: the code this process loaded
     data = json.loads(Path(args.rollouts).read_text())
+    world_set = data["meta"].get("world_set", data["meta"]["split"])
+    if world_set.startswith("v2:"):
+        runinfo.configure_v2(F2["levers"], F2["hint"], F2["samples"])
     rolls = data["rollouts"]
     if args.repeat:
         rolls = [r for i, r in enumerate(rolls) if i % REPEAT_EVERY == 0]
@@ -255,7 +282,7 @@ def evaluate(args) -> int:
     stats = defaultdict(int)
     with tempfile.TemporaryDirectory() as d:
         n_worlds = 1 + max(int("".join(c for c in w if c.isdigit())) for w in by_world)
-        for game, meta, env in worlds(data["meta"]["split"], n_worlds, Path(d)):
+        for game, meta, env in worlds(world_set, n_worlds, Path(d)):
             todo = by_world.get(meta["world_id"])
             if not todo:
                 env.close(); continue
@@ -273,6 +300,12 @@ def evaluate(args) -> int:
                 beams[r["id"]] = [(canon, 1.0)]
                 starts[r["id"]] = canon
             fp = fc._fingerprint
+            # §6.2: a generative reply that did not parse counts as wrong. The
+            # fallback (state unchanged, not executed) would otherwise score as a
+            # correct prediction whenever the true state did not change. From the
+            # step whose reply failed, the rest of that rollout counts as wrong.
+            failed_keys: set[tuple] = set()
+            broken = {r["id"]: False for r in todo}
             for depth in range(1, DEPTH + 1):
                 pending: dict[tuple, tuple[dict, str]] = {}
                 for r in todo:
@@ -286,23 +319,30 @@ def evaluate(args) -> int:
                     for key, (state, _), pred in zip(pending, pairs,
                                                      fc.step.predict_batch(pairs)):
                         fc._store(key, state, pred)
+                        if pred.parse_failed:
+                            failed_keys.add(key)
                 for r in todo:
                     a = r["actions"][depth - 1]
                     prev_top = max(beams[r["id"]], key=lambda kv: kv[1])[0]
-                    p_exec = fc._cache[(fp(prev_top), a)][1]
+                    used = (fp(prev_top), a)
+                    p_exec = fc._cache[used][1]
+                    broken[r["id"]] |= used in failed_keys
+                    bad = broken[r["id"]]
                     beams[r["id"]], _ = fc._advance_beam(beams[r["id"]], a)
                     top = max(beams[r["id"]], key=lambda kv: kv[1])[0]
                     tr = r["truth"][depth - 1]
                     pv = read_schema_values(top, schema)
                     rows.append({
                         "id": r["id"], "world": r["world"], "kind": r["kind"], "k": depth,
-                        "exact": pv == tr["values"],
-                        "vars_ok": sum(pv.get(k) == v for k, v in tr["values"].items()),
+                        "exact": pv == tr["values"] and not bad,
+                        "vars_ok": 0 if bad else sum(pv.get(k) == v for k, v in tr["values"].items()),
                         "vars": len(tr["values"]),
-                        "facts_exact": top["dynamic_facts"] == tr["dynamic_facts"],
-                        "in_beam": any(read_schema_values(s, schema) == tr["values"]
-                                       for s, _ in beams[r["id"]]),
-                        "executes": tr["executes"], "p_exec": round(float(p_exec), 4)})
+                        "facts_exact": top["dynamic_facts"] == tr["dynamic_facts"] and not bad,
+                        "in_beam": not bad and any(read_schema_values(s, schema) == tr["values"]
+                                                   for s, _ in beams[r["id"]]),
+                        "executes": tr["executes"], "p_exec": round(float(p_exec), 4),
+                        "exec_ok": (p_exec >= 0.5) == tr["executes"] and not bad,
+                        "parse_failed": bad})
             for k in ("requests", "parse_failures", "cache_hits", "contradictions"):
                 stats[k] += getattr(fc.stats, k)
             env.close()
@@ -325,9 +365,15 @@ def evaluate(args) -> int:
 
 # ------------------------------------------------------------------ report
 
-def balanced(pairs: list[tuple[bool, float]]) -> float | None:
-    pos = [p >= 0.5 for t, p in pairs if t]
-    neg = [p < 0.5 for t, p in pairs if not t]
+def exec_ok(r: dict) -> bool:
+    """Executes judgement right? Rows written before the parse-failure rule
+    carry no exec_ok and are read from p_exec."""
+    return r["exec_ok"] if "exec_ok" in r else (r["p_exec"] >= 0.5) == r["executes"]
+
+
+def balanced(rows: list[dict]) -> float | None:
+    pos = [exec_ok(r) for r in rows if r["executes"]]
+    neg = [exec_ok(r) for r in rows if not r["executes"]]
     if not pos or not neg:
         return None
     return (sum(pos) / len(pos) + sum(neg) / len(neg)) / 2
@@ -381,7 +427,8 @@ def report(args) -> int:
                 cells[k] = {"n": len(rk), "exact": exact(rk), "ci": [lo, hi],
                             "var_acc": sum(r["vars_ok"] for r in rk) / sum(r["vars"] for r in rk),
                             "in_beam": sum(r["in_beam"] for r in rk) / len(rk),
-                            "exec_balanced": balanced([(r["executes"], r["p_exec"]) for r in rk])}
+                            "exec_balanced": balanced(rk),
+                            "parse_broken": sum(r.get("parse_failed", False) for r in rk) / len(rk)}
                 line += f"{cells[k]['exact']:>9.1%}" + (f" [{lo:.0%},{hi:.0%}]" if lo is not None
                                                         else " " * 10)
             summary["models"][m][kind] = cells
@@ -423,13 +470,56 @@ def report(args) -> int:
     return 0
 
 
+def compare(args) -> int:
+    """H7 (kiis2026f/실험계획.md §5): does a model trained on the task's structure
+    lose more than frozen JEV on a structure it never saw? Per model and world,
+    the drop in mean exact match over k=1..4 from the in-distribution set (K5v2)
+    to X1; the worlds are the same test names, so drops pair by world. Reports
+    each model's mean drop and, against JEV, the paired difference with a
+    world-bootstrap 95% CI."""
+    def per_world(d: Path, m: str) -> dict[str, float]:
+        rows = [json.loads(l) for l in open(d / f"{m}.jsonl") if l.strip()]
+        acc = defaultdict(list)
+        for r in rows:
+            acc[r["world"]].append(r["exact"])
+        return {w: sum(v) / len(v) for w, v in acc.items()}
+    base, x1 = Path(args.base), Path(args.x1)
+    drops = {}
+    for m in MODELS:
+        if (base / f"{m}.jsonl").exists() and (x1 / f"{m}.jsonl").exists():
+            a, b = per_world(base, m), per_world(x1, m)
+            drops[m] = {w: a[w] - b[w] for w in sorted(set(a) & set(b))}
+    rng = random.Random(0)
+    res = {"models": {}, "vs_A_jev": {}}
+    for m, d in drops.items():
+        res["models"][m] = {"mean_drop": sum(d.values()) / len(d), "worlds": len(d)}
+    if "A_jev" in drops:
+        for m in (x for x in drops if x != "A_jev"):
+            ws = sorted(set(drops[m]) & set(drops["A_jev"]))
+            diff = {w: drops[m][w] - drops["A_jev"][w] for w in ws}
+            boots = sorted(sum(diff[rng.choice(ws)] for _ in ws) / len(ws) for _ in range(4000))
+            res["vs_A_jev"][m] = {"diff": sum(diff.values()) / len(ws),
+                                  "ci": [boots[100], boots[3899]], "worlds": len(ws)}
+    for m, v in res["models"].items():
+        extra = res["vs_A_jev"].get(m)
+        print(f"{m:<10} drop {v['mean_drop']:+.1%}" + (
+            f"   − A_jev drop: {extra['diff']:+.1%} [{extra['ci'][0]:+.1%}, {extra['ci'][1]:+.1%}]"
+            if extra else ""))
+    Path(args.out).write_text(json.dumps(res, indent=1) + "\n")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
     b.add_argument("--model", default="Qwen/Qwen3-4B")
     b.add_argument("--device", default="cuda:0")
-    b.add_argument("--split", default="test", choices=("test", "dev"))
+    b.add_argument("--split", default="test", choices=("test", "dev"), help="v1 world sets")
+    b.add_argument("--world-set", default=None,
+                   help="overrides --split: v2:test, v2:x1 or v2:dev (worlds_manifest_v2.json)")
+    b.add_argument("--starts-total", type=int, default=N_STARTS,
+                   help="start states over all worlds (not for dev smoke)")
     b.add_argument("--worlds", type=int, default=1, help="dev smoke only")
     b.add_argument("--starts", type=int, default=2, help="dev smoke only: starts per world")
     b.add_argument("--out", default=None)
@@ -447,8 +537,13 @@ def main() -> int:
     r = sub.add_parser("report")
     r.add_argument("--rollouts", default=str(ROLLOUTS))
     r.add_argument("--out", default=None)
+    c = sub.add_parser("compare", help="H7: in-distribution vs X1 accuracy drops")
+    c.add_argument("--base", required=True, help="K5v2 output directory")
+    c.add_argument("--x1", required=True, help="X1 output directory")
+    c.add_argument("--out", required=True)
     args = ap.parse_args()
-    return {"build": build, "eval": evaluate, "report": report}[args.cmd](args)
+    return {"build": build, "eval": evaluate, "report": report,
+            "compare": compare}[args.cmd](args)
 
 
 if __name__ == "__main__":

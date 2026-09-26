@@ -29,7 +29,7 @@ DEFAULT_SOURCES = {
     "artifacts/seed1234": 1234,
 }
 B = 4000
-ORDER = ["C", "validity", "Aval", "Aend", "A", "R",
+ORDER = ["C", "C_fm", "validity", "Aval", "Aend", "A", "R",
          "A_jev", "B0_typed", "D0_gen", "B_typed", "D_gen", "oracle"]
 
 
@@ -179,7 +179,15 @@ def main() -> int:
              ("B_typed", "A_jev", "학습 타입화 LLM − JEV"),
              ("A_jev", "B0_typed", "JEV − 학습 없는 Qwen (타입화)"),
              ("A_jev", "validity", "JEV − 완벽한 유효성 필터"),
-             ("A_jev", "oracle", "JEV − 완벽한 예측기")]
+             ("A_jev", "oracle", "JEV − 완벽한 예측기"),
+             # V2: the no-world-model baseline with failure memory (C_fm)
+             ("C_fm", "C", "실패 기억 − 기본 에이전트"),
+             ("A_jev", "C_fm", "JEV 세계모델 − 실패 기억 기본"),
+             ("B0_typed", "C_fm", "타입화 Qwen − 실패 기억 기본"),
+             ("D0_gen", "C_fm", "생성형 Qwen − 실패 기억 기본"),
+             ("B_typed", "C_fm", "학습 타입화 − 실패 기억 기본"),
+             ("D_gen", "C_fm", "학습 생성형 − 실패 기억 기본"),
+             ("validity", "C_fm", "완벽한 유효성 필터 − 실패 기억 기본")]
     for hi, lo, label in pairs:
         if hi not in arms or lo not in arms:
             continue
