@@ -1,0 +1,125 @@
+{
+  "config_hash": "c7a604152a04",
+  "condition": {
+    "env": {
+      "textworld": "1.7.0",
+      "structure": "trap_v2",
+      "step_cap": 30,
+      "root_prefix": "0-2 random admissible commands, not look/inventory/examine"
+    },
+    "policy": {
+      "model": "Qwen/Qwen3-4B",
+      "dtype": "bfloat16",
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_new_tokens": 320,
+      "history": 10,
+      "schema_repairs": 1,
+      "seed_key": "world|root|step",
+      "prompt": "5e657f65c840"
+    },
+    "candidates": {
+      "K": 8,
+      "H": 2,
+      "prefixes": "unique, lengths 1..H"
+    },
+    "utility": {
+      "alpha": 0.25,
+      "lambda": 0.1,
+      "cost": 0.01,
+      "beta": 0.05,
+      "invalid_term": "count"
+    },
+    "failure_memory": "drop prefixes whose first action already failed from the same state",
+    "rollout": {
+      "beam": 4,
+      "prune_w": 0.02,
+      "cache": "state fingerprint + action, whole episode"
+    },
+    "typed_questions": {
+      "step": "a15055f7f5fe",
+      "validity": "159903c5a808",
+      "validity_request": "separate",
+      "query_catalog_in_state": false
+    },
+    "state_render": "32145c2fb1a4",
+    "goal": "7d71c2424686",
+    "jev_model": "jev-1.13.0",
+    "v2": {
+      "levers": [
+        "T3"
+      ],
+      "policy_hint": true,
+      "policy_samples": 2,
+      "policy_hint_carry_key": true
+    }
+  },
+  "run": {
+    "arms": [
+      "C",
+      "C_fm",
+      "validity",
+      "oracle",
+      "A_jev"
+    ],
+    "arm_hashes": {
+      "C": "a200eda99286",
+      "C_fm": "6e24c73dcc2a",
+      "validity": "de72faa7f7bf",
+      "oracle": "81bcd35c5a13",
+      "A_jev": "0e1a1a8eac4c"
+    },
+    "arm_configs": {
+      "C": {
+        "selector": "first action of the policy's top plan"
+      },
+      "C_fm": {
+        "selector": "first action of the first plan whose first action has not failed from this state",
+        "failure_memory": true
+      },
+      "validity": {
+        "selector": "utility with engine validity, goal terms zeroed",
+        "failure_memory": true
+      },
+      "oracle": {
+        "selector": "utility with the engine's true endpoint",
+        "failure_memory": true
+      },
+      "A_jev": {
+        "world_model": "recursive one-step, typed",
+        "backend": "jev"
+      }
+    },
+    "split": "dev",
+    "worlds": 1,
+    "roots": 1,
+    "policy_seed": 20260921,
+    "budget_usd": 0.1,
+    "host": "yonghwi-racedreamer",
+    "started": "2026-09-26T10:32:22+0000",
+    "finished": "2026-09-26T10:42:20+0000"
+  },
+  "revision": {
+    "line": "71a8628aada71d536997b4dfd7188c1c57230030 dirty_files=0 synced=2026-09-26T10:31:46Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "world_fingerprints": {
+    "tv000": "d80872014085cd09"
+  },
+  "counts": {
+    "episodes": 5,
+    "policy_calls": 176,
+    "policy_repairs": 0,
+    "policy_fallbacks": 0,
+    "jev_calls": 210,
+    "jev_input_tokens": 402008,
+    "jev_usd": 0.0169,
+    "wm_seconds": 0.0
+  }
+}

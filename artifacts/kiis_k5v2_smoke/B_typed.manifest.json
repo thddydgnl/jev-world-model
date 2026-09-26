@@ -1,0 +1,51 @@
+{
+  "model": "B_typed",
+  "repeat": 0,
+  "rollouts": 4,
+  "rollouts_file": "data/kiis/k5v2_rollouts_smoke.json",
+  "rows": 16,
+  "arm_hash": "d24f23b536b3",
+  "arm_config": {
+    "world_model": "recursive one-step, typed",
+    "backend": "qwen, policy weights",
+    "readout": "next-token probability of the option letters",
+    "prompt": "b9b9eee70469",
+    "adapter": {
+      "weights_sha256": "b8b322c8ba8eb8d7",
+      "n_transitions": 6000,
+      "data_sha": "81ba823a4f7e1a2c",
+      "lora": {
+        "r": 16,
+        "lora_alpha": 32,
+        "lora_dropout": 0.05,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ]
+      },
+      "epochs": 2
+    }
+  },
+  "stats": {
+    "requests": 30,
+    "parse_failures": 0,
+    "cache_hits": 16,
+    "contradictions": 0
+  },
+  "seconds": 25.7,
+  "revision": {
+    "line": "71a8628aada71d536997b4dfd7188c1c57230030 dirty_files=0 synced=2026-09-26T10:31:46Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  }
+}
