@@ -238,6 +238,114 @@ def make_step(model: str, schema, ctx: dict):
     return GenerativeStep(ctx["scorer"], schema)
 
 
+def checked_start(env, game, schema, r: dict):
+    """Rebuild a rollout's start from its path and check the stored truth.
+    Returns an engine copy at the start (caller closes it) and its canonical state."""
+    s = replay(env, r["path"])
+    canon = canonical_state(list(s.state["_facts"]), game)
+    if (read_schema_values(canon, schema) != r["start_values"]
+            or truth_of(s, game, schema, r["actions"]) != r["truth"]):
+        raise SystemExit(f"{r['id']}: stored truth does not replay")
+    return s, canon
+
+
+def _predict(fc, pending: dict, failed_keys: set) -> None:
+    """Ask the step backend for every pending (state, action) in one batch."""
+    if pending:
+        pairs = list(pending.values())
+        for key, (state, _), pred in zip(pending, pairs, fc.step.predict_batch(pairs)):
+            fc._store(key, state, pred)
+            if pred.parse_failed:
+                failed_keys.add(key)
+
+
+def _row(r: dict, k: int, top: dict, beam_states: list, p_exec: float, bad: bool,
+         schema) -> dict:
+    tr = r["truth"][k - 1]
+    pv = read_schema_values(top, schema)
+    return {"id": r["id"], "world": r["world"], "kind": r["kind"], "k": k,
+            "exact": pv == tr["values"] and not bad,
+            "vars_ok": 0 if bad else sum(pv.get(x) == v for x, v in tr["values"].items()),
+            "vars": len(tr["values"]),
+            "facts_exact": top["dynamic_facts"] == tr["dynamic_facts"] and not bad,
+            "in_beam": not bad and any(read_schema_values(b, schema) == tr["values"]
+                                       for b in beam_states),
+            "executes": tr["executes"], "p_exec": round(float(p_exec), 4),
+            "exec_ok": (p_exec >= 0.5) == tr["executes"] and not bad,
+            "parse_failed": bad}
+
+
+def free_running_rows(fc, env, game, schema, todo: list) -> list[dict]:
+    """The model rolls each sequence out on its own predictions (the planner's
+    recursive beam), compared with the truth at every depth.
+
+    §6.2: a generative reply that did not parse counts as wrong. The fallback
+    (state unchanged, not executed) would otherwise score as a correct
+    prediction whenever the true state did not change. From the step whose
+    reply failed, the rest of that rollout counts as wrong."""
+    beams = {}
+    for r in todo:
+        s, canon = checked_start(env, game, schema, r)
+        s.close()
+        beams[r["id"]] = [(canon, 1.0)]
+    fp = fc._fingerprint
+    failed_keys: set[tuple] = set()
+    broken = {r["id"]: False for r in todo}
+    rows = []
+    for depth in range(1, DEPTH + 1):
+        pending: dict[tuple, tuple[dict, str]] = {}
+        for r in todo:
+            a = r["actions"][depth - 1]
+            for state, _ in beams[r["id"]]:
+                key = (fp(state), a)
+                if key not in fc._cache and key not in pending:
+                    pending[key] = (state, a)
+        _predict(fc, pending, failed_keys)
+        for r in todo:
+            a = r["actions"][depth - 1]
+            prev_top = max(beams[r["id"]], key=lambda kv: kv[1])[0]
+            used = (fp(prev_top), a)
+            p_exec = fc._cache[used][1]
+            broken[r["id"]] |= used in failed_keys
+            beams[r["id"]], _ = fc._advance_beam(beams[r["id"]], a)
+            top = max(beams[r["id"]], key=lambda kv: kv[1])[0]
+            rows.append(_row(r, depth, top, [b for b, _ in beams[r["id"]]], p_exec,
+                             broken[r["id"]], schema))
+    return rows
+
+
+def teacher_forced_rows(fc, env, game, schema, todo: list) -> list[dict]:
+    """Every step predicted from the TRUE state before it (engine replay), one
+    step at a time: what each depth would score if the model's own earlier
+    predictions had always been right. The gap to the free-running rollout at
+    the same depth is the error the rollout adds by feeding on itself (H8).
+
+    The top of a one-step beam is the executed branch when p >= 0.5, else the
+    unchanged state, as in _advance_beam. A reply that failed to parse is wrong
+    for its own step only."""
+    from wm.recursive_forecaster import PRUNE_W
+    fp = fc._fingerprint
+    targets, pending, failed_keys = [], {}, set()
+    for r in todo:
+        s, canon = checked_start(env, game, schema, r)
+        for k, a in enumerate(r["actions"], start=1):
+            key = (fp(canon), a)
+            if key not in fc._cache and key not in pending:
+                pending[key] = (canon, a)
+            targets.append((r, k, key, canon))
+            s.step(a)
+            canon = canonical_state(list(s.state["_facts"]), game)
+        s.close()
+    _predict(fc, pending, failed_keys)
+    rows = []
+    for r, k, key, prev in targets:
+        nxt, p_exec = fc._cache[key]
+        top = nxt if p_exec >= 0.5 else prev
+        beam_states = [b for b, w in ((nxt, p_exec), (prev, 1 - p_exec)) if w > PRUNE_W] or [top]
+        rows.append(_row(r, k, top, beam_states, p_exec, key in failed_keys, schema))
+    return rows
+
+
 def evaluate(args) -> int:
     from wm.recursive_forecaster import RecursiveForecaster
     rev = runinfo.revision()      # at start: the code this process loaded
@@ -245,6 +353,13 @@ def evaluate(args) -> int:
     world_set = data["meta"].get("world_set", data["meta"]["split"])
     if world_set.startswith("v2:"):
         runinfo.configure_v2(F2["levers"], F2["hint"], F2["samples"])
+    if args.mode == "tf" and (args.repeat or args.beam != 4):
+        raise SystemExit("teacher-forced takes neither --repeat nor --beam")
+    if args.beam != 4:
+        if args.model not in ("A_jev", "B0_typed", "B_typed"):
+            raise SystemExit("--beam applies to the typed models; generative rollouts have one branch")
+        import wm.recursive_forecaster as rf
+        rf.BEAM_K = args.beam          # read at every _advance_beam call
     rolls = data["rollouts"]
     if args.repeat:
         rolls = [r for i, r in enumerate(rolls) if i % REPEAT_EVERY == 0]
@@ -275,7 +390,9 @@ def evaluate(args) -> int:
             raise SystemExit(f"{args.model} takes no adapter")
         ctx["scorer"] = QwenScorer(wm_model, policy.tok, args.device, batch=args.wm_batch)
 
-    name = args.model + (f".rep{args.repeat}" if args.repeat else "")
+    name = (args.model + (".tf" if args.mode == "tf" else "")
+            + (f".beam{args.beam}" if args.beam != 4 else "")
+            + (f".rep{args.repeat}" if args.repeat else ""))
     out = Path(args.out) if args.out else OUT
     out.mkdir(parents=True, exist_ok=True)
     rows, t0 = [], time.time()
@@ -289,60 +406,8 @@ def evaluate(args) -> int:
             schema = state_schema(game, meta)
             goal = trap_goal_spec(game, meta)
             fc = RecursiveForecaster(None, schema, goal, step=make_step(args.model, schema, ctx))
-            beams, starts = {}, {}
-            for r in todo:
-                s = replay(env, r["path"])
-                canon = canonical_state(list(s.state["_facts"]), game)
-                if (read_schema_values(canon, schema) != r["start_values"]
-                        or truth_of(s, game, schema, r["actions"]) != r["truth"]):
-                    raise SystemExit(f"{r['id']}: stored truth does not replay")
-                s.close()
-                beams[r["id"]] = [(canon, 1.0)]
-                starts[r["id"]] = canon
-            fp = fc._fingerprint
-            # §6.2: a generative reply that did not parse counts as wrong. The
-            # fallback (state unchanged, not executed) would otherwise score as a
-            # correct prediction whenever the true state did not change. From the
-            # step whose reply failed, the rest of that rollout counts as wrong.
-            failed_keys: set[tuple] = set()
-            broken = {r["id"]: False for r in todo}
-            for depth in range(1, DEPTH + 1):
-                pending: dict[tuple, tuple[dict, str]] = {}
-                for r in todo:
-                    a = r["actions"][depth - 1]
-                    for state, _ in beams[r["id"]]:
-                        key = (fp(state), a)
-                        if key not in fc._cache and key not in pending:
-                            pending[key] = (state, a)
-                if pending:
-                    pairs = list(pending.values())
-                    for key, (state, _), pred in zip(pending, pairs,
-                                                     fc.step.predict_batch(pairs)):
-                        fc._store(key, state, pred)
-                        if pred.parse_failed:
-                            failed_keys.add(key)
-                for r in todo:
-                    a = r["actions"][depth - 1]
-                    prev_top = max(beams[r["id"]], key=lambda kv: kv[1])[0]
-                    used = (fp(prev_top), a)
-                    p_exec = fc._cache[used][1]
-                    broken[r["id"]] |= used in failed_keys
-                    bad = broken[r["id"]]
-                    beams[r["id"]], _ = fc._advance_beam(beams[r["id"]], a)
-                    top = max(beams[r["id"]], key=lambda kv: kv[1])[0]
-                    tr = r["truth"][depth - 1]
-                    pv = read_schema_values(top, schema)
-                    rows.append({
-                        "id": r["id"], "world": r["world"], "kind": r["kind"], "k": depth,
-                        "exact": pv == tr["values"] and not bad,
-                        "vars_ok": 0 if bad else sum(pv.get(k) == v for k, v in tr["values"].items()),
-                        "vars": len(tr["values"]),
-                        "facts_exact": top["dynamic_facts"] == tr["dynamic_facts"] and not bad,
-                        "in_beam": not bad and any(read_schema_values(s, schema) == tr["values"]
-                                                   for s, _ in beams[r["id"]]),
-                        "executes": tr["executes"], "p_exec": round(float(p_exec), 4),
-                        "exec_ok": (p_exec >= 0.5) == tr["executes"] and not bad,
-                        "parse_failed": bad})
+            walk = teacher_forced_rows if args.mode == "tf" else free_running_rows
+            rows += walk(fc, env, game, schema, todo)
             for k in ("requests", "parse_failures", "cache_hits", "contradictions"):
                 stats[k] += getattr(fc.stats, k)
             env.close()
@@ -350,7 +415,8 @@ def evaluate(args) -> int:
                   f"{time.time() - t0:.0f}s  requests={stats['requests']}", flush=True)
 
     (out / f"{name}.jsonl").write_text("\n".join(json.dumps(x) for x in rows) + "\n")
-    manifest = {"model": args.model, "repeat": args.repeat, "rollouts": len(rolls),
+    manifest = {"model": args.model, "mode": args.mode, "beam": args.beam,
+                "repeat": args.repeat, "rollouts": len(rolls),
                 "rollouts_file": str(Path(args.rollouts)), "rows": len(rows),
                 "arm_hash": runinfo.arm_hash(args.model, adapter),
                 "arm_config": runinfo.arm_config(args.model, adapter),
@@ -409,18 +475,19 @@ def report(args) -> int:
                             "executes": tr["executes"], "p_exec": 0.0})
     models = {"persistence": persist}
     for m in MODELS:
-        p = out / f"{m}.jsonl"
-        if p.exists():
-            models[m] = [json.loads(l) for l in open(p) if l.strip()]
+        for suffix in ("", ".beam1", ".tf"):      # free-running, beam-1 control, teacher-forced
+            p = out / f"{m}{suffix}.jsonl"
+            if p.exists():
+                models[m + suffix] = [json.loads(l) for l in open(p) if l.strip()]
     rng = random.Random(0)
     exact = lambda rs: sum(r["exact"] for r in rs) / len(rs) if rs else None
     summary = {"n_rollouts": len(data["rollouts"]), "models": {}}
-    print(f"{'model':<12}{'kind':<8}" + "".join(f"{'k=' + str(k):>20}" for k in range(1, DEPTH + 1)))
+    print(f"{'model':<16}{'kind':<8}" + "".join(f"{'k=' + str(k):>20}" for k in range(1, DEPTH + 1)))
     for m, rows in models.items():
         summary["models"][m] = {}
         for kind in ("all", "policy", "random"):
             sel = [r for r in rows if kind == "all" or r["kind"] == kind]
-            cells, line = {}, f"{m:<12}{kind:<8}"
+            cells, line = {}, f"{m:<16}{kind:<8}"
             for k in range(1, DEPTH + 1):
                 rk = [r for r in sel if r["k"] == k]
                 lo, hi = boot(rk, exact, rng) if kind == "all" else (None, None)
@@ -436,7 +503,7 @@ def report(args) -> int:
     print("\nvariable accuracy / executes balanced accuracy (all rollouts)")
     for m in models:
         c = summary["models"][m]["all"]
-        print(f"{m:<12}" + "".join(
+        print(f"{m:<16}" + "".join(
             f"   k={k} {c[k]['var_acc']:.1%} / " +
             (f"{c[k]['exec_balanced']:.1%}" if c[k]["exec_balanced"] is not None else "-")
             for k in range(1, DEPTH + 1)))
@@ -509,6 +576,90 @@ def compare(args) -> int:
     return 0
 
 
+def accumulation(args) -> int:
+    """H8 (kiis2026f/실험계획.md §5): does the typed style lose less to its own
+    errors than the generative one, on the same Qwen?
+
+    For each model run with a teacher-forced twin (m.tf.jsonl) in --out:
+    FR_k and TF_k (state exact match, free-running vs teacher-forced), the gap
+    TF_k - FR_k, and the primary score G = mean of the gap over k = 2..4 (k = 1
+    has no earlier prediction to feed on, so its gap is 0 by construction and
+    is printed as a check). Also, in the free run, P(right at k | right at
+    k-1) and FR_4 / FR_1; and G again over rollouts with no parse failure.
+    Pairs (generative - typed): D0 - B0, D - B, and the same against the
+    typed runs with beam 1 (typed format without its probability beam).
+    CIs: world bootstrap (4,000), both models resampled together."""
+    out = Path(args.out)
+    def load(name):
+        p = out / f"{name}.jsonl"
+        return [json.loads(l) for l in open(p) if l.strip()] if p.exists() else None
+    variants = {}
+    for m in MODELS:
+        tf = load(f"{m}.tf")
+        for suffix in ("", ".beam1"):
+            fr = load(m + suffix)
+            if fr is not None and tf is not None:
+                variants[m + suffix] = (fr, tf)
+
+    def g_score(fr, tf, content_only=False):
+        """Mean over k >= 2 of (teacher-forced exact - free-running exact);
+        rows may repeat (bootstrap), and each repeat counts."""
+        broken = ({r["id"] for r in fr + tf if r.get("parse_failed")} if content_only else set())
+        tfx = {(r["id"], r["k"]): r["exact"] for r in tf}
+        gaps = [tfx[(r["id"], r["k"])] - r["exact"] for r in fr
+                if r["k"] >= 2 and r["id"] not in broken]
+        return sum(gaps) / len(gaps) if gaps else None
+
+    rng = random.Random(0)
+    res = {"models": {}, "pairs": {}}
+    print(f"{'model':<16}{'FR k1..4':>30}  {'TF k1..4':>30}{'gap k1':>8}{'G':>8}{'G content':>11}"
+          f"{'P(k|k-1) 2..4':>18}{'FR4/FR1':>9}")
+    for name, (fr, tf) in variants.items():
+        frx = defaultdict(dict)
+        for r in fr:
+            frx[r["id"]][r["k"]] = r["exact"]
+        FR = {k: sum(v[k] for v in frx.values()) / len(frx) for k in range(1, DEPTH + 1)}
+        tfd = defaultdict(dict)
+        for r in tf:
+            tfd[r["id"]][r["k"]] = r["exact"]
+        TF = {k: sum(v[k] for v in tfd.values()) / len(tfd) for k in range(1, DEPTH + 1)}
+        cond = [sum(v[k] for v in frx.values() if v[k - 1]) / max(1, sum(v[k - 1] for v in frx.values()))
+                for k in range(2, DEPTH + 1)]
+        g, gc = g_score(fr, tf), g_score(fr, tf, content_only=True)
+        res["models"][name] = {"FR": FR, "TF": TF, "gap_k1": TF[1] - FR[1], "G": g,
+                               "G_content_only": gc, "cond_2_4": cond,
+                               "retention": FR[DEPTH] / FR[1] if FR[1] else None}
+        print(f"{name:<16}{'  '.join(f'{FR[k]:.1%}' for k in FR):>30}  {'  '.join(f'{TF[k]:.1%}' for k in TF):>30}"
+              f"{TF[1] - FR[1]:>+8.1%}{g:>+8.1%}" + (f"{gc:>+11.1%}" if gc is not None else f"{'-':>11}")
+              + f"{'  '.join(f'{c:.2f}' for c in cond):>18}"
+              + (f"{FR[DEPTH] / FR[1]:>9.2f}" if FR[1] else f"{'-':>9}"))
+    pairs = [("D0_gen", "B0_typed"), ("D_gen", "B_typed"),
+             ("D0_gen", "B0_typed.beam1"), ("D_gen", "B_typed.beam1")]
+    print("\nG(generative) - G(typed), world bootstrap 95% CI (> 0: typed accumulates less)")
+    for gen, typ in pairs:
+        if gen not in variants or typ not in variants:
+            continue
+        (fg, tg), (ft, tt) = variants[gen], variants[typ]
+        ws = sorted({r["world"] for r in fg} & {r["world"] for r in ft})
+        by = lambda rows: {w: [r for r in rows if r["world"] == w] for w in ws}
+        fgw, tgw, ftw, ttw = by(fg), by(tg), by(ft), by(tt)
+        def diff(sample, content_only=False):
+            a = g_score([r for w in sample for r in fgw[w]], [r for w in sample for r in tgw[w]],
+                        content_only=content_only)
+            b = g_score([r for w in sample for r in ftw[w]], [r for w in sample for r in ttw[w]],
+                        content_only=content_only)
+            return None if a is None or b is None else a - b
+        for label, co in (("all", False), ("content only", True)):
+            point = diff(ws, co)
+            boots = sorted(x for x in (diff([rng.choice(ws) for _ in ws], co) for _ in range(4000))
+                           if x is not None)
+            ci = [boots[int(0.025 * len(boots))], boots[int(0.975 * len(boots)) - 1]]
+            res["pairs"][f"{gen} - {typ} ({label})"] = {"diff": point, "ci": ci, "worlds": len(ws)}
+            print(f"  {gen} - {typ:<16} {label:<13} {point:+.1%}  [{ci[0]:+.1%}, {ci[1]:+.1%}]")
+    (out / "accumulation_h8.json").write_text(json.dumps(res, indent=1) + "\n")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -532,18 +683,25 @@ def main() -> int:
     e.add_argument("--budget", type=float, default=2.0)
     e.add_argument("--repeat", type=int, default=0, help="JEV repeat pass number (1, 2)")
     e.add_argument("--limit", type=int, default=0, help="smoke: first N rollouts")
+    e.add_argument("--mode", choices=("fr", "tf"), default="fr",
+                   help="fr: free-running rollout (default); tf: teacher-forced, every step "
+                        "from the true previous state (H8)")
+    e.add_argument("--beam", type=int, default=4,
+                   help="rollout beam width for the typed models (1 = one branch, H8 control)")
     e.add_argument("--rollouts", default=str(ROLLOUTS))
     e.add_argument("--out", default=None)
     r = sub.add_parser("report")
     r.add_argument("--rollouts", default=str(ROLLOUTS))
     r.add_argument("--out", default=None)
+    h = sub.add_parser("accumulation", help="H8: free-running vs teacher-forced error accumulation")
+    h.add_argument("--out", required=True, help="an eval output directory with *.tf.jsonl twins")
     c = sub.add_parser("compare", help="H7: in-distribution vs X1 accuracy drops")
     c.add_argument("--base", required=True, help="K5v2 output directory")
     c.add_argument("--x1", required=True, help="X1 output directory")
     c.add_argument("--out", required=True)
     args = ap.parse_args()
     return {"build": build, "eval": evaluate, "report": report,
-            "compare": compare}[args.cmd](args)
+            "compare": compare, "accumulation": accumulation}[args.cmd](args)
 
 
 if __name__ == "__main__":
