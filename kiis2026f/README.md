@@ -47,7 +47,7 @@ KIIS 이후 저널·큰 학회로 확장하는 계획은 [`../fullpaper/`](../fu
 - [x] K4 본 실행 (closed-loop, 8 arm) — 9/26, 2,304 episode. A·B·D·oracle 모두 58.7%로 상한에 붙음; oracle 실패의 76%는 정책 후보 부족 ([결과](../artifacts/kiis_k4/README.md))
 - [x] K5 k-step rollout 평가 (v1) — 9/26, k=4 완전일치 A 81.9% · B 98.0% · D 97.8% · B0 9.8% · D0 15.4% (persistence 18.8%) ([결과](../artifacts/kiis_k5/README.md))
 - [ ] **v2 재실험** (9/26 결정, [실험계획.md](실험계획.md) §4 V): 과제 난이도·후보 생성을 세계모델 없는 arm으로 보정 → B·D 재학습 → K4v2·K5v2. 표 1·그림 2는 v2
-  - [x] V0 구현 · [ ] V1 보정 (dev·val) · [ ] V2 동결 · [ ] V3 B·D 재학습 · [ ] V4 K4v2 · [ ] V5 K5v2
+  - [x] V0 구현 · [x] V1 보정 (dev·val, 후보 부족으로 미달 → V1b로 전환) · [ ] V1b 보정 (후보 먼저) · [ ] V2 동결 · [ ] V3 B·D 재학습 · [ ] V4 K4v2 · [ ] V5 K5v2
 - [ ] K6 분석 — 표 1, 그림 2, 슬롯 채움
 - [ ] K7 집필 → 최종 제출 (10/23)
 

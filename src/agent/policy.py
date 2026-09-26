@@ -48,6 +48,11 @@ Output JSON only: {{"plans": [["cmd", "cmd"], ...]}}"""
 AFFORDANCE_HINT = """NOTE: Closed containers and doors can be opened. A locked door or
 container must first be unlocked with the key that matches it. Objects can be
 inside closed containers and cannot be taken until the container is open."""
+# P1' (V1b): one more general rule. In V1 the policy opened the container that
+# held the key and then kept proposing `unlock ... with <key>` without ever
+# taking the key out (kiis2026f/실험계획.md §4 V1b).
+HINT_CARRY_KEY = """A key only works while you are carrying it: to unlock something, first
+take its key (for example out of an open container)."""
 
 
 def _extract_json(text: str) -> dict | None:
@@ -87,7 +92,7 @@ class Policy:
         # generates from the base model and every arm sees the same candidates.
         self.adapter_off = contextlib.nullcontext
         # v2 candidate levers, set by the runner; the defaults are v1.
-        self.hint = False          # P1: AFFORDANCE_HINT in the prompt
+        self.hint = False          # P1: AFFORDANCE_HINT; 2 = P1' (plus HINT_CARRY_KEY)
         self.samples = 1           # P2: independent samples merged per step
 
     def set_context(self, world_id: str, root: int, step: int) -> None:
@@ -124,7 +129,7 @@ class Policy:
     @classmethod
     def render_prompt(cls, facts: list[str], goal: str, catalog: list[str],
                       history: list[tuple[str, bool]] | None = None,
-                      k: int = 8, h: int = 2, hint: bool = False) -> str:
+                      k: int = 8, h: int = 2, hint: bool | int = False) -> str:
         """The exact text the policy sees. Needs no model, so a run can record
         what its prompt was before any weights are loaded."""
         hist = history or []
@@ -135,7 +140,8 @@ class Policy:
                              goal=goal, catalog="\n".join(f"- {c}" for c in catalog),
                              history=hist_txt, k=k, h=h)
         if hint:
-            text = text.replace("\nCURRENT FACTS:", f"\n{AFFORDANCE_HINT}\n\nCURRENT FACTS:", 1)
+            note = AFFORDANCE_HINT + ("\n" + HINT_CARRY_KEY if hint == 2 else "")
+            text = text.replace("\nCURRENT FACTS:", f"\n{note}\n\nCURRENT FACTS:", 1)
         return text
 
     def plans(self, facts: list[str], goal: str, catalog: list[str],

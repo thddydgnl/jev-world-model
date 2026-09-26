@@ -58,10 +58,20 @@ _PROBE: tuple | None = None
 _V2: dict | None = None
 
 
-def configure_v2(levers: tuple[str, ...], hint: bool, samples: int) -> None:
+def configure_v2(levers: tuple[str, ...], hint: bool | int, samples: int) -> None:
+    """hint: False, True (P1) or 2 (P1'). P1' adds a key, so the conditions of
+    configurations that ran before it existed keep their hashes."""
     global _V2, _PROBE
     _V2 = {"levers": list(levers), "policy_hint": bool(hint), "policy_samples": int(samples)}
+    if hint == 2 and not isinstance(hint, bool):
+        _V2["policy_hint_carry_key"] = True
     _PROBE = None
+
+
+def _hint_level() -> bool | int:
+    if _V2 is None or not _V2["policy_hint"]:
+        return False
+    return 2 if _V2.get("policy_hint_carry_key") else True
 
 
 def _probe_world() -> tuple:
@@ -100,7 +110,7 @@ def _probe_texts(k: int, h: int) -> dict[str, str]:
         "state_render": json.dumps(facts, ensure_ascii=False),
         "policy_prompt": Policy.render_prompt(facts, goal["text"], catalog,
                                               [(action, False)], k, h,
-                                              hint=bool(_V2 and _V2["policy_hint"])),
+                                              hint=_hint_level()),
         "typed_step": json.dumps([build_state(canon, schema, action),
                                   step_questions(schema, action)],
                                  sort_keys=True, ensure_ascii=False),

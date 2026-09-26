@@ -34,9 +34,11 @@ GPUS, PER_GPU = (0, 1), 2
 G1, G2, G3, G4, TARGET = (0.75, 0.90), 0.15, 0.05, 0.20, 0.80
 
 
-def config(levers: tuple[str, ...] = (), samples: int = 1) -> dict:
-    parts = ["P1", *levers] + (["P2"] if samples > 1 else [])
-    return {"name": "+".join(parts), "levers": list(levers), "hint": True,
+def config(levers: tuple[str, ...] = (), samples: int = 1, hint: bool | int = True) -> dict:
+    """hint True is P1, 2 is P1' (named P1k); samples 2 is P2, 3 is P2x3."""
+    extra = ["P2"] if samples == 2 else ([f"P2x{samples}"] if samples > 2 else [])
+    parts = ["P1k" if hint == 2 else "P1", *levers] + extra
+    return {"name": "+".join(parts), "levers": list(levers), "hint": hint,
             "samples": samples, "n_levers": len(parts)}
 
 
@@ -54,11 +56,12 @@ def now() -> str:
 
 
 class Status:
-    def __init__(self, path: Path) -> None:
+    def __init__(self, path: Path, plan: str = "kiis2026f/실험계획.md §4 V1",
+                 stages: list | None = None) -> None:
         self.path = path
-        self.data = {"plan": "kiis2026f/실험계획.md §4 V1", "started": now(), "phase": "start",
+        self.data = {"plan": plan, "started": now(), "phase": "start",
                      "criteria": {"G1": list(G1), "G2": G2, "G3": G3, "G4": G4, "target": TARGET},
-                     "stages": [[c["name"] for c in s] for s in STAGES],
+                     "stages": stages if stages is not None else [[c["name"] for c in s] for s in STAGES],
                      "configs": {}, "v1a": None, "chosen": None, "log": []}
         self.save()
 
@@ -81,7 +84,9 @@ def runner_cmd(out: Path, split: str, worlds: int, roots: int, arms: str,
            "--arms", arms, "--out", str(out)]
     if cfg is not None:
         cmd += ["--v2", "--levers", ",".join(cfg["levers"])]
-        if cfg["hint"]:
+        if cfg["hint"] == 2 and not isinstance(cfg["hint"], bool):
+            cmd.append("--policy-hint-carry-key")
+        elif cfg["hint"]:
             cmd.append("--policy-hint")
         if cfg["samples"] > 1:
             cmd += ["--policy-samples", str(cfg["samples"])]
@@ -155,10 +160,132 @@ def judge(by: dict) -> dict:
             "pass": all(g.values())}
 
 
+# ------------------------------------------------------------------ V1b
+#
+# kiis2026f/실험계획.md §4 V1b (9/26, after V1 stages 1-3): the policy's missing
+# candidates, not the task, limited every V1 configuration, and the side room
+# (T1) made it worse. V1b fixes the candidates first and adds task levers after.
+#   A   P1' + P2; if its missing-candidate rate misses G3, P1' + P2x3. The first
+#       to meet G3 is the base; if neither does, the one with fewer such failures.
+#   B   on that base: B0 the base itself, B1 +T2 / +T3, B2 +T2+T3, B3 +T1+T2+T3.
+#       The first stage with a configuration meeting G1-G3 ends the search; the
+#       rule and the fallback are V1's. C then runs on the choice for G4.
+# Run order is not decision order: B1 on a base runs alongside that base, and B2
+# with B3, so that GPUs do not sit idle; the decision still reads the stages in
+# order, and runs it does not use are marked as such.
+
+V1B_OUT = ROOT / "artifacts/kiis_v1bcal"
+V1B_BASES = [config((), 2, hint=2), config((), 3, hint=2)]
+V1B_TASK = [[("T2",), ("T3",)], [("T2", "T3")], [("T1", "T2", "T3")]]
+
+
+def on_base(base: dict, levers: tuple[str, ...]) -> dict:
+    return config(levers, base["samples"], hint=base["hint"])
+
+
+def batch(cfgs: list[dict], out: Path, status: Status, step: dict) -> bool:
+    """Every configuration on dev and val (the long val runs first), then scored
+    into status.data['configs']. False if a run failed."""
+    jobs = [(f"{c['name']}/{s}", runner_cmd(out / c["name"] / s, s, w, r, "validity,oracle", c),
+             out / c["name"] / s)
+            for s, w, r in sorted(SPLITS, key=lambda x: x[0] != "val") for c in cfgs]
+    if not run_jobs(jobs, status):
+        return False
+    for c in cfgs:
+        by = score([out / c["name"] / s for s, _, _ in SPLITS], out / c["name"] / "ceiling.json")
+        man = json.loads((out / c["name"] / "dev" / "run_manifest.json").read_text())
+        res = {**c, **step[c["name"]], "condition_hash": man["config_hash"], "arms": by, **judge(by)}
+        status.data["configs"][c["name"]] = res
+        status.note(f"scored {c['name']}", **{x: res[x] for x in
+                    ("oracle", "validity", "gap", "coverage_rate", "G1", "G2", "G3", "pass")})
+    return True
+
+
+def first_passing(stages: list[list[dict]], configs: dict) -> dict | None:
+    for stage in stages:
+        passing = [configs[c["name"]] for c in stage if configs[c["name"]]["pass"]]
+        if passing:
+            return min(passing, key=lambda c: abs(c["oracle"] - TARGET))
+    return None
+
+
+def run_v1b() -> int:
+    out = V1B_OUT
+    if out.exists() and any(out.iterdir()):
+        raise SystemExit(f"refusing to overwrite {out}")
+    out.mkdir(parents=True, exist_ok=True)
+    status = Status(out / "status.json", plan="kiis2026f/실험계획.md §4 V1b",
+                    stages={"A": [b["name"] for b in V1B_BASES],
+                            "B": ["base", "base+T2 | base+T3", "base+T2+T3", "base+T1+T2+T3"]})
+    configs = status.data["configs"]
+    base = None
+    for i, b in enumerate(V1B_BASES, start=1):
+        b1 = [on_base(b, lv) for lv in V1B_TASK[0]]
+        status.data["phase"] = f"A{i}: {b['name']} with its B1 alongside"
+        step = {b["name"]: {"step": "A", "base": b["name"]},
+                **{c["name"]: {"step": "B1", "base": b["name"]} for c in b1}}
+        if not batch([b, *b1], out, status, step):
+            status.data["phase"] = "failed"
+            status.note(f"A{i}: a run failed; stopping for review")
+            return 1
+        if configs[b["name"]]["G3"]:
+            base = b
+            break
+    met_g3 = base is not None
+    if base is None:
+        base = min(V1B_BASES, key=lambda b: (configs[b["name"]]["coverage_rate"], b["samples"]))
+    status.data["base"] = {"name": base["name"], "met_G3": met_g3}
+    status.note(f"base {base['name']}", met_G3=met_g3)
+
+    stages = [[base], [on_base(base, lv) for lv in V1B_TASK[0]]]
+    chosen = first_passing(stages, configs)
+    if chosen is None:
+        later = [[on_base(base, lv) for lv in st] for st in V1B_TASK[1:]]
+        status.data["phase"] = "B2 and B3"
+        step = {c["name"]: {"step": f"B{k}", "base": base["name"]}
+                for k, st in enumerate(later, start=2) for c in st}
+        if not batch([c for st in later for c in st], out, status, step):
+            status.data["phase"] = "failed"
+            status.note("B2/B3: a run failed; stopping for review")
+            return 1
+        stages += later
+        chosen = first_passing(stages, configs)
+    for c in configs.values():     # B1 runs on a base that was not taken decide nothing
+        c["used_for_decision"] = c["step"] == "A" or c["base"] == base["name"]
+    if chosen is not None:
+        status.data["chosen"] = {"name": chosen["name"], "met_all_G1_G3": True,
+                                 "rule": "first passing stage on the base; oracle closest to 80%"}
+    else:
+        pool = [configs[c["name"]] for st in stages for c in st]
+        chosen = max(pool, key=lambda c: (c["gap"], -c["n_levers"], -abs(c["oracle"] - TARGET)))
+        status.data["chosen"] = {"name": chosen["name"], "met_all_G1_G3": False,
+                                 "rule": "no configuration met G1-G3; largest oracle - validity gap"}
+    status.note(f"chosen {chosen['name']}", **status.data["chosen"])
+
+    status.data["phase"] = "G4 (C on the chosen configuration)"
+    cdir = out / chosen["name"] / "C"
+    jobs = [(f"{chosen['name']}/C/{s}", runner_cmd(cdir / s, s, w, r, "C", chosen), cdir / s)
+            for s, w, r in SPLITS]
+    if not run_jobs(jobs, status):
+        status.data["phase"] = "failed"
+        status.note("C run failed; stopping for review")
+        return 1
+    c_by = score([cdir / s for s, _, _ in SPLITS], cdir / "ceiling.json")["C"]
+    status.data["chosen"].update({"C": round(c_by["rate"], 4), "G4": c_by["rate"] <= G4})
+    status.data["phase"] = "done"
+    status.data["finished"] = now()
+    status.note("done", **status.data["chosen"])
+    (out / "DONE").write_text(status.data["chosen"]["name"] + "\n")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stages", type=int, default=len(STAGES))
+    ap.add_argument("--plan", choices=("v1", "v1b"), default="v1")
+    ap.add_argument("--stages", type=int, default=len(STAGES), help="v1 only")
     args = ap.parse_args()
+    if args.plan == "v1b":
+        return run_v1b()
 
     if OUT.exists() and any(OUT.iterdir()):
         raise SystemExit(f"refusing to overwrite {OUT}")

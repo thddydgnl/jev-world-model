@@ -1,0 +1,29 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|▏         | 5/398 [00:00<00:08, 47.08it/s]Loading weights:   8%|▊         | 31/398 [00:00<00:02, 165.09it/s]Loading weights:  12%|█▏        | 49/398 [00:00<00:02, 166.15it/s]Loading weights:  18%|█▊        | 70/398 [00:00<00:01, 176.36it/s]Loading weights:  22%|██▏       | 89/398 [00:00<00:01, 180.28it/s]Loading weights:  27%|██▋       | 108/398 [00:00<00:01, 162.92it/s]Loading weights:  31%|███▏      | 125/398 [00:00<00:01, 159.02it/s]Loading weights:  36%|███▌      | 142/398 [00:00<00:01, 161.88it/s]Loading weights:  40%|███▉      | 159/398 [00:01<00:01, 150.21it/s]Loading weights:  45%|████▍     | 178/398 [00:01<00:01, 156.92it/s]Loading weights:  49%|████▊     | 194/398 [00:01<00:01, 155.14it/s]Loading weights:  53%|█████▎    | 211/398 [00:01<00:01, 158.52it/s]Loading weights:  57%|█████▋    | 227/398 [00:01<00:01, 158.55it/s]Loading weights:  62%|██████▏   | 246/398 [00:01<00:00, 160.52it/s]Loading weights:  67%|██████▋   | 266/398 [00:01<00:00, 171.55it/s]Loading weights:  71%|███████▏  | 284/398 [00:01<00:00, 163.36it/s]Loading weights:  76%|███████▌  | 301/398 [00:01<00:00, 162.65it/s]Loading weights:  81%|████████  | 322/398 [00:01<00:00, 169.80it/s]Loading weights:  85%|████████▌ | 340/398 [00:02<00:00, 170.38it/s]Loading weights:  90%|████████▉ | 358/398 [00:02<00:00, 163.75it/s]Loading weights:  95%|█████████▍| 378/398 [00:02<00:00, 169.19it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 164.33it/s]
+loaded.
+condition 3692a52d6669  split=dev  arms=['validity', 'oracle']
+  tv000 r0  validity=X(30)  oracle=O(16)  [1 sets]
+  tv001 r0  validity=X(30)  oracle=X(30)  [2 sets]
+  tv002 r0  validity=O(7)  oracle=O(7)  [3 sets]
+  tv003 r0  validity=X(30)  oracle=X(30)  [4 sets]
+  tv004 r0  validity=X(30)  oracle=O(7)  [5 sets]
+  tv005 r0  validity=O(6)  oracle=O(6)  [6 sets]
+  tv006 r0  validity=O(8)  oracle=O(8)  [7 sets]
+  tv007 r0  validity=O(19)  oracle=O(19)  [8 sets]
+  tv008 r0  validity=O(14)  oracle=O(10)  [9 sets]
+  tv009 r0  validity=O(10)  oracle=O(10)  [10 sets]
+  tv010 r0  validity=O(7)  oracle=O(7)  [11 sets]
+  tv011 r0  validity=O(9)  oracle=O(17)  [12 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+validity      12     66.7%     16.7     41.5%     80.6%      0      0
+oracle        12     83.3%     13.9     42.5%     91.7%      0      0
+
+분해
+  예측이 필요     oracle - validity        +16.7%
+
+policy calls=367 repairs=0 fallbacks=0 catalog=58
+==========================================================================

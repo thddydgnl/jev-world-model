@@ -253,17 +253,20 @@ def main() -> int:
                     help="v2 trap worlds and candidate levers (kiis2026f/실험계획.md §4 V)")
     ap.add_argument("--levers", default="", help="v2 task levers, e.g. T1,T2,T3")
     ap.add_argument("--policy-hint", action="store_true", help="v2 candidate lever P1")
+    ap.add_argument("--policy-hint-carry-key", action="store_true",
+                    help="v2 candidate lever P1' (P1 plus the carry-the-key rule)")
     ap.add_argument("--policy-samples", type=int, default=1, help="v2 candidate lever P2")
     ap.add_argument("--wm-batch", type=int, default=8,
                     help="prompts per forward for the Qwen world models")
     args = ap.parse_args()
     levers = parse_levers(args.levers)
-    if not args.v2 and (levers or args.policy_hint or args.policy_samples != 1):
+    hint = 2 if args.policy_hint_carry_key else args.policy_hint
+    if not args.v2 and (levers or hint or args.policy_samples != 1):
         raise SystemExit("--levers / --policy-hint / --policy-samples need --v2")
     if args.v2:
         if not args.trap:
             raise SystemExit("--v2 applies to trap worlds; add --trap")
-        runinfo.configure_v2(levers, args.policy_hint, args.policy_samples)
+        runinfo.configure_v2(levers, hint, args.policy_samples)
     if args.split != "dev" and not args.trap:
         raise SystemExit("--split applies to trap worlds only; add --trap")
 
@@ -289,7 +292,7 @@ def main() -> int:
     from agent.policy import Policy
     print(f"loading {args.model} on {args.device} ...", flush=True)
     policy = Policy(args.model, args.device, seed=args.policy_seed)
-    policy.hint, policy.samples = args.policy_hint, args.policy_samples
+    policy.hint, policy.samples = hint, args.policy_samples
     print("loaded.", flush=True)
 
     scorer = judge = adapter = None

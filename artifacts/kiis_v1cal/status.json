@@ -1,0 +1,489 @@
+{
+ "plan": "kiis2026f/실험계획.md §4 V1",
+ "started": "2026-09-25T19:14:55+00:00",
+ "phase": "stage 4",
+ "criteria": {
+  "G1": [
+   0.75,
+   0.9
+  ],
+  "G2": 0.15,
+  "G3": 0.05,
+  "G4": 0.2,
+  "target": 0.8
+ },
+ "stages": [
+  [
+   "P1"
+  ],
+  [
+   "P1+T1",
+   "P1+P2"
+  ],
+  [
+   "P1+T1+T2",
+   "P1+T1+P2"
+  ],
+  [
+   "P1+T1+T2+T3",
+   "P1+T1+T2+P2"
+  ],
+  [
+   "P1+T1+T2+T3+P2"
+  ]
+ ],
+ "configs": {
+  "P1": {
+   "name": "P1",
+   "levers": [],
+   "hint": true,
+   "samples": 1,
+   "n_levers": 1,
+   "stage": 1,
+   "condition_hash": "91a53c845061",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 38,
+     "coverage": 12,
+     "planner": 2,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.9166666666666666,
+      "val": 0.675
+     },
+     "rate": 0.7307692307692307
+    },
+    "validity": {
+     "n": 52,
+     "success": 36,
+     "coverage": 12,
+     "planner": 4,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.8333333333333334,
+      "val": 0.65
+     },
+     "rate": 0.6923076923076923
+    }
+   },
+   "oracle": 0.7308,
+   "validity": 0.6923,
+   "gap": 0.0385,
+   "coverage_rate": 0.2308,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  "P1+T1": {
+   "name": "P1+T1",
+   "levers": [
+    "T1"
+   ],
+   "hint": true,
+   "samples": 1,
+   "n_levers": 2,
+   "stage": 2,
+   "condition_hash": "a01df617b355",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 24,
+     "coverage": 25,
+     "planner": 3,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.75,
+      "val": 0.375
+     },
+     "rate": 0.46153846153846156
+    },
+    "validity": {
+     "n": 52,
+     "success": 25,
+     "coverage": 24,
+     "planner": 3,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.8333333333333334,
+      "val": 0.375
+     },
+     "rate": 0.4807692307692308
+    }
+   },
+   "oracle": 0.4615,
+   "validity": 0.4808,
+   "gap": -0.0192,
+   "coverage_rate": 0.4808,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  "P1+P2": {
+   "name": "P1+P2",
+   "levers": [],
+   "hint": true,
+   "samples": 2,
+   "n_levers": 2,
+   "stage": 2,
+   "condition_hash": "61f940f009e4",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 43,
+     "coverage": 7,
+     "planner": 2,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.9166666666666666,
+      "val": 0.8
+     },
+     "rate": 0.8269230769230769
+    },
+    "validity": {
+     "n": 52,
+     "success": 40,
+     "coverage": 8,
+     "planner": 4,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.8333333333333334,
+      "val": 0.75
+     },
+     "rate": 0.7692307692307693
+    }
+   },
+   "oracle": 0.8269,
+   "validity": 0.7692,
+   "gap": 0.0577,
+   "coverage_rate": 0.1346,
+   "G1": true,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  "P1+T1+T2": {
+   "name": "P1+T1+T2",
+   "levers": [
+    "T1",
+    "T2"
+   ],
+   "hint": true,
+   "samples": 1,
+   "n_levers": 3,
+   "stage": 3,
+   "condition_hash": "3692a52d6669",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 16,
+     "coverage": 33,
+     "planner": 3,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.8333333333333334,
+      "val": 0.15
+     },
+     "rate": 0.3076923076923077
+    },
+    "validity": {
+     "n": 52,
+     "success": 14,
+     "coverage": 33,
+     "planner": 5,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.6666666666666666,
+      "val": 0.15
+     },
+     "rate": 0.2692307692307692
+    }
+   },
+   "oracle": 0.3077,
+   "validity": 0.2692,
+   "gap": 0.0385,
+   "coverage_rate": 0.6346,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  "P1+T1+P2": {
+   "name": "P1+T1+P2",
+   "levers": [
+    "T1"
+   ],
+   "hint": true,
+   "samples": 2,
+   "n_levers": 3,
+   "stage": 3,
+   "condition_hash": "b5cd5d83098b",
+   "arms": {
+    "oracle": {
+     "n": 52,
+     "success": 26,
+     "coverage": 25,
+     "planner": 1,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.8333333333333334,
+      "val": 0.4
+     },
+     "rate": 0.5
+    },
+    "validity": {
+     "n": 52,
+     "success": 26,
+     "coverage": 24,
+     "planner": 2,
+     "trap": 0,
+     "by_split": {
+      "dev": 0.8333333333333334,
+      "val": 0.4
+     },
+     "rate": 0.5
+    }
+   },
+   "oracle": 0.5,
+   "validity": 0.5,
+   "gap": 0.0,
+   "coverage_rate": 0.4808,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  }
+ },
+ "v1a": {
+  "oracle": 0.875,
+  "n": 80,
+  "coverage": 7,
+  "planner": 3
+ },
+ "chosen": null,
+ "log": [
+  {
+   "t": "2026-09-25T19:14:55+00:00",
+   "msg": "started P1/dev on GPU0",
+   "pid": 284221
+  },
+  {
+   "t": "2026-09-25T19:14:55+00:00",
+   "msg": "started P1/val on GPU1",
+   "pid": 284222
+  },
+  {
+   "t": "2026-09-25T19:14:55+00:00",
+   "msg": "started v1a_val_oracle on GPU0",
+   "pid": 284223
+  },
+  {
+   "t": "2026-09-25T19:34:26+00:00",
+   "msg": "finished P1/dev",
+   "exit": 0,
+   "minutes": 19.5
+  },
+  {
+   "t": "2026-09-25T20:01:58+00:00",
+   "msg": "finished v1a_val_oracle",
+   "exit": 0,
+   "minutes": 47.0
+  },
+  {
+   "t": "2026-09-25T20:08:58+00:00",
+   "msg": "finished P1/val",
+   "exit": 0,
+   "minutes": 54.1
+  },
+  {
+   "t": "2026-09-25T20:09:08+00:00",
+   "msg": "v1a scored",
+   "oracle": 0.875,
+   "n": 80,
+   "coverage": 7,
+   "planner": 3
+  },
+  {
+   "t": "2026-09-25T20:09:19+00:00",
+   "msg": "scored P1",
+   "oracle": 0.7308,
+   "validity": 0.6923,
+   "gap": 0.0385,
+   "coverage_rate": 0.2308,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  {
+   "t": "2026-09-25T20:09:19+00:00",
+   "msg": "started P1+T1/dev on GPU0",
+   "pid": 286548
+  },
+  {
+   "t": "2026-09-25T20:09:19+00:00",
+   "msg": "started P1+T1/val on GPU1",
+   "pid": 286549
+  },
+  {
+   "t": "2026-09-25T20:09:19+00:00",
+   "msg": "started P1+P2/dev on GPU0",
+   "pid": 286550
+  },
+  {
+   "t": "2026-09-25T20:09:19+00:00",
+   "msg": "started P1+P2/val on GPU1",
+   "pid": 286551
+  },
+  {
+   "t": "2026-09-25T20:36:50+00:00",
+   "msg": "finished P1+T1/dev",
+   "exit": 0,
+   "minutes": 27.5
+  },
+  {
+   "t": "2026-09-25T20:41:21+00:00",
+   "msg": "finished P1+P2/dev",
+   "exit": 0,
+   "minutes": 32.0
+  },
+  {
+   "t": "2026-09-25T22:49:28+00:00",
+   "msg": "finished P1+T1/val",
+   "exit": 0,
+   "minutes": 160.2
+  },
+  {
+   "t": "2026-09-25T22:50:28+00:00",
+   "msg": "finished P1+P2/val",
+   "exit": 0,
+   "minutes": 161.2
+  },
+  {
+   "t": "2026-09-25T22:50:40+00:00",
+   "msg": "scored P1+T1",
+   "oracle": 0.4615,
+   "validity": 0.4808,
+   "gap": -0.0192,
+   "coverage_rate": 0.4808,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  {
+   "t": "2026-09-25T22:50:52+00:00",
+   "msg": "scored P1+P2",
+   "oracle": 0.8269,
+   "validity": 0.7692,
+   "gap": 0.0577,
+   "coverage_rate": 0.1346,
+   "G1": true,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  {
+   "t": "2026-09-25T22:50:52+00:00",
+   "msg": "started P1+T1+T2/dev on GPU0",
+   "pid": 289855
+  },
+  {
+   "t": "2026-09-25T22:50:52+00:00",
+   "msg": "started P1+T1+T2/val on GPU1",
+   "pid": 289856
+  },
+  {
+   "t": "2026-09-25T22:50:52+00:00",
+   "msg": "started P1+T1+P2/dev on GPU0",
+   "pid": 289857
+  },
+  {
+   "t": "2026-09-25T22:50:52+00:00",
+   "msg": "started P1+T1+P2/val on GPU1",
+   "pid": 289858
+  },
+  {
+   "t": "2026-09-25T23:23:24+00:00",
+   "msg": "finished P1+T1+T2/dev",
+   "exit": 0,
+   "minutes": 32.5
+  },
+  {
+   "t": "2026-09-25T23:26:54+00:00",
+   "msg": "finished P1+T1+P2/dev",
+   "exit": 0,
+   "minutes": 36.0
+  },
+  {
+   "t": "2026-09-26T02:06:33+00:00",
+   "msg": "finished P1+T1+T2/val",
+   "exit": 0,
+   "minutes": 195.7
+  },
+  {
+   "t": "2026-09-26T03:03:07+00:00",
+   "msg": "finished P1+T1+P2/val",
+   "exit": 0,
+   "minutes": 252.3
+  },
+  {
+   "t": "2026-09-26T03:03:19+00:00",
+   "msg": "scored P1+T1+T2",
+   "oracle": 0.3077,
+   "validity": 0.2692,
+   "gap": 0.0385,
+   "coverage_rate": 0.6346,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  {
+   "t": "2026-09-26T03:03:31+00:00",
+   "msg": "scored P1+T1+P2",
+   "oracle": 0.5,
+   "validity": 0.5,
+   "gap": 0.0,
+   "coverage_rate": 0.4808,
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "pass": false
+  },
+  {
+   "t": "2026-09-26T03:03:31+00:00",
+   "msg": "started P1+T1+T2+T3/dev on GPU0",
+   "pid": 291570
+  },
+  {
+   "t": "2026-09-26T03:03:31+00:00",
+   "msg": "started P1+T1+T2+T3/val on GPU1",
+   "pid": 291571
+  },
+  {
+   "t": "2026-09-26T03:03:31+00:00",
+   "msg": "started P1+T1+T2+P2/dev on GPU0",
+   "pid": 291572
+  },
+  {
+   "t": "2026-09-26T03:03:31+00:00",
+   "msg": "started P1+T1+T2+P2/val on GPU1",
+   "pid": 291573
+  },
+  {
+   "t": "2026-09-26T03:57:04+00:00",
+   "msg": "finished P1+T1+T2+T3/dev",
+   "exit": 0,
+   "minutes": 53.6
+  },
+  {
+   "t": "2026-09-26T03:58:04+00:00",
+   "msg": "finished P1+T1+T2+P2/dev",
+   "exit": 0,
+   "minutes": 54.6
+  }
+ ]
+}

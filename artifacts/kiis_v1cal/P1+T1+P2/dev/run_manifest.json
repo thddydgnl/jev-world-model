@@ -1,0 +1,118 @@
+{
+  "config_hash": "b5cd5d83098b",
+  "condition": {
+    "env": {
+      "textworld": "1.7.0",
+      "structure": "trap_v2",
+      "step_cap": 30,
+      "root_prefix": "0-2 random admissible commands, not look/inventory/examine"
+    },
+    "policy": {
+      "model": "Qwen/Qwen3-4B",
+      "dtype": "bfloat16",
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_new_tokens": 320,
+      "history": 10,
+      "schema_repairs": 1,
+      "seed_key": "world|root|step",
+      "prompt": "5ccb489704f7"
+    },
+    "candidates": {
+      "K": 8,
+      "H": 2,
+      "prefixes": "unique, lengths 1..H"
+    },
+    "utility": {
+      "alpha": 0.25,
+      "lambda": 0.1,
+      "cost": 0.01,
+      "beta": 0.05,
+      "invalid_term": "count"
+    },
+    "failure_memory": "drop prefixes whose first action already failed from the same state",
+    "rollout": {
+      "beam": 4,
+      "prune_w": 0.02,
+      "cache": "state fingerprint + action, whole episode"
+    },
+    "typed_questions": {
+      "step": "74132600758f",
+      "validity": "6c08f9a14920",
+      "validity_request": "separate",
+      "query_catalog_in_state": false
+    },
+    "state_render": "13b1b4963f39",
+    "goal": "7d71c2424686",
+    "jev_model": "jev-1.13.0",
+    "v2": {
+      "levers": [
+        "T1"
+      ],
+      "policy_hint": true,
+      "policy_samples": 2
+    }
+  },
+  "run": {
+    "arms": [
+      "validity",
+      "oracle"
+    ],
+    "arm_hashes": {
+      "validity": "de72faa7f7bf",
+      "oracle": "81bcd35c5a13"
+    },
+    "arm_configs": {
+      "validity": {
+        "selector": "utility with engine validity, goal terms zeroed",
+        "failure_memory": true
+      },
+      "oracle": {
+        "selector": "utility with the engine's true endpoint",
+        "failure_memory": true
+      }
+    },
+    "split": "dev",
+    "worlds": 12,
+    "roots": 1,
+    "policy_seed": 20260921,
+    "budget_usd": 3.0,
+    "host": "yonghwi-racedreamer",
+    "started": "2026-09-25T22:51:02+0000",
+    "finished": "2026-09-25T23:26:36+0000"
+  },
+  "revision": {
+    "line": "54a3dcd02cfe2cc55f020d1690987ac268a2f555 dirty_files=0 synced=2026-09-25T19:14:49Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "world_fingerprints": {
+    "tv000": "8eb8b08480c95adf",
+    "tv001": "d7e85036af3cafc0",
+    "tv002": "d80a8f0a00ebefaa",
+    "tv003": "fbb6509ef5d71c4d",
+    "tv004": "b9bb878f03ed6a67",
+    "tv005": "540e2d1a031439de",
+    "tv006": "afd9c9c23f1a688a",
+    "tv007": "eb26fc7af98eaad6",
+    "tv008": "42fafa2612d66ee5",
+    "tv009": "f464ac09229cb0d2",
+    "tv010": "4842f938ffaf624f",
+    "tv011": "1aa40fb9a6acc248"
+  },
+  "counts": {
+    "episodes": 24,
+    "policy_calls": 486,
+    "policy_repairs": 0,
+    "policy_fallbacks": 0,
+    "jev_calls": 0,
+    "jev_input_tokens": 0,
+    "jev_usd": 0.0,
+    "wm_seconds": 0.0
+  }
+}

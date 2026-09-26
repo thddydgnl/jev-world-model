@@ -9,7 +9,7 @@ import json, sys, zlib
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from agent.policy import AFFORDANCE_HINT, PROMPT, Policy
+from agent.policy import AFFORDANCE_HINT, HINT_CARRY_KEY, PROMPT, Policy
 
 CATALOG = ["open box", "take key from box", "go east", "look", "unlock door with key"]
 
@@ -45,6 +45,10 @@ def main() -> int:
     hinted = Policy.render_prompt(facts, goal, CATALOG, hint=True)
     check(AFFORDANCE_HINT in hinted and AFFORDANCE_HINT not in v1, "hint only when asked")
     check(hinted.replace(AFFORDANCE_HINT + "\n\n", "") == v1, "hint adds nothing else")
+    carry = Policy.render_prompt(facts, goal, CATALOG, hint=2)
+    check(HINT_CARRY_KEY not in hinted, "P1 has no carry-the-key rule")
+    check(carry.replace(AFFORDANCE_HINT + "\n" + HINT_CARRY_KEY + "\n\n", "") == v1,
+          "P1' is P1 plus the carry-the-key rule, nothing else")
 
     key = "tv000|0|3"
     s0 = 20260921 + (zlib.crc32(key.encode()) & 0x7FFFFFFF)
