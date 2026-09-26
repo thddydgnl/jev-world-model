@@ -57,7 +57,9 @@ def main():
     adapter = Path(args.adapter)
     meta = json.loads((adapter / "train_meta.json").read_text())
     cfg = meta["args"]
-    assert not cfg["overfit"] and cfg["val"] == "data/kiis/transitions/val.jsonl"
+    # K3 (v1) and V3 (v2, kiis2026f/실험계획.md §4) adapters; never a tiny-overfit run
+    assert not cfg["overfit"] and cfg["val"] in ("data/kiis/transitions/val.jsonl",
+                                                 "data/kiis/transitions_v2/val.jsonl")
     held = load(cfg["val"], cfg["eval_n"], cfg["seed"])
     tok = AutoTokenizer.from_pretrained(cfg["model"])
     im_end = tok.convert_tokens_to_ids("<|im_end|>")

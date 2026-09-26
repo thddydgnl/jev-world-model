@@ -2,15 +2,19 @@
 
 Run after kiis_validate_wm.py and the B0_typed/B_typed/D_gen dev smokes.
 Only reads existing artifacts; writes validation/gates.json.
+--version v2 checks the V3 retraining (artifacts/kiis_k3v2, v2 data and
+condition F2, kiis2026f/실험계획.md §4 V3) with the same gates.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BASE = ROOT / "artifacts/kiis_k3"
+VERSIONS = {"v1": ("artifacts/kiis_k3", "data/kiis/transitions/val.jsonl", "0fe479090329"),
+            "v2": ("artifacts/kiis_k3v2", "data/kiis/transitions_v2/val.jsonl", "c7a604152a04")}
 
 
 def read(path):
@@ -30,6 +34,10 @@ def rows(path):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--version", choices=tuple(VERSIONS), default="v1")
+    base, val_path, condition = VERSIONS[ap.parse_args().version]
+    BASE = ROOT / base
     validation = BASE / "validation"
     sync = read(BASE / "sync_manifest.json")
     matches = {name: (BASE / name).stat().st_size == spec["bytes"]
@@ -56,7 +64,7 @@ def main():
         "training_files_synced": all(matches.values()),
         "local_validation_inputs_match_server": all(source_matches.values()),
         "validation_report_inputs": all(
-            r["val_sha256"] == source_hashes["data/kiis/transitions/val.jsonl"]
+            r["val_sha256"] == source_hashes[val_path]
             and r["script_sha256"] == source_hashes["scripts/kiis_validate_wm.py"]
             for r in reports.values()),
         "same_training_data_and_settings": b["data_sha"] == d["data_sha"]
@@ -69,7 +77,7 @@ def main():
         "dev_manifests_finished": all(m["run"].get("finished") and m["counts"]["episodes"] == 1
                                       for m in manifests.values()),
         "dev_episodes_completed": all(e["status"] in ("success", "cap") for e in episodes.values()),
-        "same_frozen_condition": {m["config_hash"] for m in manifests.values()} == {"0fe479090329"},
+        "same_frozen_condition": {m["config_hash"] for m in manifests.values()} == {condition},
         "same_dev_world": all(m["world_fingerprints"] == manifests["B0_typed"]["world_fingerprints"] for m in manifests.values())
             and all(m["run"]["split"] == "dev" for m in manifests.values()),
         "same_policy_seed": {m["run"]["policy_seed"] for m in manifests.values()} == {20260921},
