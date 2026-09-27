@@ -1,6 +1,46 @@
 {
   "source": "kiis-mvf-gpu:~/jev-wm/artifacts/kiis_k3v2",
   "files": {
+    "B_typed/README.md": {
+      "bytes": 5180,
+      "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"
+    },
+    "B_typed/adapter_config.json": {
+      "bytes": 1169,
+      "sha256": "ee76b013af799b73b77f4e2d7acdca26571525d30595a2c30e311e8720e9f883"
+    },
+    "B_typed/adapter_model.safetensors": {
+      "bytes": 132187888,
+      "sha256": "dd085a5ea6d038c9587a1a5b7654d9e560560a7e394c23b153201a7359913705"
+    },
+    "B_typed/epoch_1/README.md": {
+      "bytes": 5180,
+      "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"
+    },
+    "B_typed/epoch_1/adapter_config.json": {
+      "bytes": 1169,
+      "sha256": "ee76b013af799b73b77f4e2d7acdca26571525d30595a2c30e311e8720e9f883"
+    },
+    "B_typed/epoch_1/adapter_model.safetensors": {
+      "bytes": 132187888,
+      "sha256": "dd085a5ea6d038c9587a1a5b7654d9e560560a7e394c23b153201a7359913705"
+    },
+    "B_typed/epoch_2/README.md": {
+      "bytes": 5180,
+      "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"
+    },
+    "B_typed/epoch_2/adapter_config.json": {
+      "bytes": 1169,
+      "sha256": "ee76b013af799b73b77f4e2d7acdca26571525d30595a2c30e311e8720e9f883"
+    },
+    "B_typed/epoch_2/adapter_model.safetensors": {
+      "bytes": 132187888,
+      "sha256": "0d39b03e71129676b9c7c271e1dd415c910c7375d8533c09814ba3fc80ddc64b"
+    },
+    "B_typed/train_meta.json": {
+      "bytes": 1699,
+      "sha256": "a4efcadb29b48fe99c21e09238e2b59b6b1e8c39757e8dc0fa3108f18fde38ae"
+    },
     "D_gen/README.md": {
       "bytes": 5180,
       "sha256": "f9a652d102b7891e5e4dae770d08fe92eb6361a1fed184befa2157e26114ea00"

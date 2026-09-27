@@ -1,0 +1,342 @@
+{
+  "gates": {
+    "training_files_synced": true,
+    "local_validation_inputs_match_server": true,
+    "validation_report_inputs": true,
+    "same_training_data_and_settings": true,
+    "planned_training_size": true,
+    "same_validation_subset": true,
+    "validation_gates": true,
+    "dev_manifests_finished": true,
+    "dev_episodes_completed": true,
+    "same_frozen_condition": true,
+    "same_dev_world": true,
+    "same_policy_seed": true,
+    "same_step0_candidates": true,
+    "selected_adapters_used": true
+  },
+  "training_files": {
+    "B_typed/README.md": true,
+    "B_typed/adapter_config.json": true,
+    "B_typed/adapter_model.safetensors": true,
+    "B_typed/epoch_1/README.md": true,
+    "B_typed/epoch_1/adapter_config.json": true,
+    "B_typed/epoch_1/adapter_model.safetensors": true,
+    "B_typed/epoch_2/README.md": true,
+    "B_typed/epoch_2/adapter_config.json": true,
+    "B_typed/epoch_2/adapter_model.safetensors": true,
+    "B_typed/train_meta.json": true,
+    "D_gen/README.md": true,
+    "D_gen/adapter_config.json": true,
+    "D_gen/adapter_model.safetensors": true,
+    "D_gen/epoch_1/README.md": true,
+    "D_gen/epoch_1/adapter_config.json": true,
+    "D_gen/epoch_1/adapter_model.safetensors": true,
+    "D_gen/epoch_2/README.md": true,
+    "D_gen/epoch_2/adapter_config.json": true,
+    "D_gen/epoch_2/adapter_model.safetensors": true,
+    "D_gen/train_meta.json": true
+  },
+  "source_files": {
+    "scripts/kiis_train_wm.py": true,
+    "scripts/kiis_validate_wm.py": true,
+    "scripts/mvp_c_headroom.py": true,
+    "src/runinfo.py": true,
+    "src/agent/policy.py": true,
+    "src/wm/llm_backends.py": true,
+    "src/wm/recursive_forecaster.py": true,
+    "data/kiis/transitions_v2/train.jsonl": true,
+    "data/kiis/transitions_v2/val.jsonl": true
+  },
+  "validation": {
+    "B_typed": {
+      "style": "typed",
+      "adapter": "artifacts/kiis_k3v2/B_typed",
+      "selected_epoch": 1,
+      "transitions": 200,
+      "val_sha256": "46e7fa264d3f87fe871417b59d8c6d237829a506b342d364a4b9dd1769b03cf0",
+      "subset_sha256": "bb66ce5b1cdb585f698456d0fb935270f15d8985d5917fe4029e1dc5560d8664",
+      "loss_definition": "token-weighted target CE; fixed options per validation example",
+      "script_sha256": "83c0bcfde1b28855319aab8faefcb970a6965bd7d93f00b081e82a234afc00e4",
+      "revision": {
+        "line": "f662bcce8a753b0b7af8afba2cc36da2b9ece3d0 dirty_files=0 synced=2026-09-26T17:28:16Z",
+        "source": "REVISION"
+      },
+      "software": {
+        "textworld": "1.7.0",
+        "torch": "2.6.0+cu124",
+        "transformers": "5.17.0",
+        "peft": "0.21.0"
+      },
+      "results": {
+        "base": {
+          "target_token_ce": 2.836959091947152,
+          "target_tokens": 1600,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 0.63,
+            "validity_balanced_acc": 0.6923076923076923,
+            "var_acc_when_executes": 0.9122023809523809,
+            "parse_fail_rate": 0.0
+          }
+        },
+        "epoch_1": {
+          "target_token_ce": 0.0010041385180650053,
+          "target_tokens": 1600,
+          "weights_sha256": "dd085a5ea6d038c9"
+        },
+        "epoch_2": {
+          "target_token_ce": 1.5315838733558353e-05,
+          "target_tokens": 1600,
+          "weights_sha256": "0d39b03e71129676"
+        },
+        "selected": {
+          "target_token_ce": 0.0010041385180650053,
+          "target_tokens": 1600,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 1.0,
+            "validity_balanced_acc": 1.0,
+            "var_acc_when_executes": 1.0,
+            "parse_fail_rate": 0.0
+          },
+          "weights_sha256": "dd085a5ea6d038c9"
+        }
+      },
+      "gates": {
+        "accuracy_improves": true,
+        "val_loss_decreases": true,
+        "selected_weights_match": true,
+        "selection_accuracy_reproduced": true
+      }
+    },
+    "D_gen": {
+      "style": "gen",
+      "adapter": "artifacts/kiis_k3v2/D_gen",
+      "selected_epoch": 2,
+      "transitions": 200,
+      "val_sha256": "46e7fa264d3f87fe871417b59d8c6d237829a506b342d364a4b9dd1769b03cf0",
+      "subset_sha256": "bb66ce5b1cdb585f698456d0fb935270f15d8985d5917fe4029e1dc5560d8664",
+      "loss_definition": "token-weighted target CE; fixed options per validation example",
+      "script_sha256": "83c0bcfde1b28855319aab8faefcb970a6965bd7d93f00b081e82a234afc00e4",
+      "revision": {
+        "line": "85f3dc9d8df9b4aa05ff26af698206812811a22c dirty_files=0 synced=2026-09-26T11:39:36Z",
+        "source": "REVISION"
+      },
+      "software": {
+        "textworld": "1.7.0",
+        "torch": "2.6.0+cu124",
+        "transformers": "5.17.0",
+        "peft": "0.21.0"
+      },
+      "results": {
+        "base": {
+          "target_token_ce": 0.17702546199319621,
+          "target_tokens": 27366,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 0.395,
+            "validity_balanced_acc": 0.6366185897435898,
+            "var_acc_when_executes": 0.9032738095238095,
+            "parse_fail_rate": 0.23
+          }
+        },
+        "epoch_1": {
+          "target_token_ce": 0.0008950897692304875,
+          "target_tokens": 27366,
+          "weights_sha256": "b41181f20a93ce3a"
+        },
+        "epoch_2": {
+          "target_token_ce": 0.00016872391857640948,
+          "target_tokens": 27366,
+          "weights_sha256": "b02fb959575db8fb"
+        },
+        "selected": {
+          "target_token_ce": 0.00016872391857640948,
+          "target_tokens": 27366,
+          "inference": {
+            "transitions": 200,
+            "transition_acc": 0.995,
+            "validity_balanced_acc": 0.9951923076923077,
+            "var_acc_when_executes": 1.0,
+            "parse_fail_rate": 0.0
+          },
+          "weights_sha256": "b02fb959575db8fb"
+        }
+      },
+      "gates": {
+        "accuracy_improves": true,
+        "val_loss_decreases": true,
+        "selected_weights_match": true,
+        "selection_accuracy_reproduced": true
+      }
+    }
+  },
+  "smoke_episodes": {
+    "B0_typed": {
+      "arm": "B0_typed",
+      "status": "success",
+      "success": true,
+      "steps": 27,
+      "invalid": 20,
+      "progress": 1.0,
+      "traps": 0,
+      "decoys": 0,
+      "wm_requests": 138,
+      "wm_seconds": 78.84,
+      "parse_failures": 0,
+      "drift": {
+        "n": {
+          "1": 250,
+          "2": 142
+        },
+        "exact": {
+          "1": 144,
+          "2": 46
+        },
+        "vars_ok": {
+          "1": 1629,
+          "2": 839
+        },
+        "vars_tot": {
+          "1": 1750,
+          "2": 994
+        },
+        "in_beam": {
+          "1": 150,
+          "2": 62
+        },
+        "contradictions": 1,
+        "cache_hits": 397
+      },
+      "world_id": "tv000",
+      "root": 0,
+      "catalog_size": 51,
+      "split": "dev",
+      "policy_seed": 20260921,
+      "config_hash": "c7a604152a04",
+      "arm_hash": "7ec67f1206af"
+    },
+    "B_typed": {
+      "arm": "B_typed",
+      "status": "success",
+      "success": true,
+      "steps": 8,
+      "invalid": 1,
+      "progress": 1.0,
+      "traps": 0,
+      "decoys": 0,
+      "wm_requests": 104,
+      "wm_seconds": 82.73,
+      "parse_failures": 0,
+      "drift": {
+        "n": {
+          "1": 72,
+          "2": 43
+        },
+        "exact": {
+          "1": 72,
+          "2": 43
+        },
+        "vars_ok": {
+          "1": 504,
+          "2": 301
+        },
+        "vars_tot": {
+          "1": 504,
+          "2": 301
+        },
+        "in_beam": {
+          "1": 72,
+          "2": 43
+        },
+        "contradictions": 0,
+        "cache_hits": 123
+      },
+      "world_id": "tv000",
+      "root": 0,
+      "catalog_size": 51,
+      "split": "dev",
+      "policy_seed": 20260921,
+      "config_hash": "c7a604152a04",
+      "arm_hash": "b8f74768dd7f"
+    },
+    "D_gen": {
+      "arm": "D_gen",
+      "status": "success",
+      "success": true,
+      "steps": 8,
+      "invalid": 1,
+      "progress": 1.0,
+      "traps": 0,
+      "decoys": 0,
+      "wm_requests": 44,
+      "wm_seconds": 118.26,
+      "parse_failures": 0,
+      "drift": {
+        "n": {
+          "1": 72,
+          "2": 43
+        },
+        "exact": {
+          "1": 72,
+          "2": 43
+        },
+        "vars_ok": {
+          "1": 504,
+          "2": 301
+        },
+        "vars_tot": {
+          "1": 504,
+          "2": 301
+        },
+        "in_beam": {
+          "1": 72,
+          "2": 43
+        },
+        "contradictions": 0,
+        "cache_hits": 115
+      },
+      "world_id": "tv000",
+      "root": 0,
+      "catalog_size": 51,
+      "split": "dev",
+      "policy_seed": 20260921,
+      "config_hash": "c7a604152a04",
+      "arm_hash": "a2e44a922d80"
+    }
+  },
+  "step0_plans": [
+    [
+      "take brass key from cork barrel",
+      "open steel door"
+    ],
+    [
+      "take brass key from wooden box",
+      "open steel door"
+    ],
+    [
+      "take brass key from oak table",
+      "open steel door"
+    ],
+    [
+      "go east"
+    ],
+    [
+      "open cork barrel",
+      "take red apple from cork barrel"
+    ],
+    [
+      "open wooden box",
+      "take brass key from wooden box"
+    ],
+    [
+      "take red apple from cork barrel",
+      "go east"
+    ]
+  ],
+  "gpu_hours": {
+    "B_typed": 17.484,
+    "D_gen": 4.734
+  }
+}
