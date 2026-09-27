@@ -47,6 +47,22 @@ V2 = {
         ("typed", 1, "B_typed", "artifacts/kiis_k3v2/B_typed"),
     ),
 }
+# v3 (kiis2026f/실험계획.md §4 W): no task lever, test on the test3 vocabulary,
+# the v1 K3 adapters (same structure) if they pass the reuse check. The
+# condition hash and the P3 flag are filled in at W2 from the calibration's
+# choice; until then this refuses to run.
+V3 = {
+    "config_hash": None,
+    "args": ["--v2", "--levers", "", "--policy-hint-carry-key", "--policy-samples", "2"],
+    "split": "test3",
+    "jobs": (
+        ("core", 0, "C,C_fm,validity,oracle,A_jev", None),
+        ("generative", 0, "D_gen", "artifacts/kiis_k3/D_gen"),
+        ("zero_shot", 1, "B0_typed,D0_gen", None),
+        ("typed", 1, "B_typed", "artifacts/kiis_k3/B_typed"),
+    ),
+}
+CONFIGS = {"v2": V2, "v3": V3}
 
 
 def now() -> str:
@@ -62,7 +78,7 @@ def write_status(path: Path, status: dict) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=("smoke", "full"), required=True)
-    ap.add_argument("--version", choices=("v1", "v2"), default="v1")
+    ap.add_argument("--version", choices=("v1", "v2", "v3"), default="v1")
     ap.add_argument("--smoke-adapters", default=None,
                     help="v2 smoke only: directory with B_typed/ and D_gen/ to borrow")
     ap.add_argument("--jobs", default=None, help="comma list of job names (default: all four)")
@@ -70,11 +86,14 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     smoke = args.mode == "smoke"
-    v2 = args.version == "v2"
+    cfg = CONFIGS.get(args.version)
+    v2 = cfg is not None                 # v2 and v3 share the v2 world builder and runner flags
     if args.smoke_adapters and not (v2 and smoke):
-        raise SystemExit("--smoke-adapters is for a v2 smoke only")
-    config_hash = V2["config_hash"] if v2 else CONFIG_HASH
-    jobs = V2["jobs"] if v2 else JOBS
+        raise SystemExit("--smoke-adapters is for a v2/v3 smoke only")
+    if v2 and cfg["config_hash"] is None:
+        raise SystemExit(f"{args.version} is not frozen yet (kiis2026f/실험계획.md §4 W2)")
+    config_hash = cfg["config_hash"] if v2 else CONFIG_HASH
+    jobs = cfg["jobs"] if v2 else JOBS
     if args.smoke_adapters:
         jobs = tuple((n, g, a, f"{args.smoke_adapters}/{a}" if ad else None)
                      for n, g, a, ad in jobs)
@@ -86,8 +105,8 @@ def main() -> int:
     jobs = tuple(j for j in jobs if j[0] in selected)
     if args.gpu is not None:
         jobs = tuple((n, args.gpu, a, ad) for n, g, a, ad in jobs)
-    split = "dev" if (v2 and smoke) else "test"
-    name = "kiis_k4v2" if v2 else "kiis_k4"
+    split = "dev" if (v2 and smoke) else (cfg.get("split", "test") if v2 else "test")
+    name = f"kiis_k4{args.version}" if v2 else "kiis_k4"
     out = ROOT / "artifacts" / (f"{name}_smoke" if smoke else name)
     seeds = SEEDS[:1] if smoke else SEEDS
     label = "" if len(jobs) == len(names) else "_" + "+".join(j[0] for j in jobs)
@@ -121,7 +140,7 @@ def main() -> int:
                    "--roots", "1" if smoke else "4", "--cap", "30",
                    "--horizon", "2", "--policy-seed", str(seed),
                    "--budget", "0.1" if smoke else "3",
-                   "--arms", arms, "--out", str(job_dir)] + (V2["args"] if v2 else [])
+                   "--arms", arms, "--out", str(job_dir)] + (cfg["args"] if v2 else [])
             if adapter:
                 cmd += ["--adapter", str(ROOT / adapter)]
             env = os.environ.copy()

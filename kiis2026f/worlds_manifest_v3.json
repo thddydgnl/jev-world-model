@@ -1,0 +1,4242 @@
+{
+ "note": "written by scripts/kiis_worlds.py --v3; do not edit by hand",
+ "vocab_split": {
+  "box": {
+   "train": [
+    "felt toybox",
+    "teak drawer",
+    "lacquered dresser",
+    "walnut cabinet",
+    "rosewood casket",
+    "wicker hamper",
+    "ceramic jar",
+    "enamel canister",
+    "cardboard carton",
+    "black strongbox",
+    "leather trunk",
+    "maple cupboard",
+    "grey safe",
+    "velvet coffer"
+   ],
+   "val": [
+    "zinc tub",
+    "chrome locker"
+   ],
+   "test": [
+    "vinyl hatbox",
+    "dented footlocker",
+    "clay urn",
+    "tall armoire",
+    "rattan basket",
+    "painted hutch",
+    "plastic bin",
+    "carved bureau"
+   ]
+  },
+  "key": {
+   "train": [
+    "antique key",
+    "bent key",
+    "chunky key",
+    "nickel key",
+    "jagged key",
+    "twisted key",
+    "slender key",
+    "gilded key",
+    "ornate key",
+    "tiny key",
+    "skeleton key",
+    "square key",
+    "flat key",
+    "tarnished key"
+   ],
+   "val": [
+    "notched key",
+    "crooked key"
+   ],
+   "test": [
+    "platinum key",
+    "rusty key",
+    "spare key",
+    "master key",
+    "pewter key",
+    "hollow key",
+    "stubby key",
+    "polished key"
+   ]
+  },
+  "table": {
+   "train": [
+    "bedside nightstand",
+    "writing desk",
+    "tiled worktop",
+    "brick mantel",
+    "serving cart",
+    "folding trestle",
+    "low platform",
+    "kitchen counter",
+    "oval podium",
+    "flat dais",
+    "slate altar",
+    "reading lectern",
+    "butcher block",
+    "garden trolley"
+   ],
+   "val": [
+    "window ledge",
+    "concrete plinth"
+   ],
+   "test": [
+    "round ottoman",
+    "granite pedestal",
+    "acrylic console",
+    "drafting board",
+    "artist easel",
+    "metal rack",
+    "mahogany sideboard",
+    "bar stool"
+   ]
+  },
+  "door": {
+   "train": [
+    "amber door",
+    "rusted door",
+    "reinforced door",
+    "charcoal door",
+    "swinging door",
+    "heavy door",
+    "frosted door",
+    "studded door",
+    "olive door",
+    "scarlet door",
+    "bolted door",
+    "creaky door",
+    "barn door",
+    "latticed door"
+   ],
+   "val": [
+    "arched door",
+    "indigo door"
+   ],
+   "test": [
+    "screen door",
+    "crimson door",
+    "sliding door",
+    "narrow door",
+    "violet door",
+    "ivory door",
+    "saloon door",
+    "garden door"
+   ]
+  },
+  "apple": {
+   "train": [
+    "fuzzy kiwi",
+    "vine tomato",
+    "purple beet",
+    "tart lime",
+    "fresh peach",
+    "crunchy cucumber",
+    "spotted papaya",
+    "juicy mango",
+    "plump grape",
+    "raw carrot",
+    "wild berry",
+    "sticky lychee",
+    "golden quince",
+    "baby turnip"
+   ],
+   "val": [
+    "crisp radish",
+    "round melon"
+   ],
+   "test": [
+    "bright apricot",
+    "seedless guava",
+    "tangy grapefruit",
+    "sour lemon",
+    "dark cherry",
+    "yellow banana",
+    "sweet orange",
+    "creamy avocado"
+   ]
+  },
+  "pear": {
+   "train": [
+    "rye loaf",
+    "brown egg",
+    "hard cheese",
+    "plain cracker",
+    "mint candy",
+    "salted nut",
+    "cold sausage",
+    "bean pod",
+    "salty pretzel",
+    "fish stick",
+    "meat pie",
+    "butter waffle",
+    "raisin bun",
+    "jelly donut"
+   ],
+   "val": [
+    "chocolate truffle",
+    "stale bread"
+   ],
+   "test": [
+    "corn cob",
+    "rice ball",
+    "ham slice",
+    "garlic knot",
+    "sugar cookie",
+    "toasted muffin",
+    "honey cake",
+    "tofu cube"
+   ]
+  },
+  "room": {
+   "train": [
+    "cloakroom",
+    "porch",
+    "cabin",
+    "refectory",
+    "observatory",
+    "foyer",
+    "boathouse",
+    "bedroom",
+    "lounge",
+    "storeroom",
+    "workshop",
+    "sunroom",
+    "parlor",
+    "studio",
+    "mudroom",
+    "laundry",
+    "conservatory",
+    "kitchen",
+    "washroom",
+    "attic",
+    "chapel",
+    "loft"
+   ],
+   "val": [
+    "darkroom",
+    "den",
+    "basement",
+    "greenhouse"
+   ],
+   "test": [
+    "playroom",
+    "bakery",
+    "hallway",
+    "pavilion",
+    "scullery",
+    "office",
+    "garage",
+    "nursery",
+    "library",
+    "armory"
+   ]
+  }
+ },
+ "sets": {
+  "dev": {
+   "split": "dev",
+   "levers": [],
+   "worlds": [
+    {
+     "world_id": "tv000",
+     "names": {
+      "box": "wooden box",
+      "key": "brass key",
+      "table": "oak table",
+      "door": "steel door",
+      "apple": "red apple",
+      "pear": "ripe pear",
+      "room_a": "workroom",
+      "room_b": "cellar"
+     },
+     "fingerprint": "a837582ee526e8af"
+    },
+    {
+     "world_id": "tv001",
+     "names": {
+      "box": "iron chest",
+      "key": "silver key",
+      "table": "pine shelf",
+      "door": "birch door",
+      "apple": "green apple",
+      "pear": "soft plum",
+      "room_a": "study",
+      "room_b": "pantry"
+     },
+     "fingerprint": "1d693823a8afbedd"
+    },
+    {
+     "world_id": "tv002",
+     "names": {
+      "box": "tin crate",
+      "key": "copper key",
+      "table": "stone bench",
+      "door": "elm door",
+      "apple": "gold apple",
+      "pear": "dry fig",
+      "room_a": "atelier",
+      "room_b": "vault"
+     },
+     "fingerprint": "5d355391c84c8e91"
+    },
+    {
+     "world_id": "tv003",
+     "names": {
+      "box": "glass case",
+      "key": "bronze key",
+      "table": "marble stand",
+      "door": "cedar door",
+      "apple": "pink apple",
+      "pear": "small date",
+      "room_a": "gallery",
+      "room_b": "annex"
+     },
+     "fingerprint": "6d31704a8e955125"
+    },
+    {
+     "world_id": "tv004",
+     "names": {
+      "box": "wooden box 2",
+      "key": "brass key 2",
+      "table": "oak table 2",
+      "door": "steel door 2",
+      "apple": "red apple 2",
+      "pear": "ripe pear 2",
+      "room_a": "workroom 2",
+      "room_b": "cellar 2"
+     },
+     "fingerprint": "0bfa64f43bd62ca0"
+    },
+    {
+     "world_id": "tv005",
+     "names": {
+      "box": "iron chest 2",
+      "key": "silver key 2",
+      "table": "pine shelf 2",
+      "door": "birch door 2",
+      "apple": "green apple 2",
+      "pear": "soft plum 2",
+      "room_a": "study 2",
+      "room_b": "pantry 2"
+     },
+     "fingerprint": "796375c649b0e13b"
+    },
+    {
+     "world_id": "tv006",
+     "names": {
+      "box": "tin crate 2",
+      "key": "copper key 2",
+      "table": "stone bench 2",
+      "door": "elm door 2",
+      "apple": "gold apple 2",
+      "pear": "dry fig 2",
+      "room_a": "atelier 2",
+      "room_b": "vault 2"
+     },
+     "fingerprint": "4e7fb4d6a88b8c17"
+    },
+    {
+     "world_id": "tv007",
+     "names": {
+      "box": "glass case 2",
+      "key": "bronze key 2",
+      "table": "marble stand 2",
+      "door": "cedar door 2",
+      "apple": "pink apple 2",
+      "pear": "small date 2",
+      "room_a": "gallery 2",
+      "room_b": "annex 2"
+     },
+     "fingerprint": "630440147c3949ba"
+    },
+    {
+     "world_id": "tv008",
+     "names": {
+      "box": "wooden box 3",
+      "key": "brass key 3",
+      "table": "oak table 3",
+      "door": "steel door 3",
+      "apple": "red apple 3",
+      "pear": "ripe pear 3",
+      "room_a": "workroom 3",
+      "room_b": "cellar 3"
+     },
+     "fingerprint": "b21335d43bf24132"
+    },
+    {
+     "world_id": "tv009",
+     "names": {
+      "box": "iron chest 3",
+      "key": "silver key 3",
+      "table": "pine shelf 3",
+      "door": "birch door 3",
+      "apple": "green apple 3",
+      "pear": "soft plum 3",
+      "room_a": "study 3",
+      "room_b": "pantry 3"
+     },
+     "fingerprint": "4ef6a9c1a432a25a"
+    },
+    {
+     "world_id": "tv010",
+     "names": {
+      "box": "tin crate 3",
+      "key": "copper key 3",
+      "table": "stone bench 3",
+      "door": "elm door 3",
+      "apple": "gold apple 3",
+      "pear": "dry fig 3",
+      "room_a": "atelier 3",
+      "room_b": "vault 3"
+     },
+     "fingerprint": "26ef869c24ccd3b7"
+    },
+    {
+     "world_id": "tv011",
+     "names": {
+      "box": "glass case 3",
+      "key": "bronze key 3",
+      "table": "marble stand 3",
+      "door": "cedar door 3",
+      "apple": "pink apple 3",
+      "pear": "small date 3",
+      "room_a": "gallery 3",
+      "room_b": "annex 3"
+     },
+     "fingerprint": "1e45bbe068849905"
+    }
+   ]
+  },
+  "train": {
+   "split": "train",
+   "levers": [],
+   "worlds": [
+    {
+     "world_id": "trv000",
+     "names": {
+      "box": "velvet coffer",
+      "key": "gilded key",
+      "table": "garden trolley",
+      "door": "olive door",
+      "apple": "tart lime",
+      "pear": "bean pod",
+      "room_a": "loft",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "c4c9b93b072438e4"
+    },
+    {
+     "world_id": "trv001",
+     "names": {
+      "box": "enamel canister",
+      "key": "twisted key",
+      "table": "low platform",
+      "door": "frosted door",
+      "apple": "plump grape",
+      "pear": "butter waffle",
+      "room_a": "observatory",
+      "room_b": "boathouse"
+     },
+     "fingerprint": "2bcb10ce46c19958"
+    },
+    {
+     "world_id": "trv002",
+     "names": {
+      "box": "velvet coffer",
+      "key": "tarnished key",
+      "table": "butcher block",
+      "door": "studded door",
+      "apple": "purple beet",
+      "pear": "raisin bun",
+      "room_a": "kitchen",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "e3566d8d6e4be61b"
+    },
+    {
+     "world_id": "trv003",
+     "names": {
+      "box": "felt toybox",
+      "key": "flat key",
+      "table": "bedside nightstand",
+      "door": "heavy door",
+      "apple": "tart lime",
+      "pear": "hard cheese",
+      "room_a": "foyer",
+      "room_b": "cabin"
+     },
+     "fingerprint": "7b1cd1fed8825855"
+    },
+    {
+     "world_id": "trv004",
+     "names": {
+      "box": "enamel canister",
+      "key": "ornate key",
+      "table": "tiled worktop",
+      "door": "olive door",
+      "apple": "juicy mango",
+      "pear": "salted nut",
+      "room_a": "lounge",
+      "room_b": "cabin"
+     },
+     "fingerprint": "25a3d6eb90e3c75d"
+    },
+    {
+     "world_id": "trv005",
+     "names": {
+      "box": "maple cupboard",
+      "key": "square key",
+      "table": "tiled worktop",
+      "door": "scarlet door",
+      "apple": "raw carrot",
+      "pear": "plain cracker",
+      "room_a": "parlor",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "d2724ba1167ce35f"
+    },
+    {
+     "world_id": "trv006",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "jagged key",
+      "table": "garden trolley",
+      "door": "heavy door",
+      "apple": "spotted papaya",
+      "pear": "brown egg",
+      "room_a": "chapel",
+      "room_b": "workshop"
+     },
+     "fingerprint": "0404c1daec7a003e"
+    },
+    {
+     "world_id": "trv007",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "twisted key",
+      "table": "flat dais",
+      "door": "reinforced door",
+      "apple": "fresh peach",
+      "pear": "plain cracker",
+      "room_a": "sunroom",
+      "room_b": "refectory"
+     },
+     "fingerprint": "3325a1d79651716c"
+    },
+    {
+     "world_id": "trv008",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "tiny key",
+      "table": "oval podium",
+      "door": "creaky door",
+      "apple": "vine tomato",
+      "pear": "raisin bun",
+      "room_a": "laundry",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "58e2b8f6701a3f8b"
+    },
+    {
+     "world_id": "trv009",
+     "names": {
+      "box": "grey safe",
+      "key": "chunky key",
+      "table": "low platform",
+      "door": "barn door",
+      "apple": "golden quince",
+      "pear": "fish stick",
+      "room_a": "conservatory",
+      "room_b": "chapel"
+     },
+     "fingerprint": "7be8a91c7bbb0409"
+    },
+    {
+     "world_id": "trv010",
+     "names": {
+      "box": "ceramic jar",
+      "key": "tarnished key",
+      "table": "low platform",
+      "door": "charcoal door",
+      "apple": "purple beet",
+      "pear": "rye loaf",
+      "room_a": "kitchen",
+      "room_b": "foyer"
+     },
+     "fingerprint": "3bf7d3c669835a1a"
+    },
+    {
+     "world_id": "trv011",
+     "names": {
+      "box": "velvet coffer",
+      "key": "gilded key",
+      "table": "butcher block",
+      "door": "olive door",
+      "apple": "sticky lychee",
+      "pear": "butter waffle",
+      "room_a": "sunroom",
+      "room_b": "studio"
+     },
+     "fingerprint": "d583ff6119e71aaf"
+    },
+    {
+     "world_id": "trv012",
+     "names": {
+      "box": "black strongbox",
+      "key": "jagged key",
+      "table": "writing desk",
+      "door": "scarlet door",
+      "apple": "wild berry",
+      "pear": "bean pod",
+      "room_a": "sunroom",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "b06aa4181e061979"
+    },
+    {
+     "world_id": "trv013",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "square key",
+      "table": "brick mantel",
+      "door": "frosted door",
+      "apple": "wild berry",
+      "pear": "butter waffle",
+      "room_a": "mudroom",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "574a2d99385a30bd"
+    },
+    {
+     "world_id": "trv014",
+     "names": {
+      "box": "wicker hamper",
+      "key": "tiny key",
+      "table": "kitchen counter",
+      "door": "olive door",
+      "apple": "golden quince",
+      "pear": "salty pretzel",
+      "room_a": "laundry",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "e81792a9fa503f9a"
+    },
+    {
+     "world_id": "trv015",
+     "names": {
+      "box": "cardboard carton",
+      "key": "skeleton key",
+      "table": "kitchen counter",
+      "door": "studded door",
+      "apple": "purple beet",
+      "pear": "bean pod",
+      "room_a": "mudroom",
+      "room_b": "washroom"
+     },
+     "fingerprint": "f33a3a6126b04a5b"
+    },
+    {
+     "world_id": "trv016",
+     "names": {
+      "box": "rosewood casket",
+      "key": "nickel key",
+      "table": "oval podium",
+      "door": "reinforced door",
+      "apple": "golden quince",
+      "pear": "rye loaf",
+      "room_a": "loft",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "fd6d74403148cf9c"
+    },
+    {
+     "world_id": "trv017",
+     "names": {
+      "box": "grey safe",
+      "key": "jagged key",
+      "table": "bedside nightstand",
+      "door": "studded door",
+      "apple": "fresh peach",
+      "pear": "raisin bun",
+      "room_a": "washroom",
+      "room_b": "cabin"
+     },
+     "fingerprint": "879cbb3e962bbc5d"
+    },
+    {
+     "world_id": "trv018",
+     "names": {
+      "box": "felt toybox",
+      "key": "slender key",
+      "table": "kitchen counter",
+      "door": "latticed door",
+      "apple": "spotted papaya",
+      "pear": "salty pretzel",
+      "room_a": "conservatory",
+      "room_b": "observatory"
+     },
+     "fingerprint": "d1fa4f142240b7e4"
+    },
+    {
+     "world_id": "trv019",
+     "names": {
+      "box": "maple cupboard",
+      "key": "gilded key",
+      "table": "brick mantel",
+      "door": "creaky door",
+      "apple": "baby turnip",
+      "pear": "salty pretzel",
+      "room_a": "porch",
+      "room_b": "refectory"
+     },
+     "fingerprint": "79dcd3b8ec22f17e"
+    },
+    {
+     "world_id": "trv020",
+     "names": {
+      "box": "felt toybox",
+      "key": "chunky key",
+      "table": "serving cart",
+      "door": "barn door",
+      "apple": "baby turnip",
+      "pear": "meat pie",
+      "room_a": "observatory",
+      "room_b": "workshop"
+     },
+     "fingerprint": "5380d02d4f5b764a"
+    },
+    {
+     "world_id": "trv021",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "ornate key",
+      "table": "slate altar",
+      "door": "heavy door",
+      "apple": "vine tomato",
+      "pear": "meat pie",
+      "room_a": "storeroom",
+      "room_b": "attic"
+     },
+     "fingerprint": "28e10735e20ab516"
+    },
+    {
+     "world_id": "trv022",
+     "names": {
+      "box": "black strongbox",
+      "key": "nickel key",
+      "table": "tiled worktop",
+      "door": "scarlet door",
+      "apple": "purple beet",
+      "pear": "rye loaf",
+      "room_a": "kitchen",
+      "room_b": "washroom"
+     },
+     "fingerprint": "0d671a02841cd340"
+    },
+    {
+     "world_id": "trv023",
+     "names": {
+      "box": "ceramic jar",
+      "key": "skeleton key",
+      "table": "bedside nightstand",
+      "door": "scarlet door",
+      "apple": "raw carrot",
+      "pear": "plain cracker",
+      "room_a": "loft",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "656104a92cfbafc8"
+    },
+    {
+     "world_id": "trv024",
+     "names": {
+      "box": "maple cupboard",
+      "key": "jagged key",
+      "table": "butcher block",
+      "door": "heavy door",
+      "apple": "purple beet",
+      "pear": "salted nut",
+      "room_a": "lounge",
+      "room_b": "observatory"
+     },
+     "fingerprint": "ccbaac764d94af84"
+    },
+    {
+     "world_id": "trv025",
+     "names": {
+      "box": "felt toybox",
+      "key": "twisted key",
+      "table": "flat dais",
+      "door": "amber door",
+      "apple": "raw carrot",
+      "pear": "hard cheese",
+      "room_a": "conservatory",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "f0e3bf357159c34a"
+    },
+    {
+     "world_id": "trv026",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "slender key",
+      "table": "writing desk",
+      "door": "barn door",
+      "apple": "tart lime",
+      "pear": "rye loaf",
+      "room_a": "mudroom",
+      "room_b": "lounge"
+     },
+     "fingerprint": "d5cf544b8f750b0e"
+    },
+    {
+     "world_id": "trv027",
+     "names": {
+      "box": "cardboard carton",
+      "key": "antique key",
+      "table": "slate altar",
+      "door": "studded door",
+      "apple": "golden quince",
+      "pear": "meat pie",
+      "room_a": "porch",
+      "room_b": "workshop"
+     },
+     "fingerprint": "295664fb48918f63"
+    },
+    {
+     "world_id": "trv028",
+     "names": {
+      "box": "leather trunk",
+      "key": "gilded key",
+      "table": "slate altar",
+      "door": "creaky door",
+      "apple": "purple beet",
+      "pear": "plain cracker",
+      "room_a": "refectory",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "be21b7d178c3aabf"
+    },
+    {
+     "world_id": "trv029",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "tiny key",
+      "table": "reading lectern",
+      "door": "barn door",
+      "apple": "golden quince",
+      "pear": "meat pie",
+      "room_a": "boathouse",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "b2c4399ca6b48db3"
+    },
+    {
+     "world_id": "trv030",
+     "names": {
+      "box": "enamel canister",
+      "key": "flat key",
+      "table": "folding trestle",
+      "door": "frosted door",
+      "apple": "wild berry",
+      "pear": "raisin bun",
+      "room_a": "parlor",
+      "room_b": "refectory"
+     },
+     "fingerprint": "7ee4c6d055d87757"
+    },
+    {
+     "world_id": "trv031",
+     "names": {
+      "box": "felt toybox",
+      "key": "skeleton key",
+      "table": "kitchen counter",
+      "door": "studded door",
+      "apple": "juicy mango",
+      "pear": "meat pie",
+      "room_a": "washroom",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "6d998c051cdda29b"
+    },
+    {
+     "world_id": "trv032",
+     "names": {
+      "box": "rosewood casket",
+      "key": "antique key",
+      "table": "serving cart",
+      "door": "creaky door",
+      "apple": "tart lime",
+      "pear": "jelly donut",
+      "room_a": "laundry",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "39f886c7f5d6a414"
+    },
+    {
+     "world_id": "trv033",
+     "names": {
+      "box": "maple cupboard",
+      "key": "nickel key",
+      "table": "tiled worktop",
+      "door": "swinging door",
+      "apple": "fresh peach",
+      "pear": "plain cracker",
+      "room_a": "washroom",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "942625463174543e"
+    },
+    {
+     "world_id": "trv034",
+     "names": {
+      "box": "black strongbox",
+      "key": "tarnished key",
+      "table": "butcher block",
+      "door": "barn door",
+      "apple": "tart lime",
+      "pear": "meat pie",
+      "room_a": "workshop",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "c40dc992306ac927"
+    },
+    {
+     "world_id": "trv035",
+     "names": {
+      "box": "enamel canister",
+      "key": "slender key",
+      "table": "writing desk",
+      "door": "scarlet door",
+      "apple": "purple beet",
+      "pear": "meat pie",
+      "room_a": "boathouse",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "883c7412046e2b97"
+    },
+    {
+     "world_id": "trv036",
+     "names": {
+      "box": "cardboard carton",
+      "key": "bent key",
+      "table": "kitchen counter",
+      "door": "latticed door",
+      "apple": "spotted papaya",
+      "pear": "bean pod",
+      "room_a": "laundry",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "ae3cf17ccce7c5df"
+    },
+    {
+     "world_id": "trv037",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "gilded key",
+      "table": "serving cart",
+      "door": "barn door",
+      "apple": "fuzzy kiwi",
+      "pear": "mint candy",
+      "room_a": "storeroom",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "8fbdb6a89510001c"
+    },
+    {
+     "world_id": "trv038",
+     "names": {
+      "box": "leather trunk",
+      "key": "slender key",
+      "table": "reading lectern",
+      "door": "studded door",
+      "apple": "plump grape",
+      "pear": "raisin bun",
+      "room_a": "conservatory",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "df8ac575e299aeac"
+    },
+    {
+     "world_id": "trv039",
+     "names": {
+      "box": "grey safe",
+      "key": "square key",
+      "table": "oval podium",
+      "door": "barn door",
+      "apple": "baby turnip",
+      "pear": "salty pretzel",
+      "room_a": "foyer",
+      "room_b": "boathouse"
+     },
+     "fingerprint": "4b4840cf00a8fa2e"
+    },
+    {
+     "world_id": "trv040",
+     "names": {
+      "box": "rosewood casket",
+      "key": "twisted key",
+      "table": "brick mantel",
+      "door": "latticed door",
+      "apple": "fuzzy kiwi",
+      "pear": "meat pie",
+      "room_a": "porch",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "03b5ff016077da8d"
+    },
+    {
+     "world_id": "trv041",
+     "names": {
+      "box": "velvet coffer",
+      "key": "twisted key",
+      "table": "flat dais",
+      "door": "rusted door",
+      "apple": "plump grape",
+      "pear": "meat pie",
+      "room_a": "mudroom",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "93ab9b8d42a720e6"
+    },
+    {
+     "world_id": "trv042",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "jagged key",
+      "table": "butcher block",
+      "door": "reinforced door",
+      "apple": "vine tomato",
+      "pear": "rye loaf",
+      "room_a": "chapel",
+      "room_b": "loft"
+     },
+     "fingerprint": "e8729421ac4cafce"
+    },
+    {
+     "world_id": "trv043",
+     "names": {
+      "box": "cardboard carton",
+      "key": "chunky key",
+      "table": "oval podium",
+      "door": "olive door",
+      "apple": "vine tomato",
+      "pear": "bean pod",
+      "room_a": "refectory",
+      "room_b": "cabin"
+     },
+     "fingerprint": "9da494fd71cb2353"
+    },
+    {
+     "world_id": "trv044",
+     "names": {
+      "box": "cardboard carton",
+      "key": "tiny key",
+      "table": "butcher block",
+      "door": "amber door",
+      "apple": "sticky lychee",
+      "pear": "mint candy",
+      "room_a": "conservatory",
+      "room_b": "cabin"
+     },
+     "fingerprint": "19dee3e0157684ae"
+    },
+    {
+     "world_id": "trv045",
+     "names": {
+      "box": "ceramic jar",
+      "key": "ornate key",
+      "table": "brick mantel",
+      "door": "barn door",
+      "apple": "tart lime",
+      "pear": "salty pretzel",
+      "room_a": "washroom",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "74bb9ad71aec0a4f"
+    },
+    {
+     "world_id": "trv046",
+     "names": {
+      "box": "ceramic jar",
+      "key": "twisted key",
+      "table": "garden trolley",
+      "door": "creaky door",
+      "apple": "golden quince",
+      "pear": "salty pretzel",
+      "room_a": "mudroom",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "db7e1e4627d1b270"
+    },
+    {
+     "world_id": "trv047",
+     "names": {
+      "box": "grey safe",
+      "key": "tarnished key",
+      "table": "bedside nightstand",
+      "door": "barn door",
+      "apple": "vine tomato",
+      "pear": "bean pod",
+      "room_a": "washroom",
+      "room_b": "porch"
+     },
+     "fingerprint": "fa45b6bdd45e290a"
+    },
+    {
+     "world_id": "trv048",
+     "names": {
+      "box": "maple cupboard",
+      "key": "twisted key",
+      "table": "serving cart",
+      "door": "scarlet door",
+      "apple": "raw carrot",
+      "pear": "cold sausage",
+      "room_a": "cloakroom",
+      "room_b": "attic"
+     },
+     "fingerprint": "a0ac0fcb670dd035"
+    },
+    {
+     "world_id": "trv049",
+     "names": {
+      "box": "grey safe",
+      "key": "chunky key",
+      "table": "tiled worktop",
+      "door": "reinforced door",
+      "apple": "sticky lychee",
+      "pear": "fish stick",
+      "room_a": "lounge",
+      "room_b": "chapel"
+     },
+     "fingerprint": "00135a23e2bc5a26"
+    },
+    {
+     "world_id": "trv050",
+     "names": {
+      "box": "rosewood casket",
+      "key": "jagged key",
+      "table": "bedside nightstand",
+      "door": "studded door",
+      "apple": "fuzzy kiwi",
+      "pear": "cold sausage",
+      "room_a": "refectory",
+      "room_b": "observatory"
+     },
+     "fingerprint": "b6b9bb88eccab5a8"
+    },
+    {
+     "world_id": "trv051",
+     "names": {
+      "box": "teak drawer",
+      "key": "tarnished key",
+      "table": "oval podium",
+      "door": "olive door",
+      "apple": "vine tomato",
+      "pear": "rye loaf",
+      "room_a": "chapel",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "3cf1e4d132e5ed2b"
+    },
+    {
+     "world_id": "trv052",
+     "names": {
+      "box": "rosewood casket",
+      "key": "chunky key",
+      "table": "garden trolley",
+      "door": "latticed door",
+      "apple": "wild berry",
+      "pear": "cold sausage",
+      "room_a": "conservatory",
+      "room_b": "kitchen"
+     },
+     "fingerprint": "726520d610d6799e"
+    },
+    {
+     "world_id": "trv053",
+     "names": {
+      "box": "ceramic jar",
+      "key": "twisted key",
+      "table": "folding trestle",
+      "door": "heavy door",
+      "apple": "sticky lychee",
+      "pear": "salted nut",
+      "room_a": "mudroom",
+      "room_b": "studio"
+     },
+     "fingerprint": "d644e83a95436e88"
+    },
+    {
+     "world_id": "trv054",
+     "names": {
+      "box": "rosewood casket",
+      "key": "gilded key",
+      "table": "writing desk",
+      "door": "latticed door",
+      "apple": "golden quince",
+      "pear": "plain cracker",
+      "room_a": "laundry",
+      "room_b": "studio"
+     },
+     "fingerprint": "adc950d83eee210d"
+    },
+    {
+     "world_id": "trv055",
+     "names": {
+      "box": "ceramic jar",
+      "key": "nickel key",
+      "table": "flat dais",
+      "door": "barn door",
+      "apple": "spotted papaya",
+      "pear": "brown egg",
+      "room_a": "mudroom",
+      "room_b": "observatory"
+     },
+     "fingerprint": "cd409b5f97de7dd7"
+    },
+    {
+     "world_id": "trv056",
+     "names": {
+      "box": "enamel canister",
+      "key": "skeleton key",
+      "table": "garden trolley",
+      "door": "swinging door",
+      "apple": "crunchy cucumber",
+      "pear": "salted nut",
+      "room_a": "mudroom",
+      "room_b": "attic"
+     },
+     "fingerprint": "b5d3c860d08d5b9b"
+    },
+    {
+     "world_id": "trv057",
+     "names": {
+      "box": "rosewood casket",
+      "key": "skeleton key",
+      "table": "kitchen counter",
+      "door": "charcoal door",
+      "apple": "juicy mango",
+      "pear": "mint candy",
+      "room_a": "refectory",
+      "room_b": "laundry"
+     },
+     "fingerprint": "ac9e6091c8e6bed7"
+    },
+    {
+     "world_id": "trv058",
+     "names": {
+      "box": "wicker hamper",
+      "key": "antique key",
+      "table": "serving cart",
+      "door": "bolted door",
+      "apple": "juicy mango",
+      "pear": "hard cheese",
+      "room_a": "workshop",
+      "room_b": "observatory"
+     },
+     "fingerprint": "f7c7a41121c5978f"
+    },
+    {
+     "world_id": "trv059",
+     "names": {
+      "box": "wicker hamper",
+      "key": "antique key",
+      "table": "folding trestle",
+      "door": "frosted door",
+      "apple": "spotted papaya",
+      "pear": "fish stick",
+      "room_a": "cloakroom",
+      "room_b": "refectory"
+     },
+     "fingerprint": "5b667cc6e0366a89"
+    },
+    {
+     "world_id": "trv060",
+     "names": {
+      "box": "ceramic jar",
+      "key": "skeleton key",
+      "table": "butcher block",
+      "door": "olive door",
+      "apple": "purple beet",
+      "pear": "cold sausage",
+      "room_a": "studio",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "987adcc848c9e3f0"
+    },
+    {
+     "world_id": "trv061",
+     "names": {
+      "box": "black strongbox",
+      "key": "nickel key",
+      "table": "garden trolley",
+      "door": "swinging door",
+      "apple": "baby turnip",
+      "pear": "meat pie",
+      "room_a": "parlor",
+      "room_b": "loft"
+     },
+     "fingerprint": "89ae7290bb398636"
+    },
+    {
+     "world_id": "trv062",
+     "names": {
+      "box": "leather trunk",
+      "key": "nickel key",
+      "table": "oval podium",
+      "door": "bolted door",
+      "apple": "raw carrot",
+      "pear": "bean pod",
+      "room_a": "mudroom",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "a87182420ef270b0"
+    },
+    {
+     "world_id": "trv063",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "tarnished key",
+      "table": "folding trestle",
+      "door": "heavy door",
+      "apple": "sticky lychee",
+      "pear": "salted nut",
+      "room_a": "storeroom",
+      "room_b": "refectory"
+     },
+     "fingerprint": "8511d12350181cce"
+    },
+    {
+     "world_id": "trv064",
+     "names": {
+      "box": "velvet coffer",
+      "key": "bent key",
+      "table": "writing desk",
+      "door": "studded door",
+      "apple": "golden quince",
+      "pear": "meat pie",
+      "room_a": "laundry",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "faa661a819f3339b"
+    },
+    {
+     "world_id": "trv065",
+     "names": {
+      "box": "wicker hamper",
+      "key": "jagged key",
+      "table": "garden trolley",
+      "door": "scarlet door",
+      "apple": "plump grape",
+      "pear": "plain cracker",
+      "room_a": "washroom",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "a9d4d0f223beb388"
+    },
+    {
+     "world_id": "trv066",
+     "names": {
+      "box": "ceramic jar",
+      "key": "flat key",
+      "table": "brick mantel",
+      "door": "bolted door",
+      "apple": "wild berry",
+      "pear": "plain cracker",
+      "room_a": "studio",
+      "room_b": "foyer"
+     },
+     "fingerprint": "3f4cf0f55683b1b8"
+    },
+    {
+     "world_id": "trv067",
+     "names": {
+      "box": "felt toybox",
+      "key": "twisted key",
+      "table": "butcher block",
+      "door": "olive door",
+      "apple": "golden quince",
+      "pear": "butter waffle",
+      "room_a": "workshop",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "0ccff9e418f8146b"
+    },
+    {
+     "world_id": "trv068",
+     "names": {
+      "box": "black strongbox",
+      "key": "jagged key",
+      "table": "kitchen counter",
+      "door": "swinging door",
+      "apple": "wild berry",
+      "pear": "fish stick",
+      "room_a": "sunroom",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "212c344747a086b8"
+    },
+    {
+     "world_id": "trv069",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "ornate key",
+      "table": "garden trolley",
+      "door": "charcoal door",
+      "apple": "golden quince",
+      "pear": "bean pod",
+      "room_a": "conservatory",
+      "room_b": "studio"
+     },
+     "fingerprint": "daeb5015db91aca3"
+    },
+    {
+     "world_id": "trv070",
+     "names": {
+      "box": "teak drawer",
+      "key": "antique key",
+      "table": "brick mantel",
+      "door": "heavy door",
+      "apple": "juicy mango",
+      "pear": "meat pie",
+      "room_a": "foyer",
+      "room_b": "workshop"
+     },
+     "fingerprint": "0e152e72a6bd1594"
+    },
+    {
+     "world_id": "trv071",
+     "names": {
+      "box": "black strongbox",
+      "key": "square key",
+      "table": "serving cart",
+      "door": "bolted door",
+      "apple": "fresh peach",
+      "pear": "cold sausage",
+      "room_a": "boathouse",
+      "room_b": "lounge"
+     },
+     "fingerprint": "859ce99a3d424b3b"
+    },
+    {
+     "world_id": "trv072",
+     "names": {
+      "box": "cardboard carton",
+      "key": "antique key",
+      "table": "writing desk",
+      "door": "scarlet door",
+      "apple": "tart lime",
+      "pear": "hard cheese",
+      "room_a": "boathouse",
+      "room_b": "workshop"
+     },
+     "fingerprint": "a0f2d5af3e1eeaca"
+    },
+    {
+     "world_id": "trv073",
+     "names": {
+      "box": "rosewood casket",
+      "key": "skeleton key",
+      "table": "reading lectern",
+      "door": "latticed door",
+      "apple": "plump grape",
+      "pear": "meat pie",
+      "room_a": "loft",
+      "room_b": "lounge"
+     },
+     "fingerprint": "e0aa40be084aff7e"
+    },
+    {
+     "world_id": "trv074",
+     "names": {
+      "box": "felt toybox",
+      "key": "gilded key",
+      "table": "serving cart",
+      "door": "bolted door",
+      "apple": "crunchy cucumber",
+      "pear": "salted nut",
+      "room_a": "chapel",
+      "room_b": "washroom"
+     },
+     "fingerprint": "9f060580d2147bee"
+    },
+    {
+     "world_id": "trv075",
+     "names": {
+      "box": "velvet coffer",
+      "key": "bent key",
+      "table": "brick mantel",
+      "door": "frosted door",
+      "apple": "crunchy cucumber",
+      "pear": "hard cheese",
+      "room_a": "parlor",
+      "room_b": "kitchen"
+     },
+     "fingerprint": "34b2e99d85847068"
+    },
+    {
+     "world_id": "trv076",
+     "names": {
+      "box": "ceramic jar",
+      "key": "square key",
+      "table": "flat dais",
+      "door": "olive door",
+      "apple": "raw carrot",
+      "pear": "salty pretzel",
+      "room_a": "workshop",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "ae1d6e0fec3efee9"
+    },
+    {
+     "world_id": "trv077",
+     "names": {
+      "box": "cardboard carton",
+      "key": "gilded key",
+      "table": "bedside nightstand",
+      "door": "swinging door",
+      "apple": "baby turnip",
+      "pear": "butter waffle",
+      "room_a": "conservatory",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "c04d101a4a9643be"
+    },
+    {
+     "world_id": "trv078",
+     "names": {
+      "box": "black strongbox",
+      "key": "chunky key",
+      "table": "garden trolley",
+      "door": "latticed door",
+      "apple": "tart lime",
+      "pear": "bean pod",
+      "room_a": "workshop",
+      "room_b": "laundry"
+     },
+     "fingerprint": "6d8f92e18d9ce7c2"
+    },
+    {
+     "world_id": "trv079",
+     "names": {
+      "box": "enamel canister",
+      "key": "jagged key",
+      "table": "kitchen counter",
+      "door": "charcoal door",
+      "apple": "tart lime",
+      "pear": "salted nut",
+      "room_a": "mudroom",
+      "room_b": "studio"
+     },
+     "fingerprint": "5f49c638b612a699"
+    },
+    {
+     "world_id": "trv080",
+     "names": {
+      "box": "wicker hamper",
+      "key": "skeleton key",
+      "table": "writing desk",
+      "door": "creaky door",
+      "apple": "purple beet",
+      "pear": "brown egg",
+      "room_a": "refectory",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "f93f160be9b40b3b"
+    },
+    {
+     "world_id": "trv081",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "antique key",
+      "table": "garden trolley",
+      "door": "charcoal door",
+      "apple": "golden quince",
+      "pear": "jelly donut",
+      "room_a": "porch",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "29fac57fbad53fce"
+    },
+    {
+     "world_id": "trv082",
+     "names": {
+      "box": "leather trunk",
+      "key": "square key",
+      "table": "slate altar",
+      "door": "olive door",
+      "apple": "golden quince",
+      "pear": "brown egg",
+      "room_a": "cloakroom",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "cb12984ff81a8f97"
+    },
+    {
+     "world_id": "trv083",
+     "names": {
+      "box": "felt toybox",
+      "key": "gilded key",
+      "table": "brick mantel",
+      "door": "frosted door",
+      "apple": "juicy mango",
+      "pear": "jelly donut",
+      "room_a": "kitchen",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "68bed6fe2e58e632"
+    },
+    {
+     "world_id": "trv084",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "square key",
+      "table": "reading lectern",
+      "door": "bolted door",
+      "apple": "spotted papaya",
+      "pear": "meat pie",
+      "room_a": "attic",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "b3416888291efd5d"
+    },
+    {
+     "world_id": "trv085",
+     "names": {
+      "box": "enamel canister",
+      "key": "jagged key",
+      "table": "serving cart",
+      "door": "charcoal door",
+      "apple": "juicy mango",
+      "pear": "raisin bun",
+      "room_a": "studio",
+      "room_b": "chapel"
+     },
+     "fingerprint": "2a89154e39dbcad3"
+    },
+    {
+     "world_id": "trv086",
+     "names": {
+      "box": "felt toybox",
+      "key": "nickel key",
+      "table": "slate altar",
+      "door": "barn door",
+      "apple": "fuzzy kiwi",
+      "pear": "cold sausage",
+      "room_a": "workshop",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "7c1a83b5281533ef"
+    },
+    {
+     "world_id": "trv087",
+     "names": {
+      "box": "black strongbox",
+      "key": "flat key",
+      "table": "garden trolley",
+      "door": "frosted door",
+      "apple": "sticky lychee",
+      "pear": "salty pretzel",
+      "room_a": "storeroom",
+      "room_b": "laundry"
+     },
+     "fingerprint": "c7e41302e1d33c93"
+    },
+    {
+     "world_id": "trv088",
+     "names": {
+      "box": "grey safe",
+      "key": "flat key",
+      "table": "serving cart",
+      "door": "creaky door",
+      "apple": "fresh peach",
+      "pear": "jelly donut",
+      "room_a": "cloakroom",
+      "room_b": "refectory"
+     },
+     "fingerprint": "72615a615a91f8f2"
+    },
+    {
+     "world_id": "trv089",
+     "names": {
+      "box": "rosewood casket",
+      "key": "ornate key",
+      "table": "bedside nightstand",
+      "door": "rusted door",
+      "apple": "tart lime",
+      "pear": "meat pie",
+      "room_a": "observatory",
+      "room_b": "studio"
+     },
+     "fingerprint": "6623c26fd4d89faa"
+    },
+    {
+     "world_id": "trv090",
+     "names": {
+      "box": "wicker hamper",
+      "key": "slender key",
+      "table": "reading lectern",
+      "door": "reinforced door",
+      "apple": "fresh peach",
+      "pear": "raisin bun",
+      "room_a": "storeroom",
+      "room_b": "loft"
+     },
+     "fingerprint": "06986e58fa156637"
+    },
+    {
+     "world_id": "trv091",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "ornate key",
+      "table": "folding trestle",
+      "door": "swinging door",
+      "apple": "fuzzy kiwi",
+      "pear": "bean pod",
+      "room_a": "attic",
+      "room_b": "laundry"
+     },
+     "fingerprint": "3e1e8ee2b0bc03a4"
+    },
+    {
+     "world_id": "trv092",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "tarnished key",
+      "table": "serving cart",
+      "door": "swinging door",
+      "apple": "fresh peach",
+      "pear": "butter waffle",
+      "room_a": "cabin",
+      "room_b": "boathouse"
+     },
+     "fingerprint": "68b85d3615a67b1a"
+    },
+    {
+     "world_id": "trv093",
+     "names": {
+      "box": "black strongbox",
+      "key": "ornate key",
+      "table": "brick mantel",
+      "door": "swinging door",
+      "apple": "tart lime",
+      "pear": "rye loaf",
+      "room_a": "refectory",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "e7056aa07b091d49"
+    },
+    {
+     "world_id": "trv094",
+     "names": {
+      "box": "felt toybox",
+      "key": "antique key",
+      "table": "oval podium",
+      "door": "creaky door",
+      "apple": "crunchy cucumber",
+      "pear": "butter waffle",
+      "room_a": "laundry",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "c0759e5cd4d54989"
+    },
+    {
+     "world_id": "trv095",
+     "names": {
+      "box": "felt toybox",
+      "key": "tarnished key",
+      "table": "kitchen counter",
+      "door": "creaky door",
+      "apple": "juicy mango",
+      "pear": "jelly donut",
+      "room_a": "parlor",
+      "room_b": "boathouse"
+     },
+     "fingerprint": "32b43999294338c0"
+    },
+    {
+     "world_id": "trv096",
+     "names": {
+      "box": "leather trunk",
+      "key": "slender key",
+      "table": "oval podium",
+      "door": "creaky door",
+      "apple": "baby turnip",
+      "pear": "fish stick",
+      "room_a": "workshop",
+      "room_b": "lounge"
+     },
+     "fingerprint": "6c81c396daf4a92f"
+    },
+    {
+     "world_id": "trv097",
+     "names": {
+      "box": "ceramic jar",
+      "key": "jagged key",
+      "table": "bedside nightstand",
+      "door": "reinforced door",
+      "apple": "sticky lychee",
+      "pear": "salty pretzel",
+      "room_a": "kitchen",
+      "room_b": "boathouse"
+     },
+     "fingerprint": "c966226985690da9"
+    },
+    {
+     "world_id": "trv098",
+     "names": {
+      "box": "wicker hamper",
+      "key": "nickel key",
+      "table": "butcher block",
+      "door": "latticed door",
+      "apple": "crunchy cucumber",
+      "pear": "jelly donut",
+      "room_a": "studio",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "e4d3319d2f8b11fc"
+    },
+    {
+     "world_id": "trv099",
+     "names": {
+      "box": "black strongbox",
+      "key": "antique key",
+      "table": "serving cart",
+      "door": "frosted door",
+      "apple": "golden quince",
+      "pear": "plain cracker",
+      "room_a": "foyer",
+      "room_b": "chapel"
+     },
+     "fingerprint": "a69626e9c962d3f8"
+    },
+    {
+     "world_id": "trv100",
+     "names": {
+      "box": "ceramic jar",
+      "key": "nickel key",
+      "table": "folding trestle",
+      "door": "barn door",
+      "apple": "sticky lychee",
+      "pear": "plain cracker",
+      "room_a": "washroom",
+      "room_b": "laundry"
+     },
+     "fingerprint": "949333f73f57835f"
+    },
+    {
+     "world_id": "trv101",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "flat key",
+      "table": "tiled worktop",
+      "door": "reinforced door",
+      "apple": "tart lime",
+      "pear": "salted nut",
+      "room_a": "foyer",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "ed5ab963202c8e57"
+    },
+    {
+     "world_id": "trv102",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "skeleton key",
+      "table": "writing desk",
+      "door": "swinging door",
+      "apple": "sticky lychee",
+      "pear": "butter waffle",
+      "room_a": "laundry",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "4eaaadddbdd75042"
+    },
+    {
+     "world_id": "trv103",
+     "names": {
+      "box": "black strongbox",
+      "key": "slender key",
+      "table": "writing desk",
+      "door": "bolted door",
+      "apple": "tart lime",
+      "pear": "raisin bun",
+      "room_a": "laundry",
+      "room_b": "refectory"
+     },
+     "fingerprint": "8cf7e69468328f1d"
+    },
+    {
+     "world_id": "trv104",
+     "names": {
+      "box": "cardboard carton",
+      "key": "flat key",
+      "table": "bedside nightstand",
+      "door": "studded door",
+      "apple": "tart lime",
+      "pear": "butter waffle",
+      "room_a": "bedroom",
+      "room_b": "mudroom"
+     },
+     "fingerprint": "4670912f05b2e701"
+    },
+    {
+     "world_id": "trv105",
+     "names": {
+      "box": "maple cupboard",
+      "key": "jagged key",
+      "table": "brick mantel",
+      "door": "reinforced door",
+      "apple": "raw carrot",
+      "pear": "meat pie",
+      "room_a": "lounge",
+      "room_b": "cabin"
+     },
+     "fingerprint": "f709aa0a4ad256c7"
+    },
+    {
+     "world_id": "trv106",
+     "names": {
+      "box": "ceramic jar",
+      "key": "nickel key",
+      "table": "bedside nightstand",
+      "door": "frosted door",
+      "apple": "golden quince",
+      "pear": "raisin bun",
+      "room_a": "laundry",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "f9b6f419e1e20acd"
+    },
+    {
+     "world_id": "trv107",
+     "names": {
+      "box": "felt toybox",
+      "key": "jagged key",
+      "table": "kitchen counter",
+      "door": "scarlet door",
+      "apple": "golden quince",
+      "pear": "fish stick",
+      "room_a": "bedroom",
+      "room_b": "loft"
+     },
+     "fingerprint": "474d00aeb410c36c"
+    },
+    {
+     "world_id": "trv108",
+     "names": {
+      "box": "felt toybox",
+      "key": "tarnished key",
+      "table": "writing desk",
+      "door": "creaky door",
+      "apple": "raw carrot",
+      "pear": "brown egg",
+      "room_a": "lounge",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "e5a8d2fbc8eb06f0"
+    },
+    {
+     "world_id": "trv109",
+     "names": {
+      "box": "teak drawer",
+      "key": "square key",
+      "table": "low platform",
+      "door": "reinforced door",
+      "apple": "fresh peach",
+      "pear": "plain cracker",
+      "room_a": "studio",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "e609741baf9ae521"
+    },
+    {
+     "world_id": "trv110",
+     "names": {
+      "box": "rosewood casket",
+      "key": "twisted key",
+      "table": "brick mantel",
+      "door": "bolted door",
+      "apple": "crunchy cucumber",
+      "pear": "fish stick",
+      "room_a": "workshop",
+      "room_b": "lounge"
+     },
+     "fingerprint": "2fedc8a9e14dc4c5"
+    },
+    {
+     "world_id": "trv111",
+     "names": {
+      "box": "black strongbox",
+      "key": "slender key",
+      "table": "folding trestle",
+      "door": "barn door",
+      "apple": "vine tomato",
+      "pear": "rye loaf",
+      "room_a": "boathouse",
+      "room_b": "laundry"
+     },
+     "fingerprint": "9d448403636275bc"
+    },
+    {
+     "world_id": "trv112",
+     "names": {
+      "box": "enamel canister",
+      "key": "chunky key",
+      "table": "butcher block",
+      "door": "latticed door",
+      "apple": "tart lime",
+      "pear": "salty pretzel",
+      "room_a": "conservatory",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "356e4427829b8434"
+    },
+    {
+     "world_id": "trv113",
+     "names": {
+      "box": "rosewood casket",
+      "key": "antique key",
+      "table": "slate altar",
+      "door": "latticed door",
+      "apple": "plump grape",
+      "pear": "brown egg",
+      "room_a": "washroom",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "28dfe0e65d0d94e4"
+    },
+    {
+     "world_id": "trv114",
+     "names": {
+      "box": "leather trunk",
+      "key": "tiny key",
+      "table": "tiled worktop",
+      "door": "bolted door",
+      "apple": "fuzzy kiwi",
+      "pear": "fish stick",
+      "room_a": "washroom",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "03d09dbd37fcf2df"
+    },
+    {
+     "world_id": "trv115",
+     "names": {
+      "box": "teak drawer",
+      "key": "nickel key",
+      "table": "slate altar",
+      "door": "charcoal door",
+      "apple": "vine tomato",
+      "pear": "brown egg",
+      "room_a": "chapel",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "1492ca1f26756230"
+    },
+    {
+     "world_id": "trv116",
+     "names": {
+      "box": "teak drawer",
+      "key": "twisted key",
+      "table": "writing desk",
+      "door": "swinging door",
+      "apple": "baby turnip",
+      "pear": "bean pod",
+      "room_a": "conservatory",
+      "room_b": "parlor"
+     },
+     "fingerprint": "9888bfedeaee02e1"
+    },
+    {
+     "world_id": "trv117",
+     "names": {
+      "box": "velvet coffer",
+      "key": "tarnished key",
+      "table": "reading lectern",
+      "door": "latticed door",
+      "apple": "juicy mango",
+      "pear": "brown egg",
+      "room_a": "lounge",
+      "room_b": "laundry"
+     },
+     "fingerprint": "b8d018f0000d97f6"
+    },
+    {
+     "world_id": "trv118",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "twisted key",
+      "table": "writing desk",
+      "door": "charcoal door",
+      "apple": "golden quince",
+      "pear": "cold sausage",
+      "room_a": "chapel",
+      "room_b": "observatory"
+     },
+     "fingerprint": "c425ce6f227e1e61"
+    },
+    {
+     "world_id": "trv119",
+     "names": {
+      "box": "maple cupboard",
+      "key": "antique key",
+      "table": "slate altar",
+      "door": "latticed door",
+      "apple": "baby turnip",
+      "pear": "salted nut",
+      "room_a": "porch",
+      "room_b": "refectory"
+     },
+     "fingerprint": "2da2d0394001c72b"
+    },
+    {
+     "world_id": "trv120",
+     "names": {
+      "box": "black strongbox",
+      "key": "gilded key",
+      "table": "oval podium",
+      "door": "amber door",
+      "apple": "baby turnip",
+      "pear": "plain cracker",
+      "room_a": "boathouse",
+      "room_b": "attic"
+     },
+     "fingerprint": "49c06b08e779b1f1"
+    },
+    {
+     "world_id": "trv121",
+     "names": {
+      "box": "rosewood casket",
+      "key": "twisted key",
+      "table": "garden trolley",
+      "door": "amber door",
+      "apple": "sticky lychee",
+      "pear": "meat pie",
+      "room_a": "loft",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "adb3a0505cb3817e"
+    },
+    {
+     "world_id": "trv122",
+     "names": {
+      "box": "teak drawer",
+      "key": "ornate key",
+      "table": "serving cart",
+      "door": "heavy door",
+      "apple": "wild berry",
+      "pear": "jelly donut",
+      "room_a": "attic",
+      "room_b": "workshop"
+     },
+     "fingerprint": "f3b482f4f49792a8"
+    },
+    {
+     "world_id": "trv123",
+     "names": {
+      "box": "teak drawer",
+      "key": "chunky key",
+      "table": "bedside nightstand",
+      "door": "bolted door",
+      "apple": "tart lime",
+      "pear": "mint candy",
+      "room_a": "conservatory",
+      "room_b": "boathouse"
+     },
+     "fingerprint": "5e357947b1cd2765"
+    },
+    {
+     "world_id": "trv124",
+     "names": {
+      "box": "felt toybox",
+      "key": "tarnished key",
+      "table": "oval podium",
+      "door": "frosted door",
+      "apple": "wild berry",
+      "pear": "hard cheese",
+      "room_a": "washroom",
+      "room_b": "lounge"
+     },
+     "fingerprint": "d189322e1fc93802"
+    },
+    {
+     "world_id": "trv125",
+     "names": {
+      "box": "leather trunk",
+      "key": "nickel key",
+      "table": "bedside nightstand",
+      "door": "studded door",
+      "apple": "raw carrot",
+      "pear": "raisin bun",
+      "room_a": "sunroom",
+      "room_b": "foyer"
+     },
+     "fingerprint": "601b428ca9815a0a"
+    },
+    {
+     "world_id": "trv126",
+     "names": {
+      "box": "rosewood casket",
+      "key": "gilded key",
+      "table": "oval podium",
+      "door": "scarlet door",
+      "apple": "golden quince",
+      "pear": "bean pod",
+      "room_a": "lounge",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "a9c737b5da242bb8"
+    },
+    {
+     "world_id": "trv127",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "jagged key",
+      "table": "folding trestle",
+      "door": "charcoal door",
+      "apple": "raw carrot",
+      "pear": "cold sausage",
+      "room_a": "observatory",
+      "room_b": "conservatory"
+     },
+     "fingerprint": "958c75061a4fdca7"
+    },
+    {
+     "world_id": "trv128",
+     "names": {
+      "box": "grey safe",
+      "key": "tiny key",
+      "table": "tiled worktop",
+      "door": "scarlet door",
+      "apple": "plump grape",
+      "pear": "brown egg",
+      "room_a": "mudroom",
+      "room_b": "foyer"
+     },
+     "fingerprint": "f7a257e47a38e4bc"
+    },
+    {
+     "world_id": "trv129",
+     "names": {
+      "box": "rosewood casket",
+      "key": "nickel key",
+      "table": "writing desk",
+      "door": "latticed door",
+      "apple": "vine tomato",
+      "pear": "bean pod",
+      "room_a": "porch",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "a216676ca43573a4"
+    },
+    {
+     "world_id": "trv130",
+     "names": {
+      "box": "leather trunk",
+      "key": "chunky key",
+      "table": "slate altar",
+      "door": "olive door",
+      "apple": "tart lime",
+      "pear": "hard cheese",
+      "room_a": "sunroom",
+      "room_b": "refectory"
+     },
+     "fingerprint": "b098135baea8fbaa"
+    },
+    {
+     "world_id": "trv131",
+     "names": {
+      "box": "leather trunk",
+      "key": "tiny key",
+      "table": "oval podium",
+      "door": "amber door",
+      "apple": "purple beet",
+      "pear": "butter waffle",
+      "room_a": "workshop",
+      "room_b": "laundry"
+     },
+     "fingerprint": "688165a0d193dc1f"
+    },
+    {
+     "world_id": "trv132",
+     "names": {
+      "box": "grey safe",
+      "key": "square key",
+      "table": "folding trestle",
+      "door": "reinforced door",
+      "apple": "purple beet",
+      "pear": "brown egg",
+      "room_a": "loft",
+      "room_b": "washroom"
+     },
+     "fingerprint": "63423f84b7e90813"
+    },
+    {
+     "world_id": "trv133",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "chunky key",
+      "table": "writing desk",
+      "door": "charcoal door",
+      "apple": "plump grape",
+      "pear": "salted nut",
+      "room_a": "cloakroom",
+      "room_b": "loft"
+     },
+     "fingerprint": "e7e65c3691b0f252"
+    },
+    {
+     "world_id": "trv134",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "ornate key",
+      "table": "bedside nightstand",
+      "door": "heavy door",
+      "apple": "baby turnip",
+      "pear": "plain cracker",
+      "room_a": "parlor",
+      "room_b": "studio"
+     },
+     "fingerprint": "893f40e7c78acd28"
+    },
+    {
+     "world_id": "trv135",
+     "names": {
+      "box": "ceramic jar",
+      "key": "chunky key",
+      "table": "kitchen counter",
+      "door": "rusted door",
+      "apple": "fuzzy kiwi",
+      "pear": "rye loaf",
+      "room_a": "chapel",
+      "room_b": "cloakroom"
+     },
+     "fingerprint": "f5091aa583f3ba4f"
+    },
+    {
+     "world_id": "trv136",
+     "names": {
+      "box": "cardboard carton",
+      "key": "jagged key",
+      "table": "bedside nightstand",
+      "door": "amber door",
+      "apple": "juicy mango",
+      "pear": "salty pretzel",
+      "room_a": "kitchen",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "287193c6d73c934c"
+    },
+    {
+     "world_id": "trv137",
+     "names": {
+      "box": "ceramic jar",
+      "key": "gilded key",
+      "table": "butcher block",
+      "door": "latticed door",
+      "apple": "wild berry",
+      "pear": "rye loaf",
+      "room_a": "cabin",
+      "room_b": "sunroom"
+     },
+     "fingerprint": "771bb45157e00116"
+    },
+    {
+     "world_id": "trv138",
+     "names": {
+      "box": "teak drawer",
+      "key": "square key",
+      "table": "brick mantel",
+      "door": "rusted door",
+      "apple": "purple beet",
+      "pear": "plain cracker",
+      "room_a": "workshop",
+      "room_b": "bedroom"
+     },
+     "fingerprint": "aa9b0e6eb8cea248"
+    },
+    {
+     "world_id": "trv139",
+     "names": {
+      "box": "teak drawer",
+      "key": "bent key",
+      "table": "kitchen counter",
+      "door": "charcoal door",
+      "apple": "raw carrot",
+      "pear": "plain cracker",
+      "room_a": "cabin",
+      "room_b": "parlor"
+     },
+     "fingerprint": "a498a7c348bb705d"
+    },
+    {
+     "world_id": "trv140",
+     "names": {
+      "box": "grey safe",
+      "key": "bent key",
+      "table": "butcher block",
+      "door": "amber door",
+      "apple": "baby turnip",
+      "pear": "jelly donut",
+      "room_a": "lounge",
+      "room_b": "loft"
+     },
+     "fingerprint": "be315cc2a5c1ef9b"
+    },
+    {
+     "world_id": "trv141",
+     "names": {
+      "box": "wicker hamper",
+      "key": "square key",
+      "table": "serving cart",
+      "door": "olive door",
+      "apple": "baby turnip",
+      "pear": "jelly donut",
+      "room_a": "lounge",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "9c91901fb93d5fdb"
+    },
+    {
+     "world_id": "trv142",
+     "names": {
+      "box": "lacquered dresser",
+      "key": "flat key",
+      "table": "writing desk",
+      "door": "rusted door",
+      "apple": "vine tomato",
+      "pear": "raisin bun",
+      "room_a": "lounge",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "d5025541f5a9f7cf"
+    },
+    {
+     "world_id": "trv143",
+     "names": {
+      "box": "walnut cabinet",
+      "key": "nickel key",
+      "table": "oval podium",
+      "door": "heavy door",
+      "apple": "plump grape",
+      "pear": "brown egg",
+      "room_a": "cloakroom",
+      "room_b": "parlor"
+     },
+     "fingerprint": "eff63e6236929bec"
+    },
+    {
+     "world_id": "trv144",
+     "names": {
+      "box": "teak drawer",
+      "key": "square key",
+      "table": "low platform",
+      "door": "charcoal door",
+      "apple": "sticky lychee",
+      "pear": "jelly donut",
+      "room_a": "kitchen",
+      "room_b": "studio"
+     },
+     "fingerprint": "4ac257ea8c8cd887"
+    },
+    {
+     "world_id": "trv145",
+     "names": {
+      "box": "felt toybox",
+      "key": "twisted key",
+      "table": "folding trestle",
+      "door": "studded door",
+      "apple": "wild berry",
+      "pear": "salted nut",
+      "room_a": "chapel",
+      "room_b": "storeroom"
+     },
+     "fingerprint": "4b5b746200325d3a"
+    },
+    {
+     "world_id": "trv146",
+     "names": {
+      "box": "wicker hamper",
+      "key": "ornate key",
+      "table": "reading lectern",
+      "door": "amber door",
+      "apple": "spotted papaya",
+      "pear": "meat pie",
+      "room_a": "lounge",
+      "room_b": "parlor"
+     },
+     "fingerprint": "ec86ddbc7eacd34d"
+    },
+    {
+     "world_id": "trv147",
+     "names": {
+      "box": "velvet coffer",
+      "key": "flat key",
+      "table": "low platform",
+      "door": "creaky door",
+      "apple": "purple beet",
+      "pear": "bean pod",
+      "room_a": "chapel",
+      "room_b": "foyer"
+     },
+     "fingerprint": "fe745ee4d6a374b5"
+    },
+    {
+     "world_id": "trv148",
+     "names": {
+      "box": "velvet coffer",
+      "key": "ornate key",
+      "table": "slate altar",
+      "door": "olive door",
+      "apple": "fresh peach",
+      "pear": "cold sausage",
+      "room_a": "laundry",
+      "room_b": "cabin"
+     },
+     "fingerprint": "947e75acd5b94edd"
+    },
+    {
+     "world_id": "trv149",
+     "names": {
+      "box": "felt toybox",
+      "key": "slender key",
+      "table": "flat dais",
+      "door": "swinging door",
+      "apple": "purple beet",
+      "pear": "jelly donut",
+      "room_a": "lounge",
+      "room_b": "chapel"
+     },
+     "fingerprint": "6d44542ded3c8f1d"
+    }
+   ]
+  },
+  "val": {
+   "split": "val",
+   "levers": [],
+   "worlds": [
+    {
+     "world_id": "vav000",
+     "names": {
+      "box": "chrome locker",
+      "key": "notched key",
+      "table": "window ledge",
+      "door": "arched door",
+      "apple": "crisp radish",
+      "pear": "chocolate truffle",
+      "room_a": "darkroom",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "25f7b67d3dbb1832"
+    },
+    {
+     "world_id": "vav001",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "stale bread",
+      "room_a": "basement",
+      "room_b": "den"
+     },
+     "fingerprint": "049f06591eb30a1f"
+    },
+    {
+     "world_id": "vav002",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "den",
+      "room_b": "darkroom"
+     },
+     "fingerprint": "9762ac7d61979524"
+    },
+    {
+     "world_id": "vav003",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "basement",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "368f98245cbc9508"
+    },
+    {
+     "world_id": "vav004",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "concrete plinth",
+      "door": "arched door",
+      "apple": "crisp radish",
+      "pear": "stale bread",
+      "room_a": "darkroom",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "d4c885084dafcb22"
+    },
+    {
+     "world_id": "vav005",
+     "names": {
+      "box": "chrome locker",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "greenhouse",
+      "room_b": "den"
+     },
+     "fingerprint": "30aadad207446026"
+    },
+    {
+     "world_id": "vav006",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "concrete plinth",
+      "door": "arched door",
+      "apple": "crisp radish",
+      "pear": "stale bread",
+      "room_a": "darkroom",
+      "room_b": "basement"
+     },
+     "fingerprint": "c4ad84cf66c76910"
+    },
+    {
+     "world_id": "vav007",
+     "names": {
+      "box": "chrome locker",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "crisp radish",
+      "pear": "stale bread",
+      "room_a": "den",
+      "room_b": "basement"
+     },
+     "fingerprint": "08b44ab45a456744"
+    },
+    {
+     "world_id": "vav008",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "crisp radish",
+      "pear": "stale bread",
+      "room_a": "basement",
+      "room_b": "den"
+     },
+     "fingerprint": "8da2773a97bfd3a8"
+    },
+    {
+     "world_id": "vav009",
+     "names": {
+      "box": "zinc tub",
+      "key": "notched key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "basement",
+      "room_b": "darkroom"
+     },
+     "fingerprint": "1099ab71ab3f8984"
+    },
+    {
+     "world_id": "vav010",
+     "names": {
+      "box": "chrome locker",
+      "key": "notched key",
+      "table": "window ledge",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "stale bread",
+      "room_a": "greenhouse",
+      "room_b": "basement"
+     },
+     "fingerprint": "e650bdf68332e645"
+    },
+    {
+     "world_id": "vav011",
+     "names": {
+      "box": "chrome locker",
+      "key": "crooked key",
+      "table": "concrete plinth",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "den",
+      "room_b": "basement"
+     },
+     "fingerprint": "2536467058c20c8b"
+    },
+    {
+     "world_id": "vav012",
+     "names": {
+      "box": "zinc tub",
+      "key": "notched key",
+      "table": "window ledge",
+      "door": "arched door",
+      "apple": "crisp radish",
+      "pear": "chocolate truffle",
+      "room_a": "darkroom",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "d179702d110eca91"
+    },
+    {
+     "world_id": "vav013",
+     "names": {
+      "box": "chrome locker",
+      "key": "notched key",
+      "table": "concrete plinth",
+      "door": "arched door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "den",
+      "room_b": "darkroom"
+     },
+     "fingerprint": "2e8ab0eb35fb9114"
+    },
+    {
+     "world_id": "vav014",
+     "names": {
+      "box": "chrome locker",
+      "key": "notched key",
+      "table": "concrete plinth",
+      "door": "arched door",
+      "apple": "round melon",
+      "pear": "stale bread",
+      "room_a": "basement",
+      "room_b": "darkroom"
+     },
+     "fingerprint": "98e2e39f7fecbfeb"
+    },
+    {
+     "world_id": "vav015",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "concrete plinth",
+      "door": "indigo door",
+      "apple": "round melon",
+      "pear": "stale bread",
+      "room_a": "darkroom",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "704f7c7c6c306104"
+    },
+    {
+     "world_id": "vav016",
+     "names": {
+      "box": "zinc tub",
+      "key": "notched key",
+      "table": "concrete plinth",
+      "door": "arched door",
+      "apple": "crisp radish",
+      "pear": "stale bread",
+      "room_a": "darkroom",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "0f462377b4fe16ad"
+    },
+    {
+     "world_id": "vav017",
+     "names": {
+      "box": "zinc tub",
+      "key": "notched key",
+      "table": "window ledge",
+      "door": "arched door",
+      "apple": "round melon",
+      "pear": "chocolate truffle",
+      "room_a": "darkroom",
+      "room_b": "greenhouse"
+     },
+     "fingerprint": "8dd4a4b657924a96"
+    },
+    {
+     "world_id": "vav018",
+     "names": {
+      "box": "chrome locker",
+      "key": "notched key",
+      "table": "concrete plinth",
+      "door": "arched door",
+      "apple": "round melon",
+      "pear": "stale bread",
+      "room_a": "basement",
+      "room_b": "darkroom"
+     },
+     "fingerprint": "98e2e39f7fecbfeb"
+    },
+    {
+     "world_id": "vav019",
+     "names": {
+      "box": "zinc tub",
+      "key": "crooked key",
+      "table": "window ledge",
+      "door": "arched door",
+      "apple": "crisp radish",
+      "pear": "stale bread",
+      "room_a": "greenhouse",
+      "room_b": "den"
+     },
+     "fingerprint": "e44e38d791725625"
+    }
+   ]
+  },
+  "cal_test": {
+   "split": "test",
+   "levers": [],
+   "worlds": [
+    {
+     "world_id": "tev000",
+     "names": {
+      "box": "rattan basket",
+      "key": "master key",
+      "table": "metal rack",
+      "door": "ivory door",
+      "apple": "yellow banana",
+      "pear": "garlic knot",
+      "room_a": "scullery",
+      "room_b": "library"
+     },
+     "fingerprint": "1ae6d062b88871f9"
+    },
+    {
+     "world_id": "tev001",
+     "names": {
+      "box": "clay urn",
+      "key": "hollow key",
+      "table": "artist easel",
+      "door": "violet door",
+      "apple": "yellow banana",
+      "pear": "toasted muffin",
+      "room_a": "nursery",
+      "room_b": "scullery"
+     },
+     "fingerprint": "e6d79a08b797415f"
+    },
+    {
+     "world_id": "tev002",
+     "names": {
+      "box": "clay urn",
+      "key": "polished key",
+      "table": "granite pedestal",
+      "door": "crimson door",
+      "apple": "seedless guava",
+      "pear": "ham slice",
+      "room_a": "nursery",
+      "room_b": "scullery"
+     },
+     "fingerprint": "7182f2d1a2deaa3a"
+    },
+    {
+     "world_id": "tev003",
+     "names": {
+      "box": "rattan basket",
+      "key": "master key",
+      "table": "metal rack",
+      "door": "garden door",
+      "apple": "tangy grapefruit",
+      "pear": "tofu cube",
+      "room_a": "office",
+      "room_b": "hallway"
+     },
+     "fingerprint": "e9e2bd47985f77b6"
+    },
+    {
+     "world_id": "tev004",
+     "names": {
+      "box": "tall armoire",
+      "key": "spare key",
+      "table": "bar stool",
+      "door": "ivory door",
+      "apple": "sweet orange",
+      "pear": "sugar cookie",
+      "room_a": "library",
+      "room_b": "office"
+     },
+     "fingerprint": "55164a34cf2de029"
+    },
+    {
+     "world_id": "tev005",
+     "names": {
+      "box": "plastic bin",
+      "key": "rusty key",
+      "table": "granite pedestal",
+      "door": "ivory door",
+      "apple": "seedless guava",
+      "pear": "sugar cookie",
+      "room_a": "armory",
+      "room_b": "playroom"
+     },
+     "fingerprint": "741d27161a3a3298"
+    },
+    {
+     "world_id": "tev006",
+     "names": {
+      "box": "dented footlocker",
+      "key": "master key",
+      "table": "acrylic console",
+      "door": "saloon door",
+      "apple": "yellow banana",
+      "pear": "toasted muffin",
+      "room_a": "scullery",
+      "room_b": "nursery"
+     },
+     "fingerprint": "5d97062333ced363"
+    },
+    {
+     "world_id": "tev007",
+     "names": {
+      "box": "rattan basket",
+      "key": "master key",
+      "table": "granite pedestal",
+      "door": "saloon door",
+      "apple": "creamy avocado",
+      "pear": "garlic knot",
+      "room_a": "armory",
+      "room_b": "scullery"
+     },
+     "fingerprint": "c9b3014c5a208344"
+    },
+    {
+     "world_id": "tev008",
+     "names": {
+      "box": "plastic bin",
+      "key": "hollow key",
+      "table": "artist easel",
+      "door": "sliding door",
+      "apple": "dark cherry",
+      "pear": "honey cake",
+      "room_a": "hallway",
+      "room_b": "pavilion"
+     },
+     "fingerprint": "05814a05d431ed27"
+    },
+    {
+     "world_id": "tev009",
+     "names": {
+      "box": "plastic bin",
+      "key": "stubby key",
+      "table": "drafting board",
+      "door": "screen door",
+      "apple": "dark cherry",
+      "pear": "toasted muffin",
+      "room_a": "office",
+      "room_b": "library"
+     },
+     "fingerprint": "46e180cd2a504a20"
+    },
+    {
+     "world_id": "tev010",
+     "names": {
+      "box": "rattan basket",
+      "key": "polished key",
+      "table": "metal rack",
+      "door": "sliding door",
+      "apple": "creamy avocado",
+      "pear": "sugar cookie",
+      "room_a": "library",
+      "room_b": "nursery"
+     },
+     "fingerprint": "732f731708d3bb3a"
+    },
+    {
+     "world_id": "tev011",
+     "names": {
+      "box": "clay urn",
+      "key": "stubby key",
+      "table": "mahogany sideboard",
+      "door": "crimson door",
+      "apple": "dark cherry",
+      "pear": "ham slice",
+      "room_a": "playroom",
+      "room_b": "hallway"
+     },
+     "fingerprint": "791eab6fef09bac3"
+    },
+    {
+     "world_id": "tev012",
+     "names": {
+      "box": "dented footlocker",
+      "key": "rusty key",
+      "table": "bar stool",
+      "door": "narrow door",
+      "apple": "bright apricot",
+      "pear": "honey cake",
+      "room_a": "playroom",
+      "room_b": "armory"
+     },
+     "fingerprint": "655c5782019b9595"
+    },
+    {
+     "world_id": "tev013",
+     "names": {
+      "box": "rattan basket",
+      "key": "polished key",
+      "table": "drafting board",
+      "door": "saloon door",
+      "apple": "tangy grapefruit",
+      "pear": "rice ball",
+      "room_a": "pavilion",
+      "room_b": "garage"
+     },
+     "fingerprint": "5cf84978a2c2f0bf"
+    },
+    {
+     "world_id": "tev014",
+     "names": {
+      "box": "dented footlocker",
+      "key": "pewter key",
+      "table": "drafting board",
+      "door": "crimson door",
+      "apple": "creamy avocado",
+      "pear": "toasted muffin",
+      "room_a": "armory",
+      "room_b": "garage"
+     },
+     "fingerprint": "9e4655275c18d4e4"
+    },
+    {
+     "world_id": "tev015",
+     "names": {
+      "box": "plastic bin",
+      "key": "stubby key",
+      "table": "mahogany sideboard",
+      "door": "violet door",
+      "apple": "tangy grapefruit",
+      "pear": "garlic knot",
+      "room_a": "armory",
+      "room_b": "nursery"
+     },
+     "fingerprint": "461ab286f8b89444"
+    },
+    {
+     "world_id": "tev016",
+     "names": {
+      "box": "rattan basket",
+      "key": "platinum key",
+      "table": "granite pedestal",
+      "door": "garden door",
+      "apple": "bright apricot",
+      "pear": "garlic knot",
+      "room_a": "hallway",
+      "room_b": "office"
+     },
+     "fingerprint": "8adf7f0c27efd136"
+    },
+    {
+     "world_id": "tev017",
+     "names": {
+      "box": "rattan basket",
+      "key": "polished key",
+      "table": "granite pedestal",
+      "door": "ivory door",
+      "apple": "seedless guava",
+      "pear": "ham slice",
+      "room_a": "armory",
+      "room_b": "garage"
+     },
+     "fingerprint": "7a7b48bc326e1811"
+    },
+    {
+     "world_id": "tev018",
+     "names": {
+      "box": "carved bureau",
+      "key": "stubby key",
+      "table": "acrylic console",
+      "door": "garden door",
+      "apple": "tangy grapefruit",
+      "pear": "honey cake",
+      "room_a": "library",
+      "room_b": "garage"
+     },
+     "fingerprint": "89421c6c5438c8ea"
+    },
+    {
+     "world_id": "tev019",
+     "names": {
+      "box": "rattan basket",
+      "key": "polished key",
+      "table": "round ottoman",
+      "door": "ivory door",
+      "apple": "tangy grapefruit",
+      "pear": "sugar cookie",
+      "room_a": "scullery",
+      "room_b": "pavilion"
+     },
+     "fingerprint": "3cbbffe731caab28"
+    },
+    {
+     "world_id": "tev020",
+     "names": {
+      "box": "painted hutch",
+      "key": "master key",
+      "table": "metal rack",
+      "door": "sliding door",
+      "apple": "sweet orange",
+      "pear": "honey cake",
+      "room_a": "nursery",
+      "room_b": "bakery"
+     },
+     "fingerprint": "b5a7512f364dc93c"
+    },
+    {
+     "world_id": "tev021",
+     "names": {
+      "box": "rattan basket",
+      "key": "spare key",
+      "table": "drafting board",
+      "door": "violet door",
+      "apple": "bright apricot",
+      "pear": "sugar cookie",
+      "room_a": "playroom",
+      "room_b": "office"
+     },
+     "fingerprint": "fbe82bf6a972ae1c"
+    },
+    {
+     "world_id": "tev022",
+     "names": {
+      "box": "clay urn",
+      "key": "pewter key",
+      "table": "drafting board",
+      "door": "crimson door",
+      "apple": "sour lemon",
+      "pear": "corn cob",
+      "room_a": "office",
+      "room_b": "pavilion"
+     },
+     "fingerprint": "290cf58e5af3bbd5"
+    },
+    {
+     "world_id": "tev023",
+     "names": {
+      "box": "tall armoire",
+      "key": "pewter key",
+      "table": "artist easel",
+      "door": "sliding door",
+      "apple": "seedless guava",
+      "pear": "honey cake",
+      "room_a": "scullery",
+      "room_b": "playroom"
+     },
+     "fingerprint": "8e148ea6625211d8"
+    }
+   ]
+  },
+  "test": {
+   "split": "test3",
+   "levers": [],
+   "worlds": [
+    {
+     "world_id": "t3v000",
+     "names": {
+      "box": "nylon duffel",
+      "key": "coral key",
+      "table": "hickory washstand",
+      "door": "dutch door",
+      "apple": "shiny persimmon",
+      "pear": "peanut brittle",
+      "room_a": "infirmary",
+      "room_b": "atrium"
+     },
+     "fingerprint": "fd857e8084d3af8a"
+    },
+    {
+     "world_id": "t3v001",
+     "names": {
+      "box": "nylon duffel",
+      "key": "onyx key",
+      "table": "plywood sawhorse",
+      "door": "maroon door",
+      "apple": "peeled tangerine",
+      "pear": "sourdough roll",
+      "room_a": "dormitory",
+      "room_b": "terrace"
+     },
+     "fingerprint": "9c55e66c475cb510"
+    },
+    {
+     "world_id": "t3v002",
+     "names": {
+      "box": "silk purse",
+      "key": "cobalt key",
+      "table": "hickory washstand",
+      "door": "mirrored door",
+      "apple": "glossy starfruit",
+      "pear": "baked potato",
+      "room_a": "terrace",
+      "room_b": "infirmary"
+     },
+     "fingerprint": "e53e0b550d462cd4"
+    },
+    {
+     "world_id": "t3v003",
+     "names": {
+      "box": "glazed crock",
+      "key": "onyx key",
+      "table": "formica tabletop",
+      "door": "hinged door",
+      "apple": "peeled tangerine",
+      "pear": "spinach quiche",
+      "room_a": "solarium",
+      "room_b": "dormitory"
+     },
+     "fingerprint": "03e2d7dd9b3dfd1e"
+    },
+    {
+     "world_id": "t3v004",
+     "names": {
+      "box": "denim backpack",
+      "key": "coral key",
+      "table": "spruce workbench",
+      "door": "hinged door",
+      "apple": "glossy starfruit",
+      "pear": "caramel popcorn",
+      "room_a": "scriptorium",
+      "room_b": "solarium"
+     },
+     "fingerprint": "fe9d51a269c1ca26"
+    },
+    {
+     "world_id": "t3v005",
+     "names": {
+      "box": "rubber tote",
+      "key": "cobalt key",
+      "table": "wrought tripod",
+      "door": "rolling door",
+      "apple": "sliced cantaloupe",
+      "pear": "peanut brittle",
+      "room_a": "boudoir",
+      "room_b": "terrace"
+     },
+     "fingerprint": "ed6ce4c61324578f"
+    },
+    {
+     "world_id": "t3v006",
+     "names": {
+      "box": "straw pannier",
+      "key": "curved key",
+      "table": "hickory washstand",
+      "door": "dutch door",
+      "apple": "bumpy kumquat",
+      "pear": "oat biscuit",
+      "room_a": "vestibule",
+      "room_b": "terrace"
+     },
+     "fingerprint": "c67af07b8e5fe105"
+    },
+    {
+     "world_id": "t3v007",
+     "names": {
+      "box": "rubber tote",
+      "key": "ebony key",
+      "table": "sturdy bookcase",
+      "door": "pocket door",
+      "apple": "chilled nectarine",
+      "pear": "sourdough roll",
+      "room_a": "vestibule",
+      "room_b": "boudoir"
+     },
+     "fingerprint": "e745cf93912f8a6d"
+    },
+    {
+     "world_id": "t3v008",
+     "names": {
+      "box": "denim backpack",
+      "key": "titanium key",
+      "table": "sturdy bookcase",
+      "door": "khaki door",
+      "apple": "whole pomegranate",
+      "pear": "tuna sandwich",
+      "room_a": "terrace",
+      "room_b": "chamber"
+     },
+     "fingerprint": "2f0e23bb741e143e"
+    },
+    {
+     "world_id": "t3v009",
+     "names": {
+      "box": "straw pannier",
+      "key": "ebony key",
+      "table": "hickory washstand",
+      "door": "pocket door",
+      "apple": "firm clementine",
+      "pear": "veggie wrap",
+      "room_a": "scriptorium",
+      "room_b": "dormitory"
+     },
+     "fingerprint": "a64592fdfd458d3f"
+    },
+    {
+     "world_id": "t3v010",
+     "names": {
+      "box": "quilted valise",
+      "key": "jade key",
+      "table": "formica tabletop",
+      "door": "khaki door",
+      "apple": "chilled nectarine",
+      "pear": "spinach quiche",
+      "room_a": "dormitory",
+      "room_b": "vestibule"
+     },
+     "fingerprint": "85efb50f0baeb2c8"
+    },
+    {
+     "world_id": "t3v011",
+     "names": {
+      "box": "nylon duffel",
+      "key": "curved key",
+      "table": "hickory washstand",
+      "door": "rolling door",
+      "apple": "sliced cantaloupe",
+      "pear": "pita wedge",
+      "room_a": "infirmary",
+      "room_b": "atrium"
+     },
+     "fingerprint": "0e0fff685b506f70"
+    },
+    {
+     "world_id": "t3v012",
+     "names": {
+      "box": "rubber tote",
+      "key": "onyx key",
+      "table": "plywood sawhorse",
+      "door": "rolling door",
+      "apple": "chilled nectarine",
+      "pear": "spinach quiche",
+      "room_a": "rotunda",
+      "room_b": "infirmary"
+     },
+     "fingerprint": "22a66dafee4f9834"
+    },
+    {
+     "world_id": "t3v013",
+     "names": {
+      "box": "bamboo steamer",
+      "key": "curved key",
+      "table": "sturdy bookcase",
+      "door": "maroon door",
+      "apple": "peeled tangerine",
+      "pear": "almond croissant",
+      "room_a": "chamber",
+      "room_b": "gazebo"
+     },
+     "fingerprint": "418384dca4ef7ea9"
+    },
+    {
+     "world_id": "t3v014",
+     "names": {
+      "box": "wool knapsack",
+      "key": "coral key",
+      "table": "spruce workbench",
+      "door": "khaki door",
+      "apple": "whole pomegranate",
+      "pear": "baked potato",
+      "room_a": "boudoir",
+      "room_b": "chamber"
+     },
+     "fingerprint": "ea9f8d54ade4bf59"
+    },
+    {
+     "world_id": "t3v015",
+     "names": {
+      "box": "straw pannier",
+      "key": "magnetic key",
+      "table": "wrought tripod",
+      "door": "rolling door",
+      "apple": "glossy starfruit",
+      "pear": "almond croissant",
+      "room_a": "rotunda",
+      "room_b": "atrium"
+     },
+     "fingerprint": "0cbc23812b02235a"
+    },
+    {
+     "world_id": "t3v016",
+     "names": {
+      "box": "bamboo steamer",
+      "key": "titanium key",
+      "table": "wrought tripod",
+      "door": "dutch door",
+      "apple": "glossy starfruit",
+      "pear": "sourdough roll",
+      "room_a": "vestibule",
+      "room_b": "boudoir"
+     },
+     "fingerprint": "9bf33bb54b544d82"
+    },
+    {
+     "world_id": "t3v017",
+     "names": {
+      "box": "silk purse",
+      "key": "cobalt key",
+      "table": "timber pallet",
+      "door": "rolling door",
+      "apple": "peeled tangerine",
+      "pear": "baked potato",
+      "room_a": "solarium",
+      "room_b": "gazebo"
+     },
+     "fingerprint": "6b7099a1af3a2e5a"
+    },
+    {
+     "world_id": "t3v018",
+     "names": {
+      "box": "straw pannier",
+      "key": "jade key",
+      "table": "formica tabletop",
+      "door": "mirrored door",
+      "apple": "chilled nectarine",
+      "pear": "almond croissant",
+      "room_a": "gazebo",
+      "room_b": "terrace"
+     },
+     "fingerprint": "2868479680f9742a"
+    },
+    {
+     "world_id": "t3v019",
+     "names": {
+      "box": "nylon duffel",
+      "key": "bone key",
+      "table": "plywood sawhorse",
+      "door": "khaki door",
+      "apple": "bumpy kumquat",
+      "pear": "tuna sandwich",
+      "room_a": "smithy",
+      "room_b": "vestibule"
+     },
+     "fingerprint": "97293b8aa06dcc77"
+    },
+    {
+     "world_id": "t3v020",
+     "names": {
+      "box": "straw pannier",
+      "key": "crystal key",
+      "table": "wrought tripod",
+      "door": "khaki door",
+      "apple": "peeled tangerine",
+      "pear": "baked potato",
+      "room_a": "scriptorium",
+      "room_b": "infirmary"
+     },
+     "fingerprint": "7216f58dfdcc0b51"
+    },
+    {
+     "world_id": "t3v021",
+     "names": {
+      "box": "quilted valise",
+      "key": "titanium key",
+      "table": "spruce workbench",
+      "door": "hinged door",
+      "apple": "glossy starfruit",
+      "pear": "tuna sandwich",
+      "room_a": "solarium",
+      "room_b": "scriptorium"
+     },
+     "fingerprint": "be54e97503699c5f"
+    },
+    {
+     "world_id": "t3v022",
+     "names": {
+      "box": "silk purse",
+      "key": "jade key",
+      "table": "sturdy bookcase",
+      "door": "hinged door",
+      "apple": "whole pomegranate",
+      "pear": "veggie wrap",
+      "room_a": "boudoir",
+      "room_b": "scriptorium"
+     },
+     "fingerprint": "2e75afd34d70a2d7"
+    },
+    {
+     "world_id": "t3v023",
+     "names": {
+      "box": "denim backpack",
+      "key": "jade key",
+      "table": "sturdy bookcase",
+      "door": "pocket door",
+      "apple": "sliced cantaloupe",
+      "pear": "veggie wrap",
+      "room_a": "chamber",
+      "room_b": "dormitory"
+     },
+     "fingerprint": "fceb4c23b07c427a"
+    }
+   ]
+  },
+  "x1": {
+   "split": "test3",
+   "levers": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "worlds": [
+    {
+     "world_id": "t3v000",
+     "names": {
+      "box": "nylon duffel",
+      "key": "coral key",
+      "table": "hickory washstand",
+      "door": "dutch door",
+      "apple": "shiny persimmon",
+      "pear": "peanut brittle",
+      "room_a": "infirmary",
+      "room_b": "atrium",
+      "box2": "denim backpack",
+      "key2": "onyx key",
+      "door2": "maroon door",
+      "room_c": "gazebo"
+     },
+     "fingerprint": "81db3e7afdddaaff"
+    },
+    {
+     "world_id": "t3v001",
+     "names": {
+      "box": "nylon duffel",
+      "key": "onyx key",
+      "table": "plywood sawhorse",
+      "door": "maroon door",
+      "apple": "peeled tangerine",
+      "pear": "sourdough roll",
+      "room_a": "dormitory",
+      "room_b": "terrace",
+      "box2": "straw pannier",
+      "key2": "titanium key",
+      "door2": "dutch door",
+      "room_c": "boudoir"
+     },
+     "fingerprint": "2a1a6cae8c271cb0"
+    },
+    {
+     "world_id": "t3v002",
+     "names": {
+      "box": "silk purse",
+      "key": "cobalt key",
+      "table": "hickory washstand",
+      "door": "mirrored door",
+      "apple": "glossy starfruit",
+      "pear": "baked potato",
+      "room_a": "terrace",
+      "room_b": "infirmary",
+      "box2": "rubber tote",
+      "key2": "onyx key",
+      "door2": "hinged door",
+      "room_c": "boudoir"
+     },
+     "fingerprint": "7a3c92b61498c5a6"
+    },
+    {
+     "world_id": "t3v003",
+     "names": {
+      "box": "glazed crock",
+      "key": "onyx key",
+      "table": "formica tabletop",
+      "door": "hinged door",
+      "apple": "peeled tangerine",
+      "pear": "spinach quiche",
+      "room_a": "solarium",
+      "room_b": "dormitory",
+      "box2": "straw pannier",
+      "key2": "crystal key",
+      "door2": "dutch door",
+      "room_c": "gazebo"
+     },
+     "fingerprint": "1432c39ada91fbe3"
+    },
+    {
+     "world_id": "t3v004",
+     "names": {
+      "box": "denim backpack",
+      "key": "coral key",
+      "table": "spruce workbench",
+      "door": "hinged door",
+      "apple": "glossy starfruit",
+      "pear": "caramel popcorn",
+      "room_a": "scriptorium",
+      "room_b": "solarium",
+      "box2": "silk purse",
+      "key2": "crystal key",
+      "door2": "teal door",
+      "room_c": "boudoir"
+     },
+     "fingerprint": "7a2af0550137eb28"
+    },
+    {
+     "world_id": "t3v005",
+     "names": {
+      "box": "rubber tote",
+      "key": "cobalt key",
+      "table": "wrought tripod",
+      "door": "rolling door",
+      "apple": "sliced cantaloupe",
+      "pear": "peanut brittle",
+      "room_a": "boudoir",
+      "room_b": "terrace",
+      "box2": "bamboo steamer",
+      "key2": "titanium key",
+      "door2": "teal door",
+      "room_c": "gazebo"
+     },
+     "fingerprint": "15bc01a1bccd6074"
+    },
+    {
+     "world_id": "t3v006",
+     "names": {
+      "box": "straw pannier",
+      "key": "curved key",
+      "table": "hickory washstand",
+      "door": "dutch door",
+      "apple": "bumpy kumquat",
+      "pear": "oat biscuit",
+      "room_a": "vestibule",
+      "room_b": "terrace",
+      "box2": "denim backpack",
+      "key2": "coral key",
+      "door2": "rolling door",
+      "room_c": "dormitory"
+     },
+     "fingerprint": "a6e31612ce81c474"
+    },
+    {
+     "world_id": "t3v007",
+     "names": {
+      "box": "rubber tote",
+      "key": "ebony key",
+      "table": "sturdy bookcase",
+      "door": "pocket door",
+      "apple": "chilled nectarine",
+      "pear": "sourdough roll",
+      "room_a": "vestibule",
+      "room_b": "boudoir",
+      "box2": "quilted valise",
+      "key2": "jade key",
+      "door2": "mirrored door",
+      "room_c": "terrace"
+     },
+     "fingerprint": "36a5d1a4de112c75"
+    },
+    {
+     "world_id": "t3v008",
+     "names": {
+      "box": "denim backpack",
+      "key": "titanium key",
+      "table": "sturdy bookcase",
+      "door": "khaki door",
+      "apple": "whole pomegranate",
+      "pear": "tuna sandwich",
+      "room_a": "terrace",
+      "room_b": "chamber",
+      "box2": "silk purse",
+      "key2": "magnetic key",
+      "door2": "dutch door",
+      "room_c": "atrium"
+     },
+     "fingerprint": "be95bf84613a311b"
+    },
+    {
+     "world_id": "t3v009",
+     "names": {
+      "box": "straw pannier",
+      "key": "ebony key",
+      "table": "hickory washstand",
+      "door": "pocket door",
+      "apple": "firm clementine",
+      "pear": "veggie wrap",
+      "room_a": "scriptorium",
+      "room_b": "dormitory",
+      "box2": "quilted valise",
+      "key2": "titanium key",
+      "door2": "mirrored door",
+      "room_c": "solarium"
+     },
+     "fingerprint": "0c9699a8eca3b124"
+    },
+    {
+     "world_id": "t3v010",
+     "names": {
+      "box": "quilted valise",
+      "key": "jade key",
+      "table": "formica tabletop",
+      "door": "khaki door",
+      "apple": "chilled nectarine",
+      "pear": "spinach quiche",
+      "room_a": "dormitory",
+      "room_b": "vestibule",
+      "box2": "wool knapsack",
+      "key2": "bone key",
+      "door2": "mirrored door",
+      "room_c": "rotunda"
+     },
+     "fingerprint": "7baff3eae0e97f7b"
+    },
+    {
+     "world_id": "t3v011",
+     "names": {
+      "box": "nylon duffel",
+      "key": "curved key",
+      "table": "hickory washstand",
+      "door": "rolling door",
+      "apple": "sliced cantaloupe",
+      "pear": "pita wedge",
+      "room_a": "infirmary",
+      "room_b": "atrium",
+      "box2": "denim backpack",
+      "key2": "ebony key",
+      "door2": "dutch door",
+      "room_c": "dormitory"
+     },
+     "fingerprint": "4f03118eebc198df"
+    },
+    {
+     "world_id": "t3v012",
+     "names": {
+      "box": "rubber tote",
+      "key": "onyx key",
+      "table": "plywood sawhorse",
+      "door": "rolling door",
+      "apple": "chilled nectarine",
+      "pear": "spinach quiche",
+      "room_a": "rotunda",
+      "room_b": "infirmary",
+      "box2": "bamboo steamer",
+      "key2": "bone key",
+      "door2": "dutch door",
+      "room_c": "gazebo"
+     },
+     "fingerprint": "1733b63e737d7426"
+    },
+    {
+     "world_id": "t3v013",
+     "names": {
+      "box": "bamboo steamer",
+      "key": "curved key",
+      "table": "sturdy bookcase",
+      "door": "maroon door",
+      "apple": "peeled tangerine",
+      "pear": "almond croissant",
+      "room_a": "chamber",
+      "room_b": "gazebo",
+      "box2": "straw pannier",
+      "key2": "titanium key",
+      "door2": "rolling door",
+      "room_c": "infirmary"
+     },
+     "fingerprint": "7f8896c11887aad1"
+    },
+    {
+     "world_id": "t3v014",
+     "names": {
+      "box": "wool knapsack",
+      "key": "coral key",
+      "table": "spruce workbench",
+      "door": "khaki door",
+      "apple": "whole pomegranate",
+      "pear": "baked potato",
+      "room_a": "boudoir",
+      "room_b": "chamber",
+      "box2": "straw pannier",
+      "key2": "bone key",
+      "door2": "dutch door",
+      "room_c": "atrium"
+     },
+     "fingerprint": "a0e7062e24972ed2"
+    },
+    {
+     "world_id": "t3v015",
+     "names": {
+      "box": "straw pannier",
+      "key": "magnetic key",
+      "table": "wrought tripod",
+      "door": "rolling door",
+      "apple": "glossy starfruit",
+      "pear": "almond croissant",
+      "room_a": "rotunda",
+      "room_b": "atrium",
+      "box2": "bamboo steamer",
+      "key2": "titanium key",
+      "door2": "maroon door",
+      "room_c": "dormitory"
+     },
+     "fingerprint": "13ed71b19f04a460"
+    },
+    {
+     "world_id": "t3v016",
+     "names": {
+      "box": "bamboo steamer",
+      "key": "titanium key",
+      "table": "wrought tripod",
+      "door": "dutch door",
+      "apple": "glossy starfruit",
+      "pear": "sourdough roll",
+      "room_a": "vestibule",
+      "room_b": "boudoir",
+      "box2": "straw pannier",
+      "key2": "magnetic key",
+      "door2": "teal door",
+      "room_c": "dormitory"
+     },
+     "fingerprint": "653d77f49b469a7d"
+    },
+    {
+     "world_id": "t3v017",
+     "names": {
+      "box": "silk purse",
+      "key": "cobalt key",
+      "table": "timber pallet",
+      "door": "rolling door",
+      "apple": "peeled tangerine",
+      "pear": "baked potato",
+      "room_a": "solarium",
+      "room_b": "gazebo",
+      "box2": "straw pannier",
+      "key2": "curved key",
+      "door2": "teal door",
+      "room_c": "terrace"
+     },
+     "fingerprint": "47e9b1897f9749d0"
+    },
+    {
+     "world_id": "t3v018",
+     "names": {
+      "box": "straw pannier",
+      "key": "jade key",
+      "table": "formica tabletop",
+      "door": "mirrored door",
+      "apple": "chilled nectarine",
+      "pear": "almond croissant",
+      "room_a": "gazebo",
+      "room_b": "terrace",
+      "box2": "rubber tote",
+      "key2": "coral key",
+      "door2": "pocket door",
+      "room_c": "rotunda"
+     },
+     "fingerprint": "9825ccc5833a12b0"
+    },
+    {
+     "world_id": "t3v019",
+     "names": {
+      "box": "nylon duffel",
+      "key": "bone key",
+      "table": "plywood sawhorse",
+      "door": "khaki door",
+      "apple": "bumpy kumquat",
+      "pear": "tuna sandwich",
+      "room_a": "smithy",
+      "room_b": "vestibule",
+      "box2": "wool knapsack",
+      "key2": "magnetic key",
+      "door2": "hinged door",
+      "room_c": "boudoir"
+     },
+     "fingerprint": "1ecb676ccfdd12e3"
+    },
+    {
+     "world_id": "t3v020",
+     "names": {
+      "box": "straw pannier",
+      "key": "crystal key",
+      "table": "wrought tripod",
+      "door": "khaki door",
+      "apple": "peeled tangerine",
+      "pear": "baked potato",
+      "room_a": "scriptorium",
+      "room_b": "infirmary",
+      "box2": "silk purse",
+      "key2": "curved key",
+      "door2": "hinged door",
+      "room_c": "boudoir"
+     },
+     "fingerprint": "54aa2be48952de51"
+    },
+    {
+     "world_id": "t3v021",
+     "names": {
+      "box": "quilted valise",
+      "key": "titanium key",
+      "table": "spruce workbench",
+      "door": "hinged door",
+      "apple": "glossy starfruit",
+      "pear": "tuna sandwich",
+      "room_a": "solarium",
+      "room_b": "scriptorium",
+      "box2": "silk purse",
+      "key2": "bone key",
+      "door2": "rolling door",
+      "room_c": "infirmary"
+     },
+     "fingerprint": "f30c7ced70ed6d2a"
+    },
+    {
+     "world_id": "t3v022",
+     "names": {
+      "box": "silk purse",
+      "key": "jade key",
+      "table": "sturdy bookcase",
+      "door": "hinged door",
+      "apple": "whole pomegranate",
+      "pear": "veggie wrap",
+      "room_a": "boudoir",
+      "room_b": "scriptorium",
+      "box2": "bamboo steamer",
+      "key2": "crystal key",
+      "door2": "mirrored door",
+      "room_c": "terrace"
+     },
+     "fingerprint": "a9a95897f8dd050b"
+    },
+    {
+     "world_id": "t3v023",
+     "names": {
+      "box": "denim backpack",
+      "key": "jade key",
+      "table": "sturdy bookcase",
+      "door": "pocket door",
+      "apple": "sliced cantaloupe",
+      "pear": "veggie wrap",
+      "room_a": "chamber",
+      "room_b": "dormitory",
+      "box2": "straw pannier",
+      "key2": "coral key",
+      "door2": "dutch door",
+      "room_c": "vestibule"
+     },
+     "fingerprint": "15475d64e2bfe4eb"
+    }
+   ]
+  },
+  "x1dev": {
+   "split": "dev",
+   "levers": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "worlds": [
+    {
+     "world_id": "tv000",
+     "names": {
+      "box": "wooden box",
+      "key": "brass key",
+      "table": "oak table",
+      "door": "steel door",
+      "apple": "red apple",
+      "pear": "ripe pear",
+      "room_a": "workroom",
+      "room_b": "cellar",
+      "box2": "cork barrel",
+      "key2": "dull key",
+      "door2": "wicket gate",
+      "room_c": "porchway"
+     },
+     "fingerprint": "ef79c0dbb7fb3660"
+    },
+    {
+     "world_id": "tv001",
+     "names": {
+      "box": "iron chest",
+      "key": "silver key",
+      "table": "pine shelf",
+      "door": "birch door",
+      "apple": "green apple",
+      "pear": "soft plum",
+      "room_a": "study",
+      "room_b": "pantry",
+      "box2": "canvas sack",
+      "key2": "long key",
+      "door2": "plank door",
+      "room_c": "landing"
+     },
+     "fingerprint": "e174a13f10ff81e9"
+    },
+    {
+     "world_id": "tv002",
+     "names": {
+      "box": "tin crate",
+      "key": "copper key",
+      "table": "stone bench",
+      "door": "elm door",
+      "apple": "gold apple",
+      "pear": "dry fig",
+      "room_a": "atelier",
+      "room_b": "vault",
+      "box2": "cloth bundle",
+      "key2": "worn key",
+      "door2": "mesh gate",
+      "room_c": "larder"
+     },
+     "fingerprint": "698343ede1fabe83"
+    },
+    {
+     "world_id": "tv003",
+     "names": {
+      "box": "glass case",
+      "key": "bronze key",
+      "table": "marble stand",
+      "door": "cedar door",
+      "apple": "pink apple",
+      "pear": "small date",
+      "room_a": "gallery",
+      "room_b": "annex",
+      "box2": "linen bag",
+      "key2": "odd key",
+      "door2": "reed curtain",
+      "room_c": "lobby"
+     },
+     "fingerprint": "c3ceef03ceacd4f1"
+    },
+    {
+     "world_id": "tv004",
+     "names": {
+      "box": "wooden box 2",
+      "key": "brass key 2",
+      "table": "oak table 2",
+      "door": "steel door 2",
+      "apple": "red apple 2",
+      "pear": "ripe pear 2",
+      "room_a": "workroom 2",
+      "room_b": "cellar 2",
+      "box2": "cork barrel 2",
+      "key2": "dull key 2",
+      "door2": "wicket gate 2",
+      "room_c": "porchway 2"
+     },
+     "fingerprint": "346b9bafe7c35fbb"
+    },
+    {
+     "world_id": "tv005",
+     "names": {
+      "box": "iron chest 2",
+      "key": "silver key 2",
+      "table": "pine shelf 2",
+      "door": "birch door 2",
+      "apple": "green apple 2",
+      "pear": "soft plum 2",
+      "room_a": "study 2",
+      "room_b": "pantry 2",
+      "box2": "canvas sack 2",
+      "key2": "long key 2",
+      "door2": "plank door 2",
+      "room_c": "landing 2"
+     },
+     "fingerprint": "384975b459cdab87"
+    },
+    {
+     "world_id": "tv006",
+     "names": {
+      "box": "tin crate 2",
+      "key": "copper key 2",
+      "table": "stone bench 2",
+      "door": "elm door 2",
+      "apple": "gold apple 2",
+      "pear": "dry fig 2",
+      "room_a": "atelier 2",
+      "room_b": "vault 2",
+      "box2": "cloth bundle 2",
+      "key2": "worn key 2",
+      "door2": "mesh gate 2",
+      "room_c": "larder 2"
+     },
+     "fingerprint": "764cd7cfaafe79d2"
+    },
+    {
+     "world_id": "tv007",
+     "names": {
+      "box": "glass case 2",
+      "key": "bronze key 2",
+      "table": "marble stand 2",
+      "door": "cedar door 2",
+      "apple": "pink apple 2",
+      "pear": "small date 2",
+      "room_a": "gallery 2",
+      "room_b": "annex 2",
+      "box2": "linen bag 2",
+      "key2": "odd key 2",
+      "door2": "reed curtain 2",
+      "room_c": "lobby 2"
+     },
+     "fingerprint": "0d8b822248ba9bfb"
+    },
+    {
+     "world_id": "tv008",
+     "names": {
+      "box": "wooden box 3",
+      "key": "brass key 3",
+      "table": "oak table 3",
+      "door": "steel door 3",
+      "apple": "red apple 3",
+      "pear": "ripe pear 3",
+      "room_a": "workroom 3",
+      "room_b": "cellar 3",
+      "box2": "cork barrel 3",
+      "key2": "dull key 3",
+      "door2": "wicket gate 3",
+      "room_c": "porchway 3"
+     },
+     "fingerprint": "9da39463af8a0e0e"
+    },
+    {
+     "world_id": "tv009",
+     "names": {
+      "box": "iron chest 3",
+      "key": "silver key 3",
+      "table": "pine shelf 3",
+      "door": "birch door 3",
+      "apple": "green apple 3",
+      "pear": "soft plum 3",
+      "room_a": "study 3",
+      "room_b": "pantry 3",
+      "box2": "canvas sack 3",
+      "key2": "long key 3",
+      "door2": "plank door 3",
+      "room_c": "landing 3"
+     },
+     "fingerprint": "2ab0b1c1f7b01978"
+    },
+    {
+     "world_id": "tv010",
+     "names": {
+      "box": "tin crate 3",
+      "key": "copper key 3",
+      "table": "stone bench 3",
+      "door": "elm door 3",
+      "apple": "gold apple 3",
+      "pear": "dry fig 3",
+      "room_a": "atelier 3",
+      "room_b": "vault 3",
+      "box2": "cloth bundle 3",
+      "key2": "worn key 3",
+      "door2": "mesh gate 3",
+      "room_c": "larder 3"
+     },
+     "fingerprint": "5c4d63185049093c"
+    },
+    {
+     "world_id": "tv011",
+     "names": {
+      "box": "glass case 3",
+      "key": "bronze key 3",
+      "table": "marble stand 3",
+      "door": "cedar door 3",
+      "apple": "pink apple 3",
+      "pear": "small date 3",
+      "room_a": "gallery 3",
+      "room_b": "annex 3",
+      "box2": "linen bag 3",
+      "key2": "odd key 3",
+      "door2": "reed curtain 3",
+      "room_c": "lobby 3"
+     },
+     "fingerprint": "c78ea99c11d894e3"
+    }
+   ]
+  }
+ },
+ "test3_vocab": {
+  "box": [
+   "wool knapsack",
+   "rubber tote",
+   "nylon duffel",
+   "quilted valise",
+   "silk purse",
+   "straw pannier",
+   "denim backpack",
+   "glazed crock",
+   "bamboo steamer"
+  ],
+  "key": [
+   "cobalt key",
+   "titanium key",
+   "bone key",
+   "coral key",
+   "jade key",
+   "onyx key",
+   "crystal key",
+   "magnetic key",
+   "ebony key",
+   "curved key"
+  ],
+  "table": [
+   "plywood sawhorse",
+   "sturdy bookcase",
+   "timber pallet",
+   "poplar credenza",
+   "spruce workbench",
+   "hickory washstand",
+   "wrought tripod",
+   "formica tabletop"
+  ],
+  "door": [
+   "teal door",
+   "maroon door",
+   "khaki door",
+   "dutch door",
+   "pocket door",
+   "hinged door",
+   "rolling door",
+   "mirrored door"
+  ],
+  "apple": [
+   "peeled tangerine",
+   "chilled nectarine",
+   "whole pomegranate",
+   "shiny persimmon",
+   "sliced cantaloupe",
+   "firm clementine",
+   "bumpy kumquat",
+   "glossy starfruit"
+  ],
+  "pear": [
+   "sourdough roll",
+   "oat biscuit",
+   "pita wedge",
+   "baked potato",
+   "tuna sandwich",
+   "veggie wrap",
+   "caramel popcorn",
+   "peanut brittle",
+   "almond croissant",
+   "spinach quiche"
+  ],
+  "room": [
+   "chamber",
+   "vestibule",
+   "atrium",
+   "gazebo",
+   "solarium",
+   "boudoir",
+   "scriptorium",
+   "infirmary",
+   "dormitory",
+   "terrace",
+   "smithy",
+   "rotunda"
+  ]
+ }
+}

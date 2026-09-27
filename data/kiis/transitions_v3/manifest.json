@@ -1,0 +1,39 @@
+{
+ "note": "written by scripts/kiis_transitions.py; engine truth only",
+ "splits": {
+  "val": {
+   "worlds": 20,
+   "transitions": 2364,
+   "sha256": "6264333d63fbc18d",
+   "kinds": {
+    "walk": 1183,
+    "branch": 1181
+   },
+   "executes": {
+    "False": 1238,
+    "True": 1126
+   },
+   "changed_vars": {
+    "0": 1549,
+    "1": 815
+   }
+  },
+  "test": {
+   "worlds": 24,
+   "transitions": 2869,
+   "sha256": "9b2ed9b89b5b3b64",
+   "kinds": {
+    "walk": 1453,
+    "branch": 1416
+   },
+   "executes": {
+    "True": 1382,
+    "False": 1487
+   },
+   "changed_vars": {
+    "0": 1860,
+    "1": 1009
+   }
+  }
+ }
+}

@@ -51,14 +51,28 @@ REPEAT_EVERY = 8          # rollouts with index % 8 == 0 (100 of 800) for JEV re
 # "v2:<set>" (v2:test, v2:x1, v2:dev). The policy that writes the H=4 sequences and
 # the probe behind every arm hash are condition F2's.
 F2 = {"levers": ("T3",), "hint": 2, "samples": 2}
+# v3 (§4 W): "v3:<set>" (v3:test, v3:x1, v3:dev, v3:x1dev) from worlds_manifest_v3.json,
+# condition F3. `retry` (P3) is filled in at W2 from the calibration's choice; P3
+# never fires here (no history), but it is part of F3's condition hash.
+F3 = {"levers": (), "hint": 2, "samples": 2, "retry": None}
+
+
+def cond_of(world_set: str) -> dict | None:
+    """The versioned condition of a world set, or None for v1."""
+    if world_set.startswith("v3:"):
+        if F3["retry"] is None:
+            raise SystemExit("v3 is not frozen yet (kiis2026f/실험계획.md §4 W2)")
+        return F3
+    return F2 if world_set.startswith("v2:") else None
 
 
 # ------------------------------------------------------------------ worlds
 
 def world_set_info(world_set: str) -> tuple[str, tuple | None, dict]:
     """(split, levers or None for v1, world_id -> fingerprint) of a world set."""
-    if world_set.startswith("v2:"):
-        s = json.loads((ROOT / "kiis2026f/worlds_manifest_v2.json").read_text())["sets"][world_set[3:]]
+    if world_set.startswith(("v2:", "v3:")):
+        s = json.loads((ROOT / f"kiis2026f/worlds_manifest_{world_set[:2]}.json").read_text()
+                       )["sets"][world_set[3:]]
         return s["split"], tuple(s["levers"]), {w["world_id"]: w["fingerprint"] for w in s["worlds"]}
     ref = json.loads((ROOT / "kiis2026f/worlds_manifest.json").read_text())["worlds"][world_set]
     return world_set, None, {w["world_id"]: w["fingerprint"] for w in ref}
@@ -156,11 +170,12 @@ def build(args) -> int:
     from forecast import render_facts
     rev = runinfo.revision()      # at start: the code this process loaded
     world_set = args.world_set or args.split
-    v2 = world_set.startswith("v2:")
+    cond = cond_of(world_set)
+    v2 = cond is not None                                   # v2 or v3
     smoke = world_set.split(":")[-1].endswith("dev")       # v2:dev, v2:x1dev, v1 dev
     policy = Policy(args.model, args.device, seed=POLICY_SEED)
     if v2:
-        policy.hint, policy.samples = F2["hint"], F2["samples"]
+        policy.hint, policy.samples = cond["hint"], cond["samples"]
     n_worlds = args.worlds if smoke else len(world_set_info(world_set)[2])
     total = args.starts_total
     per_world = [total // n_worlds + (1 if i < total % n_worlds else 0) for i in range(n_worlds)]
@@ -201,7 +216,7 @@ def build(args) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     split, levers, _ = world_set_info(world_set)
     meta_out = {"note": "scripts/kiis_k5_rollout.py build; engine truth and policy plans only",
-                "split": split, "world_set": world_set, "levers": list(levers) if levers else None,
+                "split": split, "world_set": world_set, "levers": list(levers) if levers is not None else None,
                 "depth": DEPTH, "p_valid": P_VALID,
                 "policy": {"model": args.model, "k": POLICY_K, "h": POLICY_H, "seed": POLICY_SEED,
                            "hint": policy.hint, "samples": policy.samples,
@@ -351,8 +366,9 @@ def evaluate(args) -> int:
     rev = runinfo.revision()      # at start: the code this process loaded
     data = json.loads(Path(args.rollouts).read_text())
     world_set = data["meta"].get("world_set", data["meta"]["split"])
-    if world_set.startswith("v2:"):
-        runinfo.configure_v2(F2["levers"], F2["hint"], F2["samples"])
+    cond = cond_of(world_set)
+    if cond is not None:
+        runinfo.configure_v2(cond["levers"], cond["hint"], cond["samples"], bool(cond.get("retry")))
     if args.mode == "tf" and (args.repeat or args.beam != 4):
         raise SystemExit("teacher-forced takes neither --repeat nor --beam")
     if args.beam != 4:
@@ -668,7 +684,7 @@ def main() -> int:
     b.add_argument("--device", default="cuda:0")
     b.add_argument("--split", default="test", choices=("test", "dev"), help="v1 world sets")
     b.add_argument("--world-set", default=None,
-                   help="overrides --split: v2:test, v2:x1 or v2:dev (worlds_manifest_v2.json)")
+                   help="overrides --split: v2:test, v2:x1, v2:dev (worlds_manifest_v2.json) or the same in v3")
     b.add_argument("--starts-total", type=int, default=N_STARTS,
                    help="start states over all worlds (not for dev smoke)")
     b.add_argument("--worlds", type=int, default=1, help="dev smoke only")

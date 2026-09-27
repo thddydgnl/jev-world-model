@@ -1,4 +1,4 @@
-"""K4v2 as a queue of (seed, job) units over GPU slots (kiis2026f/실험계획.md §4 V4).
+"""K4v2/K4v3 as a queue of (seed, job) units over GPU slots (kiis2026f/실험계획.md §4 V4, W3).
 
 kiis_run_k4.py starts all of a seed's jobs together and waits for the slowest,
 so a GPU slot sits idle while core (five arms, the slowest job) finishes. Here
@@ -33,20 +33,39 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from kiis_run_k4 import SEEDS, V2  # noqa: E402
+from kiis_run_k4 import CONFIGS, SEEDS  # noqa: E402
 
-OUT = ROOT / "artifacts" / "kiis_k4v2"
 PER_GPU = 2
-GATE = OUT / "GPU0_READY"
-# heaviest first; typed needs the validated B adapter
-UNITS = (
-    ("core_a", "C,C_fm", None),
-    ("zero_shot", "B0_typed,D0_gen", None),
-    ("core_b", "validity,oracle,A_jev", None),
-    ("generative", "D_gen", "artifacts/kiis_k3v2/D_gen"),
-    ("typed", "B_typed", "artifacts/kiis_k3v2/B_typed"),
-)
-NEEDS_GATE = {"typed"}
+# per version: output, gate file, jobs that wait for the gate, units heaviest
+# first. v2: typed needed the validated B adapter and GPU0 opened with it.
+# v3 (§4 W3): nothing waits for a GPU; generative and typed wait until the v1
+# adapters have passed the reuse check (ADAPTERS_READY).
+VERSIONS = {
+    "v2": {"gate": "GPU0_READY", "needs_gate": {"typed"}, "adapters": "artifacts/kiis_k3v2"},
+    "v3": {"gate": "ADAPTERS_READY", "needs_gate": {"typed", "generative"},
+           "adapters": "artifacts/kiis_k3"},
+}
+OUT = GATE = CFG = None
+NEEDS_GATE: set = set()
+UNITS: tuple = ()
+
+
+def configure(version: str) -> None:
+    global OUT, GATE, CFG, NEEDS_GATE, UNITS
+    v = VERSIONS[version]
+    CFG = CONFIGS[version]
+    if CFG["config_hash"] is None:
+        raise SystemExit(f"{version} is not frozen yet (kiis2026f/실험계획.md §4 W2)")
+    OUT = ROOT / "artifacts" / f"kiis_k4{version}"
+    GATE = OUT / v["gate"]
+    NEEDS_GATE = set(v["needs_gate"])
+    UNITS = (
+        ("core_a", "C,C_fm", None),
+        ("zero_shot", "B0_typed,D0_gen", None),
+        ("core_b", "validity,oracle,A_jev", None),
+        ("generative", "D_gen", f"{v['adapters']}/D_gen"),
+        ("typed", "B_typed", f"{v['adapters']}/B_typed"),
+    )
 
 
 def now() -> str:
@@ -67,9 +86,10 @@ def alive(pid: int) -> bool:
 
 def command(seed: int, arms: str, adapter: str | None, out: Path) -> list[str]:
     cmd = [sys.executable, "-u", str(ROOT / "scripts" / "mvp_c_headroom.py"),
-           "--device", "cuda:0", "--trap", "--split", "test", "--worlds", "24", "--roots", "4",
+           "--device", "cuda:0", "--trap", "--split", CFG.get("split", "test"),
+           "--worlds", "24", "--roots", "4",
            "--cap", "30", "--horizon", "2", "--policy-seed", str(seed), "--budget", "3",
-           "--arms", arms, "--out", str(out)] + V2["args"]
+           "--arms", arms, "--out", str(out)] + CFG["args"]
     if adapter:
         cmd += ["--adapter", str(ROOT / adapter)]
     return cmd
@@ -82,7 +102,7 @@ def validate(unit: dict, code: int | None) -> tuple[bool, dict]:
         run = m["run"]
         expected = 24 * 4 * len(unit["arms"].split(","))
         ok = ((code in (0, None)) and bool(run.get("finished"))
-              and m["config_hash"] == V2["config_hash"] and run["split"] == "test"
+              and m["config_hash"] == CFG["config_hash"] and run["split"] == CFG.get("split", "test")
               and run["policy_seed"] == unit["seed"] and run["worlds"] == 24 and run["roots"] == 4
               and m["counts"]["episodes"] == expected)
         info.update(episodes=m["counts"]["episodes"], expected=expected,
@@ -95,14 +115,18 @@ def validate(unit: dict, code: int | None) -> tuple[bool, dict]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--version", choices=tuple(VERSIONS), default="v2")
     ap.add_argument("--gpus", default="0,1")
-    ap.add_argument("--gate-gpu", default="0", help="GPUs used only once the gate file exists")
+    ap.add_argument("--gate-gpu", default=None,
+                    help="GPUs used only once the gate file exists (default: 0 for v2, none for v3)")
     ap.add_argument("--adopt", action="append", default=[], help="seed:job:pid:gpu of a running unit")
     ap.add_argument("--skip", action="append", default=[], help="seed:job not to queue (already run)")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    configure(args.version)
     gpus = [int(g) for g in args.gpus.split(",")]
-    gated = {int(g) for g in args.gate_gpu.split(",") if g != ""}
+    gate_gpu = args.gate_gpu if args.gate_gpu is not None else ("0" if args.version == "v2" else "")
+    gated = {int(g) for g in gate_gpu.split(",") if g != ""}
 
     adopted = []
     for spec in args.adopt:
