@@ -8,7 +8,9 @@ arm's episodes depend only on (world, root, step) seeds, never on which process
 or which other arms ran them, so the split does not change any result
 (checked in K1: step-0 candidates identical across processes and GPUs).
 
-- slots: two per GPU (policy + world model share weights; about 10–14 GB each).
+- slots: two per GPU (policy + world model share weights; about 8–12 GB each);
+  --per-gpu sets the start value and a PER_GPU file in the output directory
+  overrides it while running (v3: 1 while K5v3 shares the GPUs, then 2).
 - --adopt seed:job:pid:gpu takes over a unit already running (started by
   kiis_run_k4.py): it holds a slot until the pid exits, then is validated.
 - a GPU listed in --gate-gpu is used only once the gate file exists. GPU0 is
@@ -116,6 +118,10 @@ def validate(unit: dict, code: int | None) -> tuple[bool, dict]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--version", choices=tuple(VERSIONS), default="v2")
+    ap.add_argument("--per-gpu", type=int, default=PER_GPU,
+                    help="slots per GPU at start; a file PER_GPU in the output directory, "
+                         "if present, overrides it while running (e.g. 1 while K5 shares the "
+                         "GPUs, then 2 — written by hand, read every minute)")
     ap.add_argument("--gpus", default="0,1")
     ap.add_argument("--gate-gpu", default=None,
                     help="GPUs used only once the gate file exists (default: 0 for v2, none for v3)")
@@ -150,7 +156,8 @@ def main() -> int:
             queue.append({"seed": seed, "job": name, "arms": arms, "adapter": adapter,
                           "out": str(out)})
     if args.dry_run:
-        print(f"GPUs {gpus}, {PER_GPU} slots each, gated {sorted(gated)} by {GATE.name}")
+        print(f"GPUs {gpus}, {args.per_gpu} slots each (override file {OUT.name}/PER_GPU), "
+              f"gated {sorted(gated)} by {GATE.name}")
         for a in adopted:
             print(f"  adopt  seed {a['seed']:<9} {a['job']:<10} pid {a['pid']} GPU{a['gpu']} alive={alive(a['pid'])}")
         for u in queue:
@@ -190,8 +197,18 @@ def main() -> int:
             status["units"][key(r)].update(phase="complete" if ok else "failed", finished=now(), **info)
             save()
         gate_open = GATE.exists()
+        per_gpu = args.per_gpu
+        override = OUT / "PER_GPU"
+        if override.exists():
+            try:
+                per_gpu = int(override.read_text().strip())
+            except ValueError:
+                pass
+        if status.get("per_gpu") != per_gpu:
+            status["per_gpu"] = per_gpu
+            save()
         for gpu in gpus:
-            while sum(r["gpu"] == gpu for r in running) < PER_GPU:
+            while sum(r["gpu"] == gpu for r in running) < per_gpu:
                 if gpu in gated and not gate_open:
                     break
                 pick = next((u for u in queue if u["job"] not in NEEDS_GATE or gate_open), None)
