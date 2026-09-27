@@ -1,0 +1,3 @@
+{"exits": {"B_typed": 0, "D_gen": 0, "k4v3_smoke": 0, "k5v3_smoke": 0}, "val_sha256": "6264333d63fbc18d873604fd6328e06e177fa874d4aa7d1af838e54985c70800"}
+B_typed 0.61 -> 1.0 {'accuracy_improves': True, 'accuracy_at_least_0.99': True, 'selected_weights_match': True}
+D_gen 0.435 -> 0.995 {'accuracy_improves': True, 'accuracy_at_least_0.99': True, 'selected_weights_match': True}

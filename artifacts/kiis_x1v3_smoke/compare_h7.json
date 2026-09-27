@@ -1,0 +1,58 @@
+{
+ "models": {
+  "A_jev": {
+   "mean_drop": 0.125,
+   "worlds": 1
+  },
+  "B0_typed": {
+   "mean_drop": -0.1875,
+   "worlds": 1
+  },
+  "B_typed": {
+   "mean_drop": 0.0625,
+   "worlds": 1
+  },
+  "D0_gen": {
+   "mean_drop": 0.25,
+   "worlds": 1
+  },
+  "D_gen": {
+   "mean_drop": 0.25,
+   "worlds": 1
+  }
+ },
+ "vs_A_jev": {
+  "B0_typed": {
+   "diff": -0.3125,
+   "ci": [
+    -0.3125,
+    -0.3125
+   ],
+   "worlds": 1
+  },
+  "B_typed": {
+   "diff": -0.0625,
+   "ci": [
+    -0.0625,
+    -0.0625
+   ],
+   "worlds": 1
+  },
+  "D0_gen": {
+   "diff": 0.125,
+   "ci": [
+    0.125,
+    0.125
+   ],
+   "worlds": 1
+  },
+  "D_gen": {
+   "diff": 0.125,
+   "ci": [
+    0.125,
+    0.125
+   ],
+   "worlds": 1
+  }
+ }
+}

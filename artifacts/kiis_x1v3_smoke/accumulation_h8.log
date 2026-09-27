@@ -1,0 +1,19 @@
+model                                 FR k1..4                        TF k1..4  gap k1       G  G content     P(k|k-1) 2..4  FR4/FR1
+A_jev               75.0%  75.0%  75.0%  75.0%    75.0%  100.0%  100.0%  75.0%   +0.0%  +16.7%     +16.7%  1.00  1.00  1.00     1.00
+B0_typed            50.0%  50.0%  25.0%  25.0%      50.0%  25.0%  50.0%  25.0%   +0.0%   +0.0%      +0.0%  1.00  0.50  1.00     0.50
+B0_typed.beam1      50.0%  50.0%  25.0%  25.0%      50.0%  25.0%  50.0%  25.0%   +0.0%   +0.0%      +0.0%  1.00  0.50  1.00     0.50
+B_typed          100.0%  100.0%  100.0%  75.0%   100.0%  100.0%  100.0%  75.0%   +0.0%   +0.0%      +0.0%  1.00  1.00  0.75     0.75
+B_typed.beam1    100.0%  100.0%  100.0%  75.0%   100.0%  100.0%  100.0%  75.0%   +0.0%   +0.0%      +0.0%  1.00  1.00  0.75     0.75
+D0_gen                  0.0%  0.0%  0.0%  0.0%        0.0%  25.0%  25.0%  0.0%   +0.0%  +16.7%          -  0.00  0.00  0.00        -
+D_gen               75.0%  75.0%  75.0%  50.0%     75.0%  75.0%  100.0%  50.0%   +0.0%   +8.3%      +8.3%  1.00  1.00  0.67     0.67
+
+G(generative) - G(typed), world bootstrap 95% CI (> 0: typed accumulates less)
+  D0_gen - B0_typed         all           +16.7%  [+16.7%, +16.7%]
+Traceback (most recent call last):
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 724, in <module>
+    raise SystemExit(main())
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 719, in main
+    return {"build": build, "eval": evaluate, "report": report,
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 672, in accumulation
+    ci = [boots[int(0.025 * len(boots))], boots[int(0.975 * len(boots)) - 1]]
+IndexError: list index out of range

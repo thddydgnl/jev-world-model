@@ -1,0 +1,62 @@
+{
+  "style": "gen",
+  "adapter": "artifacts/kiis_k3/D_gen",
+  "selected_epoch": 2,
+  "transitions": 200,
+  "val_path": "data/kiis/transitions_v3/val.jsonl",
+  "trained_val_path": "data/kiis/transitions/val.jsonl",
+  "val_sha256": "6264333d63fbc18d873604fd6328e06e177fa874d4aa7d1af838e54985c70800",
+  "subset_sha256": "2b3cb32ca4a64035d96d6c1d4bb4de7d48858b31e99b02fe5d35e8608a32421f",
+  "loss_definition": "token-weighted target CE; fixed options per validation example",
+  "script_sha256": "376e5b541470b63470ba146d013f488c6c366fb6192c353c416d9f6ac19865d5",
+  "revision": {
+    "line": "c082eaf808090e41c893e4f79b1ef491d5366e6b dirty_files=0 synced=2026-09-27T16:22:42Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "results": {
+    "base": {
+      "target_token_ce": 0.23778345987877228,
+      "target_tokens": 24362,
+      "inference": {
+        "transitions": 200,
+        "transition_acc": 0.435,
+        "validity_balanced_acc": 0.5873397435897436,
+        "var_acc_when_executes": 0.9027777777777778,
+        "parse_fail_rate": 0.37
+      }
+    },
+    "epoch_1": {
+      "target_token_ce": 0.0008240140818661677,
+      "target_tokens": 24362,
+      "weights_sha256": "49ef219272ef58f0"
+    },
+    "epoch_2": {
+      "target_token_ce": 0.00013030844249566995,
+      "target_tokens": 24362,
+      "weights_sha256": "16ee9b707f6b3f58"
+    },
+    "selected": {
+      "target_token_ce": 0.00013030844249566995,
+      "target_tokens": 24362,
+      "inference": {
+        "transitions": 200,
+        "transition_acc": 0.995,
+        "validity_balanced_acc": 0.9947916666666667,
+        "var_acc_when_executes": 0.9982638888888888,
+        "parse_fail_rate": 0.0
+      },
+      "weights_sha256": "16ee9b707f6b3f58"
+    }
+  },
+  "gates": {
+    "accuracy_improves": true,
+    "accuracy_at_least_0.99": true,
+    "selected_weights_match": true
+  }
+}

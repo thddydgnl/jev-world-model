@@ -1,0 +1,2 @@
+A_jev.tf tv000: 4 rollouts  8s  requests=32
+done A_jev.tf: 16 rows, 7.6s, {'requests': 32, 'parse_failures': 0, 'cache_hits': 0, 'contradictions': 0}

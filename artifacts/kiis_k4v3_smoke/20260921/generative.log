@@ -1,0 +1,19 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   3%|▎         | 11/398 [00:00<00:03, 105.52it/s]Loading weights:   9%|▊         | 34/398 [00:00<00:02, 176.77it/s]Loading weights:  15%|█▍        | 58/398 [00:00<00:01, 200.68it/s]Loading weights:  20%|██        | 80/398 [00:00<00:01, 204.58it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 198.76it/s]Loading weights:  31%|███▏      | 125/398 [00:00<00:01, 208.20it/s]Loading weights:  37%|███▋      | 147/398 [00:00<00:01, 209.74it/s]Loading weights:  43%|████▎     | 170/398 [00:00<00:01, 212.04it/s]Loading weights:  48%|████▊     | 192/398 [00:00<00:00, 209.89it/s]Loading weights:  54%|█████▍    | 214/398 [00:01<00:00, 205.36it/s]Loading weights:  59%|█████▉    | 236/398 [00:01<00:00, 207.86it/s]Loading weights:  66%|██████▌   | 261/398 [00:01<00:00, 220.06it/s]Loading weights:  71%|███████▏  | 284/398 [00:01<00:00, 221.08it/s]Loading weights:  78%|███████▊  | 312/398 [00:01<00:00, 234.59it/s]Loading weights:  84%|████████▍ | 336/398 [00:01<00:00, 221.22it/s]Loading weights:  90%|█████████ | 359/398 [00:01<00:00, 219.42it/s]Loading weights:  96%|█████████▌| 382/398 [00:01<00:00, 211.33it/s]Loading weights: 100%|██████████| 398/398 [00:01<00:00, 209.91it/s]
+loaded.
+adapter /home/yonghwi/jev-wm/artifacts/kiis_k3/D_gen 16ee9b707f6b3f58
+condition 448b4fac3efe  split=dev  arms=['D_gen']
+  tv000 r0  D_gen=X(30)  [1 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+D_gen          1      0.0%     30.0     10.0%     33.3%      0      0
+
+분해
+
+D_gen: 세계모델 예측 41  파싱 실패 1 (2.4%)  세계모델 GPU 3.3분 (에피소드당 196초)
+
+policy calls=60 repairs=0 fallbacks=0 catalog=40
+==========================================================================

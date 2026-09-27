@@ -1,0 +1,19 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 3/398 [00:00<00:13, 28.42it/s]Loading weights:   7%|▋         | 26/398 [00:00<00:02, 134.08it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:02, 165.32it/s]Loading weights:  16%|█▌        | 64/398 [00:00<00:02, 163.98it/s]Loading weights:  21%|██        | 82/398 [00:00<00:01, 168.91it/s]Loading weights:  26%|██▌       | 103/398 [00:00<00:01, 180.53it/s]Loading weights:  31%|███▏      | 125/398 [00:00<00:01, 188.30it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 191.60it/s]Loading weights:  42%|████▏     | 169/398 [00:00<00:01, 195.38it/s]Loading weights:  48%|████▊     | 191/398 [00:01<00:01, 197.85it/s]Loading weights:  54%|█████▎    | 213/398 [00:01<00:00, 196.30it/s]Loading weights:  59%|█████▉    | 234/398 [00:01<00:00, 195.86it/s]Loading weights:  64%|██████▍   | 254/398 [00:01<00:00, 193.96it/s]Loading weights:  69%|██████▉   | 274/398 [00:01<00:00, 191.62it/s]Loading weights:  74%|███████▍  | 294/398 [00:01<00:00, 188.49it/s]Loading weights:  79%|███████▊  | 313/398 [00:01<00:00, 180.68it/s]Loading weights:  84%|████████▍ | 334/398 [00:01<00:00, 188.76it/s]Loading weights:  89%|████████▉ | 356/398 [00:01<00:00, 195.47it/s]Loading weights:  95%|█████████▍| 378/398 [00:02<00:00, 192.80it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 185.90it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+loaded.
+adapter /home/yonghwi/jev-wm/artifacts/kiis_k3/B_typed b8b322c8ba8eb8d7
+condition 448b4fac3efe  split=dev  arms=['B_typed']
+  tv000 r0  B_typed=X(30)  [1 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+B_typed        1      0.0%     30.0      0.0%     33.3%      0      0
+
+분해
+
+B_typed: 세계모델 예측 68  파싱 실패 0 (0.0%)  세계모델 GPU 1.4분 (에피소드당 85초)
+
+policy calls=60 repairs=0 fallbacks=0 catalog=40
+==========================================================================
