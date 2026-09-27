@@ -53,6 +53,13 @@ inside closed containers and cannot be taken until the container is open."""
 # taking the key out (kiis2026f/실험계획.md §4 V1b).
 HINT_CARRY_KEY = """A key only works while you are carrying it: to unlock something, first
 take its key (for example out of an open container)."""
+# v3 candidate lever P3 (kiis2026f/실험계획.md §4 W): asked only when every
+# candidate's first command has already failed from this exact state. In the
+# v2 pilot the policy then kept proposing the same failed commands and the
+# oracle, which knows they all fail, repeated one of them to the step cap.
+# Lists the agent's own observed failures; no world's names or solution.
+STUCK_NOTE = """STUCK: every sequence you proposed starts with a command that already
+FAILED from this exact state: {cmds}. Start each sequence with a different command."""
 
 
 def _extract_json(text: str) -> dict | None:
@@ -129,9 +136,11 @@ class Policy:
     @classmethod
     def render_prompt(cls, facts: list[str], goal: str, catalog: list[str],
                       history: list[tuple[str, bool]] | None = None,
-                      k: int = 8, h: int = 2, hint: bool | int = False) -> str:
+                      k: int = 8, h: int = 2, hint: bool | int = False,
+                      stuck: list[str] | None = None) -> str:
         """The exact text the policy sees. Needs no model, so a run can record
-        what its prompt was before any weights are loaded."""
+        what its prompt was before any weights are loaded. `stuck` (P3) lists
+        the commands that already failed from this state."""
         hist = history or []
         hist_txt = "\n".join(
             f'- "{a}" -> {"ok" if ok else "FAILED"}' for a, ok in hist[-cls.HISTORY:]
@@ -142,6 +151,9 @@ class Policy:
         if hint:
             note = AFFORDANCE_HINT + ("\n" + HINT_CARRY_KEY if hint == 2 else "")
             text = text.replace("\nCURRENT FACTS:", f"\n{note}\n\nCURRENT FACTS:", 1)
+        if stuck:
+            note = STUCK_NOTE.format(cmds="; ".join(f'"{c}"' for c in stuck))
+            text = text.replace("\nReturn ", f"\n{note}\n\nReturn ", 1)
         return text
 
     def plans(self, facts: list[str], goal: str, catalog: list[str],
@@ -176,6 +188,25 @@ class Policy:
             status = "fallback"
             plans = [[c] for c in catalog[:k]]
         return plans[:k * self.samples], status
+
+    def plans_stuck(self, facts: list[str], goal: str, catalog: list[str],
+                    history: list[tuple[str, bool]] | None, stuck: list[str],
+                    k: int = 8, h: int = 2) -> tuple[list[list[str]], str]:
+        """P3: one more sample when every candidate's first command already
+        failed from this state. Seeded by the situation key plus `#stuck`, so
+        it is the same for every arm that reaches the same situation, and the
+        ordinary samples of this step are untouched."""
+        prompt = self.render_prompt(facts, goal, catalog, history, k, h,
+                                    hint=self.hint, stuck=stuck)
+        key = getattr(self, "_ctx_key", None)
+        seed0 = getattr(self, "_ctx_seed", None)
+        if key is not None:
+            self._ctx_seed = self.seed + (zlib.crc32(f"{key}#stuck".encode()) & 0x7FFFFFFF)
+        try:
+            return self._sample(prompt, catalog, k, h)
+        finally:
+            if seed0 is not None:
+                self._ctx_seed = seed0
 
     def _sample(self, prompt: str, catalog: list[str], k: int,
                 h: int) -> tuple[list[list[str]], str]:

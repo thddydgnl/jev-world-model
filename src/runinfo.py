@@ -58,13 +58,17 @@ _PROBE: tuple | None = None
 _V2: dict | None = None
 
 
-def configure_v2(levers: tuple[str, ...], hint: bool | int, samples: int) -> None:
-    """hint: False, True (P1) or 2 (P1'). P1' adds a key, so the conditions of
-    configurations that ran before it existed keep their hashes."""
+def configure_v2(levers: tuple[str, ...], hint: bool | int, samples: int,
+                 retry_stuck: bool = False) -> None:
+    """hint: False, True (P1) or 2 (P1'). P1' and P3 (`retry_stuck`) add a key
+    only when on, so the conditions of configurations that ran before them
+    existed keep their hashes."""
     global _V2, _PROBE
     _V2 = {"levers": list(levers), "policy_hint": bool(hint), "policy_samples": int(samples)}
     if hint == 2 and not isinstance(hint, bool):
         _V2["policy_hint_carry_key"] = True
+    if retry_stuck:
+        _V2["policy_retry_stuck"] = True
     _PROBE = None
 
 
@@ -111,6 +115,9 @@ def _probe_texts(k: int, h: int) -> dict[str, str]:
         "policy_prompt": Policy.render_prompt(facts, goal["text"], catalog,
                                               [(action, False)], k, h,
                                               hint=_hint_level()),
+        "policy_stuck_prompt": Policy.render_prompt(facts, goal["text"], catalog,
+                                                    [(action, False)], k, h,
+                                                    hint=_hint_level(), stuck=[action]),
         "typed_step": json.dumps([build_state(canon, schema, action),
                                   step_questions(schema, action)],
                                  sort_keys=True, ensure_ascii=False),
@@ -158,6 +165,8 @@ def condition(*, model: str, max_new_tokens: int, k: int, h: int,
     if _V2 is not None:
         cond["env"]["structure"] = "trap_v2"
         cond["v2"] = dict(_V2)
+        if _V2.get("policy_retry_stuck"):
+            cond["policy"]["stuck_prompt"] = digest(texts["policy_stuck_prompt"])
     return cond
 
 

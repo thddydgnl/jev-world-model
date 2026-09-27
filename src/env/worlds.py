@@ -337,7 +337,28 @@ def build_trap_world(idx: int, out_dir: Path, rng: random.Random,
 # The v1 builder above is untouched, so v1 worlds and their fingerprints stay valid.
 
 LEVERS = ("T1", "T2", "T3")
-V2_PREFIX = {"dev": "tv", "train": "trv", "val": "vav", "test": "tev"}
+V2_PREFIX = {"dev": "tv", "train": "trv", "val": "vav", "test": "tev", "test3": "t3v"}
+# v3 test (kiis2026f/실험계획.md §4 W). The v2 test names were looked at in
+# K4v2 and the v3 changes were chosen after that, so v3 is evaluated on a new
+# vocabulary. No word here occurs in any other name in this file (TRAP_VOCAB,
+# TRAP_NAMES, NAME_POOL, V2_DEV_EXTRA) apart from the head nouns "key" and
+# "door" (tests/test_v3_worlds.py).
+TEST3_VOCAB: dict[str, list[str]] = {
+    "box": ["wool knapsack", "rubber tote", "nylon duffel", "quilted valise", "silk purse",
+            "straw pannier", "denim backpack", "glazed crock", "bamboo steamer"],
+    "key": ["cobalt key", "titanium key", "bone key", "coral key", "jade key",
+            "onyx key", "crystal key", "magnetic key", "ebony key", "curved key"],
+    "table": ["plywood sawhorse", "sturdy bookcase", "timber pallet", "poplar credenza",
+              "spruce workbench", "hickory washstand", "wrought tripod", "formica tabletop"],
+    "door": ["teal door", "maroon door", "khaki door", "dutch door", "pocket door",
+             "hinged door", "rolling door", "mirrored door"],
+    "apple": ["peeled tangerine", "chilled nectarine", "whole pomegranate", "shiny persimmon",
+              "sliced cantaloupe", "firm clementine", "bumpy kumquat", "glossy starfruit"],
+    "pear": ["sourdough roll", "oat biscuit", "pita wedge", "baked potato", "tuna sandwich",
+             "veggie wrap", "caramel popcorn", "peanut brittle", "almond croissant", "spinach quiche"],
+    "room": ["chamber", "vestibule", "atrium", "gazebo", "solarium", "boudoir", "scriptorium",
+             "infirmary", "dormitory", "terrace", "smithy", "rotunda"],
+}
 # Extra dev names, one set per TRAP_NAMES entry: (box2, key2, door2, room_c).
 # None of these words is in TRAP_VOCAB or in the other dev names, apart from the
 # head nouns "key" and "door".
@@ -370,9 +391,12 @@ def trap_names_v2(split: str, idx: int) -> dict[str, str]:
         suffix = f" {idx // len(TRAP_NAMES) + 1}" if idx >= len(TRAP_NAMES) else ""
         extra = tuple(n + suffix for n in V2_DEV_EXTRA[idx % len(V2_DEV_EXTRA)])
     else:
-        if split not in SPLITS:
+        if split == "test3":
+            pools = TEST3_VOCAB
+        elif split in SPLITS:
+            pools = {slot: vocab_split(slot)[split] for slot in TRAP_VOCAB}
+        else:
             raise ValueError(f"unknown split {split!r}")
-        pools = {slot: vocab_split(slot)[split] for slot in TRAP_VOCAB}
         rng = random.Random(f"kiis-names-v2-{VOCAB_SEED}-{split}-{idx}")
         for _ in range(5000):
             rooms = rng.sample(pools["room"], 3)

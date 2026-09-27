@@ -32,6 +32,7 @@ INFOS = EnvInfos(facts=True, typed_entities=True, possible_admissible_commands=T
 COUNTS = {"train": 150, "val": 20, "test": 24}
 OUT = Path("data/kiis/transitions")
 OUT_V2 = Path("data/kiis/transitions_v2")      # v2 worlds (kiis2026f/실험계획.md §4 V2)
+OUT_V3 = Path("data/kiis/transitions_v3")      # v3 worlds (§4 W); test = the test3 vocabulary
 
 
 def main() -> int:
@@ -40,13 +41,17 @@ def main() -> int:
     ap.add_argument("--scale", type=float, default=1.0, help="fraction of worlds (smoke)")
     ap.add_argument("--v2", action="store_true",
                     help="v2 worlds from kiis2026f/worlds_manifest_v2.json -> data/kiis/transitions_v2")
+    ap.add_argument("--v3", action="store_true",
+                    help="v3 worlds from kiis2026f/worlds_manifest_v3.json -> data/kiis/transitions_v3")
     args = ap.parse_args()
-    out_dir = OUT_V2 if args.v2 else OUT
+    version = "v3" if args.v3 else ("v2" if args.v2 else None)
+    out_dir = {"v2": OUT_V2, "v3": OUT_V3}.get(version, OUT)
 
-    if args.v2:
-        sets = json.loads(Path("kiis2026f/worlds_manifest_v2.json").read_text())["sets"]
+    if version:
+        sets = json.loads(Path(f"kiis2026f/worlds_manifest_{version}.json").read_text())["sets"]
         ref = {k: sets[k]["worlds"] for k in COUNTS}
         levers = {k: tuple(sets[k]["levers"]) for k in COUNTS}
+        build_split = {k: sets[k]["split"] for k in COUNTS}
     else:
         ref = json.loads(Path("kiis2026f/worlds_manifest.json").read_text())["worlds"]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -57,8 +62,9 @@ def main() -> int:
         records, kinds, execs, changed = [], Counter(), Counter(), Counter()
         with tempfile.TemporaryDirectory() as d:
             for i in range(n_worlds):
-                if args.v2:
-                    game, path, meta = build_trap_world_v2(i, Path(d), split, levers[split])
+                if version:
+                    game, path, meta = build_trap_world_v2(i, Path(d), build_split[split],
+                                                           levers[split])
                 else:
                     game, path, meta = build_trap_world(i, Path(d), random.Random(0), split=split)
                 if world_fingerprint(game) != fp_ref[meta["world_id"]]:
@@ -66,7 +72,7 @@ def main() -> int:
                 schema = state_schema(game, meta)
                 env = textworld.start(str(path), request_infos=INFOS)
                 env.reset()
-                rng = random.Random(f"kiis-transitions-{'v2-' if args.v2 else ''}{split}-{i}")
+                rng = random.Random(f"kiis-transitions-{version + '-' if version else ''}{split}-{i}")
                 for rec in world_transitions(env, game, meta, schema, rng):
                     rec["split"] = split
                     rec["schema"] = schema

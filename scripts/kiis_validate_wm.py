@@ -53,6 +53,9 @@ def main():
     ap.add_argument("--adapter", required=True)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--val", default=None,
+                    help="score on this val set instead of the adapter's own (v3 reuse "
+                         "check of the v1 adapters, kiis2026f/실험계획.md §4 W)")
     args = ap.parse_args()
     adapter = Path(args.adapter)
     meta = json.loads((adapter / "train_meta.json").read_text())
@@ -60,7 +63,10 @@ def main():
     # K3 (v1) and V3 (v2, kiis2026f/실험계획.md §4) adapters; never a tiny-overfit run
     assert not cfg["overfit"] and cfg["val"] in ("data/kiis/transitions/val.jsonl",
                                                  "data/kiis/transitions_v2/val.jsonl")
-    held = load(cfg["val"], cfg["eval_n"], cfg["seed"])
+    if args.val is not None:
+        assert args.val == "data/kiis/transitions_v3/val.jsonl", args.val
+    val_path = args.val or cfg["val"]
+    held = load(val_path, cfg["eval_n"], cfg["seed"])
     tok = AutoTokenizer.from_pretrained(cfg["model"])
     im_end = tok.convert_tokens_to_ids("<|im_end|>")
     rng = random.Random("kiis-validation-options-0")
@@ -68,7 +74,8 @@ def main():
                for r in held for m, t, n in examples(r, cfg["style"], rng)]
     report = {"style": cfg["style"], "adapter": str(adapter),
               "selected_epoch": meta["selected_epoch"], "transitions": len(held),
-              "val_sha256": hashlib.sha256(Path(cfg["val"]).read_bytes()).hexdigest(),
+              "val_path": val_path, "trained_val_path": cfg["val"],
+              "val_sha256": hashlib.sha256(Path(val_path).read_bytes()).hexdigest(),
               "subset_sha256": hashlib.sha256(json.dumps(held, sort_keys=True).encode()).hexdigest(),
               "loss_definition": "token-weighted target CE; fixed options per validation example",
               "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -94,6 +101,18 @@ def main():
         print(label, json.dumps(metrics), flush=True)
         out.write_text(json.dumps(report, indent=2) + "\n")
     r = report["results"]
+    if args.val is not None:
+        # reuse check (§4 W): the selection was made on the adapter's own val,
+        # so only accuracy on this set and the weights' identity are judged
+        acc = r["selected"]["inference"]["transition_acc"]
+        report["gates"] = {
+            "accuracy_improves": acc > r["base"]["inference"]["transition_acc"],
+            "accuracy_at_least_0.99": acc >= 0.99,
+            "selected_weights_match": r["selected"]["weights_sha256"] == r[f"epoch_{meta['selected_epoch']}"]["weights_sha256"],
+        }
+        out.write_text(json.dumps(report, indent=2) + "\n")
+        print("GATES", json.dumps(report["gates"]), flush=True)
+        return 0 if all(report["gates"].values()) else 1
     report["gates"] = {
         "accuracy_improves": r["selected"]["inference"]["transition_acc"] > r["base"]["inference"]["transition_acc"],
         "val_loss_decreases": r["epoch_2"]["target_token_ce"] < r["epoch_1"]["target_token_ce"] < r["base"]["target_token_ce"],

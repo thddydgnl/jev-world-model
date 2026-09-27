@@ -53,6 +53,7 @@ STEP_CAP = 15          # MVP scale; 설계.md §3.3 uses 30 for the main experim
 K = 8
 H = 2
 CAP = [15]
+STUCK_RETRY = [False]   # v3 candidate lever P3, set by --policy-retry-stuck
 HORIZON = [2]      # mutable so --horizon can override          # mutable so --cap can override
 JEV_ARMS = ("A", "Aend", "Aval", "R", "A_jev")
 JEV_MODE = {"A": "full", "Aend": "endpoint", "Aval": "validity"}
@@ -158,7 +159,7 @@ def score_batched(fc, state, prefixes, plans, env=None, game=None, failed=None):
 def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
                 root_idx=0):
     env = env_root.copy()
-    steps = invalid = traps = decoys = 0
+    steps = invalid = traps = decoys = stuck_retries = 0
     status = "cap"
     history: list[tuple[str, bool]] = []
     failed: set[tuple[str, str]] = set()      # (state fingerprint, action)
@@ -171,6 +172,23 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         policy.set_context(meta["world_id"], root_idx, step)
         plans, pstatus = policy.plans(render_facts(state), goal["text"], catalog,
                                       history, K, HORIZON[0])
+        retried = False
+        if STUCK_RETRY[0] and arm != "C":
+            # P3 (kiis2026f/실험계획.md §4 W): every candidate starts with a
+            # command that already failed from this state, so the failure
+            # memory has nothing left to drop. Ask once more, naming them.
+            # Triggered by observed failures only, never by a model's
+            # prediction, so it is the same rule for every arm that has the
+            # failure memory; C has none and stays as it is.
+            fp = "|".join(",".join(r) for r in state["dynamic_facts"])
+            firsts = {p[0] for p in plans if p}
+            if firsts and all((fp, a) in failed for a in firsts):
+                here = sorted(a for f, a in failed if f == fp)
+                more, _ = policy.plans_stuck(render_facts(state), goal["text"], catalog,
+                                             history, here, K, HORIZON[0])
+                plans = plans + [p for p in more if p not in plans]
+                retried = True
+                stuck_retries += 1
 
         if arm == "C":
             action = plans[0][0]
@@ -227,7 +245,8 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
         log.append({"arm": arm, "world": meta["world_id"], "root": root_idx,
                     "step": step, "action": action, "valid": was_valid,
                     "policy_status": pstatus, "plans": plans, "prefix": list(chosen),
-                    "trap": bool(is_trap), "decoy": bool(is_decoy)})
+                    "trap": bool(is_trap), "decoy": bool(is_decoy),
+                    **({"stuck_retry": retried} if STUCK_RETRY[0] else {})})
     else:
         if goal_satisfied(list(env.state["_facts"]), goal):
             status = "success"
@@ -235,7 +254,8 @@ def run_episode(arm, env_root, game, meta, goal, policy, catalog, log, fc=None,
     env.close()
     return {"arm": arm, "status": status, "success": status == "success",
             "steps": steps, "invalid": invalid, "progress": progress,
-            "traps": traps, "decoys": decoys}
+            "traps": traps, "decoys": decoys,
+            **({"stuck_retries": stuck_retries} if STUCK_RETRY[0] else {})}
 
 
 def main() -> int:
@@ -257,7 +277,7 @@ def main() -> int:
                     help="varies policy sampling while worlds/roots stay fixed")
     ap.add_argument("--arms", default="C,validity,oracle",
                     help=f"comma list from {','.join(ALL_ARMS)}")
-    ap.add_argument("--split", default="dev", choices=SPLITS,
+    ap.add_argument("--split", default="dev", choices=SPLITS + ("test3",),
                     help="trap-world names: dev = t000.. (developed on), "
                          "test = held-out names (kiis2026f/실험계획.md §3)")
     ap.add_argument("--adapter", default=None,
@@ -269,17 +289,23 @@ def main() -> int:
     ap.add_argument("--policy-hint-carry-key", action="store_true",
                     help="v2 candidate lever P1' (P1 plus the carry-the-key rule)")
     ap.add_argument("--policy-samples", type=int, default=1, help="v2 candidate lever P2")
+    ap.add_argument("--policy-retry-stuck", action="store_true",
+                    help="v3 candidate lever P3: ask the policy once more when every "
+                         "candidate's first command already failed from this state")
     ap.add_argument("--wm-batch", type=int, default=8,
                     help="prompts per forward for the Qwen world models")
     args = ap.parse_args()
     levers = parse_levers(args.levers)
     hint = 2 if args.policy_hint_carry_key else args.policy_hint
-    if not args.v2 and (levers or hint or args.policy_samples != 1):
-        raise SystemExit("--levers / --policy-hint / --policy-samples need --v2")
+    if not args.v2 and (levers or hint or args.policy_samples != 1 or args.policy_retry_stuck
+                        or args.split == "test3"):
+        raise SystemExit("--levers / --policy-hint / --policy-samples / --policy-retry-stuck "
+                         "/ --split test3 need --v2")
     if args.v2:
         if not args.trap:
             raise SystemExit("--v2 applies to trap worlds; add --trap")
-        runinfo.configure_v2(levers, hint, args.policy_samples)
+        runinfo.configure_v2(levers, hint, args.policy_samples, args.policy_retry_stuck)
+    STUCK_RETRY[0] = args.policy_retry_stuck
     if args.split != "dev" and not args.trap:
         raise SystemExit("--split applies to trap worlds only; add --trap")
 

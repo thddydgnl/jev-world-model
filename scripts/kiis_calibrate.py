@@ -1,4 +1,7 @@
-"""V1 calibration (kiis2026f/실험계획.md §4 V1) on the GPU server, started by hand.
+"""V1, V1b and W (v3) calibration (kiis2026f/실험계획.md §4 V1, V1b, W) on the GPU
+server, started by hand. The docstring below is V1's; V1b and W are described
+above their own functions.
+
 
 Configurations are tried in stages by lever count (P1 counts as one). Each runs
 the two world-model-free planners, validity and oracle, on dev (12 worlds x 1
@@ -34,12 +37,18 @@ GPUS, PER_GPU = (0, 1), 2
 G1, G2, G3, G4, TARGET = (0.75, 0.90), 0.15, 0.05, 0.20, 0.80
 
 
-def config(levers: tuple[str, ...] = (), samples: int = 1, hint: bool | int = True) -> dict:
-    """hint True is P1, 2 is P1' (named P1k); samples 2 is P2, 3 is P2x3."""
+def config(levers: tuple[str, ...] = (), samples: int = 1, hint: bool | int = True,
+           retry: bool = False) -> dict:
+    """hint True is P1, 2 is P1' (named P1k); samples 2 is P2, 3 is P2x3;
+    retry is P3 (v3). The P3 key is added only when on, so v1/V1b records
+    keep their shape."""
     extra = ["P2"] if samples == 2 else ([f"P2x{samples}"] if samples > 2 else [])
-    parts = ["P1k" if hint == 2 else "P1", *levers] + extra
-    return {"name": "+".join(parts), "levers": list(levers), "hint": hint,
-            "samples": samples, "n_levers": len(parts)}
+    parts = ["P1k" if hint == 2 else "P1", *levers] + extra + (["P3"] if retry else [])
+    cfg = {"name": "+".join(parts), "levers": list(levers), "hint": hint,
+           "samples": samples, "n_levers": len(parts)}
+    if retry:
+        cfg["retry"] = True
+    return cfg
 
 
 STAGES = [
@@ -90,18 +99,22 @@ def runner_cmd(out: Path, split: str, worlds: int, roots: int, arms: str,
             cmd.append("--policy-hint")
         if cfg["samples"] > 1:
             cmd += ["--policy-samples", str(cfg["samples"])]
+        if cfg.get("retry"):
+            cmd.append("--policy-retry-stuck")
     return cmd
 
 
-def run_jobs(jobs: list[tuple[str, list[str], Path]], status: Status) -> bool:
-    """Run (name, cmd, out) jobs, at most PER_GPU per GPU. True if all exit 0
-    and wrote a finished manifest."""
+def run_jobs(jobs: list[tuple[str, list[str], Path]], status: Status,
+             slots: dict[int, int] | None = None) -> bool:
+    """Run (name, cmd, out) jobs, at most slots[gpu] per GPU (default PER_GPU on
+    each of GPUS). True if all exit 0 and wrote a finished manifest."""
+    slots = slots or {g: PER_GPU for g in GPUS}
     pending, running, ok = list(jobs), [], True
-    load = {g: 0 for g in GPUS}
+    load = {g: 0 for g in slots}
     while pending or running:
-        while pending and min(load.values()) < PER_GPU:
+        while pending and any(load[g] < slots[g] for g in slots):
             name, cmd, out = pending.pop(0)
-            gpu = min(GPUS, key=lambda g: load[g])
+            gpu = min((g for g in slots if load[g] < slots[g]), key=lambda g: load[g] / slots[g])
             out.mkdir(parents=True, exist_ok=True)
             log = (out.parent / f"{out.name}.log").open("w")
             env = {**os.environ, "CUDA_VISIBLE_DEVICES": str(gpu)}
@@ -279,13 +292,169 @@ def run_v1b() -> int:
     return 0
 
 
+# ------------------------------------------------------------------ W (v3)
+#
+# kiis2026f/실험계획.md §4 W (9/27, committed before this runs). No task lever
+# (the v1 structure), and a calibration set with many names: dev (12 x 1), val
+# (20 x 2) and cal_test = the v2 test names (24 x 2), which K4v2 had already
+# shown. Two settings, both run: W-a = P1' + P2, W-b = W-a + P3. Criteria:
+#   G1 oracle >= 90% overall AND on cal_test (no upper bound)
+#   G2 oracle - validity >= 15%p overall
+#   G3 oracle episodes ended by missing candidates <= 5% overall AND on cal_test
+#   G4 C <= 20% on the chosen setting
+#   G5 monotonicity: on cal_test x 1 root (24 episodes; oracle re-run on the
+#      same episodes) B0, D0 and A_jev each succeed at most once more than oracle
+# Rule: the first setting in order (W-a, W-b) meeting G1-G3 gets G4 and G5; if
+# it fails either and the next meets G1-G3, the next gets them. If none passes,
+# the setting closest on G1 (the lower of the two oracle rates), then G2, is
+# taken and the shortfall recorded. The criteria do not move.
+
+W_OUT = ROOT / "artifacts/kiis_wcal"
+W_SETS = (("test", 24, 2), ("val", 20, 2), ("dev", 12, 1))   # longest first; test = cal_test
+W_G1, W_G2, W_G3, W_G4, W_G5_SLACK = 0.90, 0.15, 0.05, 0.20, 1
+W_CONFIGS = [config((), 2, hint=2), config((), 2, hint=2, retry=True)]
+
+
+def w_score(dirs: list[Path], out: Path) -> dict:
+    """Per arm, overall and per split: n, success, coverage failures."""
+    res = subprocess.run([sys.executable, str(ROOT / "scripts/kiis_k4_ceiling.py"),
+                          "--runs", *map(str, dirs), "--out", str(out)],
+                         cwd=ROOT, capture_output=True, text=True)
+    if res.returncode != 0:
+        raise RuntimeError(f"ceiling diagnostic failed: {res.stdout[-500:]} {res.stderr[-500:]}")
+    eps = json.loads(out.read_text())["episodes"]
+    by: dict = {}
+    for arm in sorted({e["arm"] for e in eps}):
+        for part in ("all", *sorted({e["split"] for e in eps})):
+            mine = [e for e in eps if e["arm"] == arm and part in ("all", e["split"])]
+            n = len(mine)
+            by.setdefault(arm, {})[part] = {
+                "n": n, "success": sum(e["kind"] == "success" for e in mine),
+                "coverage": sum(e["kind"] == "coverage" for e in mine),
+                "planner": sum(e["kind"] == "planner" for e in mine),
+                "rate": round(sum(e["kind"] == "success" for e in mine) / max(1, n), 4),
+                "coverage_rate": round(sum(e["kind"] == "coverage" for e in mine) / max(1, n), 4)}
+    return by
+
+
+def w_judge(by: dict) -> dict:
+    o, v = by["oracle"], by["validity"]
+    gap = o["all"]["rate"] - v["all"]["rate"]
+    g = {"G1": o["all"]["rate"] >= W_G1 and o["test"]["rate"] >= W_G1,
+         "G2": gap >= W_G2,
+         "G3": o["all"]["coverage_rate"] <= W_G3 and o["test"]["coverage_rate"] <= W_G3}
+    return {"oracle": o["all"]["rate"], "oracle_cal_test": o["test"]["rate"],
+            "validity": v["all"]["rate"], "gap": round(gap, 4),
+            "coverage_rate": o["all"]["coverage_rate"],
+            "coverage_rate_cal_test": o["test"]["coverage_rate"], **g,
+            "pass_G1_G3": all(g.values())}
+
+
+def w_g4_g5(cfg: dict, out: Path, status: Status, slots: dict[int, int]) -> bool:
+    """C on the three sets (G4) and the G5 set (oracle, B0+D0, A_jev on cal_test
+    x 1 root), side by side. Writes the verdicts into the config's record."""
+    d = out / cfg["name"]
+    jobs = [(f"{cfg['name']}/C/{s}", runner_cmd(d / "C" / s, s, w, r, "C", cfg), d / "C" / s)
+            for s, w, r in W_SETS]
+    g5 = {"oracle": "oracle", "zero_shot": "B0_typed,D0_gen", "A_jev": "A_jev"}
+    for name, arms in g5.items():
+        cmd = runner_cmd(d / "G5" / name, "test", 24, 1, arms, cfg)
+        if name == "A_jev":
+            cmd += ["--budget", "1"]
+        jobs.append((f"{cfg['name']}/G5/{name}", cmd, d / "G5" / name))
+    jobs.sort(key=lambda j: "/G5/zero_shot" not in j[0])        # slowest first
+    if not run_jobs(jobs, status, slots):
+        return False
+    rec = status.data["configs"][cfg["name"]]
+    c_by = w_score([d / "C" / s for s, _, _ in W_SETS], d / "C" / "ceiling.json")["C"]["all"]
+    rec.update(C=c_by["rate"], G4=c_by["rate"] <= W_G4)
+    g5_by = w_score([d / "G5" / n for n in g5], d / "G5" / "ceiling.json")
+    o = g5_by["oracle"]["all"]["success"]
+    counts = {a: g5_by[a]["all"]["success"] for a in ("oracle", "B0_typed", "D0_gen", "A_jev")}
+    rec.update(G5_counts=counts, G5_n=g5_by["oracle"]["all"]["n"],
+               G5=all(counts[a] <= o + W_G5_SLACK for a in ("B0_typed", "D0_gen", "A_jev")))
+    status.note(f"G4/G5 {cfg['name']}", C=rec["C"], G4=rec["G4"], G5=rec["G5"], **counts)
+    return True
+
+
+def run_w(slots: dict[int, int]) -> int:
+    out = W_OUT
+    if out.exists() and any(out.iterdir()):
+        raise SystemExit(f"refusing to overwrite {out}")
+    out.mkdir(parents=True, exist_ok=True)
+    status = Status(out / "status.json", plan="kiis2026f/실험계획.md §4 W",
+                    stages={"order": [c["name"] for c in W_CONFIGS]})
+    status.data["criteria"] = {"G1": W_G1, "G2": W_G2, "G3": W_G3, "G4": W_G4,
+                               "G5_slack": W_G5_SLACK, "sets": [list(x) for x in W_SETS],
+                               "G1_G3_also_on": "cal_test (split test, no lever)"}
+    status.data["slots"] = {str(g): n for g, n in slots.items()}
+    configs = status.data["configs"]
+
+    status.data["phase"] = "G1-G3: validity and oracle, both settings"
+    jobs = [(f"{c['name']}/{s}", runner_cmd(out / c["name"] / s, s, w, r, "validity,oracle", c),
+             out / c["name"] / s) for s, w, r in W_SETS for c in W_CONFIGS]
+    if not run_jobs(jobs, status, slots):
+        status.data["phase"] = "failed"
+        status.note("a G1-G3 run failed; stopping for review")
+        return 1
+    for c in W_CONFIGS:
+        by = w_score([out / c["name"] / s for s, _, _ in W_SETS], out / c["name"] / "ceiling.json")
+        man = json.loads((out / c["name"] / "dev" / "run_manifest.json").read_text())
+        configs[c["name"]] = {**c, "condition_hash": man["config_hash"], "arms": by, **w_judge(by)}
+        status.note(f"scored {c['name']}", **{x: configs[c["name"]][x] for x in
+                    ("oracle", "oracle_cal_test", "validity", "gap", "coverage_rate",
+                     "coverage_rate_cal_test", "G1", "G2", "G3", "pass_G1_G3")})
+
+    chosen = None
+    for c in W_CONFIGS:
+        if not configs[c["name"]]["pass_G1_G3"]:
+            continue
+        status.data["phase"] = f"G4/G5 on {c['name']}"
+        if not w_g4_g5(c, out, status, slots):
+            status.data["phase"] = "failed"
+            status.note("a G4/G5 run failed; stopping for review")
+            return 1
+        if configs[c["name"]]["G4"] and configs[c["name"]]["G5"]:
+            chosen = c
+            status.data["chosen"] = {"name": c["name"], "met_all": True,
+                                     "rule": "first setting in order meeting G1-G5"}
+            break
+    if chosen is None:
+        chosen = max(W_CONFIGS, key=lambda c: (min(configs[c["name"]]["oracle"],
+                                                   configs[c["name"]]["oracle_cal_test"]),
+                                               configs[c["name"]]["gap"]))
+        if "G5" not in configs[chosen["name"]]:
+            status.data["phase"] = f"G4/G5 on {chosen['name']} (record only)"
+            if not w_g4_g5(chosen, out, status, slots):
+                status.data["phase"] = "failed"
+                return 1
+        status.data["chosen"] = {"name": chosen["name"], "met_all": False,
+                                 "rule": "no setting met G1-G5; closest on G1, then G2"}
+    status.data["chosen"].update({k: configs[chosen["name"]].get(k) for k in
+                                  ("condition_hash", "oracle", "oracle_cal_test", "validity", "gap",
+                                   "coverage_rate", "coverage_rate_cal_test", "C",
+                                   "G1", "G2", "G3", "G4", "G5", "G5_counts")})
+    status.data["phase"] = "done"
+    status.data["finished"] = now()
+    status.note(f"chosen {chosen['name']}", **status.data["chosen"])
+    (out / "DONE").write_text(chosen["name"] + "\n")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--plan", choices=("v1", "v1b"), default="v1")
+    ap.add_argument("--plan", choices=("v1", "v1b", "w"), default="v1")
     ap.add_argument("--stages", type=int, default=len(STAGES), help="v1 only")
+    ap.add_argument("--slots", default="0,0,1,1",
+                    help="w only: one GPU id per process slot, e.g. 0,0,1")
     args = ap.parse_args()
     if args.plan == "v1b":
         return run_v1b()
+    if args.plan == "w":
+        slots: dict[int, int] = {}
+        for g in args.slots.split(","):
+            slots[int(g)] = slots.get(int(g), 0) + 1
+        return run_w(slots)
 
     if OUT.exists() and any(OUT.iterdir()):
         raise SystemExit(f"refusing to overwrite {OUT}")
