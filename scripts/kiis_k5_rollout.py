@@ -52,9 +52,9 @@ REPEAT_EVERY = 8          # rollouts with index % 8 == 0 (100 of 800) for JEV re
 # the probe behind every arm hash are condition F2's.
 F2 = {"levers": ("T3",), "hint": 2, "samples": 2}
 # v3 (§4 W): "v3:<set>" (v3:test, v3:x1, v3:dev, v3:x1dev) from worlds_manifest_v3.json,
-# condition F3. `retry` (P3) is filled in at W2 from the calibration's choice; P3
-# never fires here (no history), but it is part of F3's condition hash.
-F3 = {"levers": (), "hint": 2, "samples": 2, "retry": None}
+# condition F3 = W-b (P1' + P2 + P3), frozen at W2 on 9/28. P3 never fires here
+# (no history), but it is part of F3's condition hash (448b4fac3efe).
+F3 = {"levers": (), "hint": 2, "samples": 2, "retry": True}
 
 
 def cond_of(world_set: str) -> dict | None:

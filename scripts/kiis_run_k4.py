@@ -48,12 +48,13 @@ V2 = {
     ),
 }
 # v3 (kiis2026f/실험계획.md §4 W): no task lever, test on the test3 vocabulary,
-# the v1 K3 adapters (same structure) if they pass the reuse check. The
-# condition hash and the P3 flag are filled in at W2 from the calibration's
-# choice; until then this refuses to run.
+# the v1 K3 adapters (same structure) if they pass the reuse check. Condition
+# F3 = the calibration's choice W-b, P1' + P2 + P3 (artifacts/kiis_wcal, met
+# G1-G5), frozen at W2 on 9/28.
 V3 = {
-    "config_hash": None,
-    "args": ["--v2", "--levers", "", "--policy-hint-carry-key", "--policy-samples", "2"],
+    "config_hash": "448b4fac3efe",
+    "args": ["--v2", "--levers", "", "--policy-hint-carry-key", "--policy-samples", "2",
+             "--policy-retry-stuck"],
     "split": "test3",
     "jobs": (
         ("core", 0, "C,C_fm,validity,oracle,A_jev", None),

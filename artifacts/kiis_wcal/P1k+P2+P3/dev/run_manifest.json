@@ -1,0 +1,119 @@
+{
+  "config_hash": "448b4fac3efe",
+  "condition": {
+    "env": {
+      "textworld": "1.7.0",
+      "structure": "trap_v2",
+      "step_cap": 30,
+      "root_prefix": "0-2 random admissible commands, not look/inventory/examine"
+    },
+    "policy": {
+      "model": "Qwen/Qwen3-4B",
+      "dtype": "bfloat16",
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_new_tokens": 320,
+      "history": 10,
+      "schema_repairs": 1,
+      "seed_key": "world|root|step",
+      "prompt": "3c774d0e4ae8",
+      "stuck_prompt": "d77a84ae7804"
+    },
+    "candidates": {
+      "K": 8,
+      "H": 2,
+      "prefixes": "unique, lengths 1..H"
+    },
+    "utility": {
+      "alpha": 0.25,
+      "lambda": 0.1,
+      "cost": 0.01,
+      "beta": 0.05,
+      "invalid_term": "count"
+    },
+    "failure_memory": "drop prefixes whose first action already failed from the same state",
+    "rollout": {
+      "beam": 4,
+      "prune_w": 0.02,
+      "cache": "state fingerprint + action, whole episode"
+    },
+    "typed_questions": {
+      "step": "2f7376ee0bf2",
+      "validity": "4eab271e60b7",
+      "validity_request": "separate",
+      "query_catalog_in_state": false
+    },
+    "state_render": "5c7c810aa122",
+    "goal": "7d71c2424686",
+    "jev_model": "jev-1.13.0",
+    "v2": {
+      "levers": [],
+      "policy_hint": true,
+      "policy_samples": 2,
+      "policy_hint_carry_key": true,
+      "policy_retry_stuck": true
+    }
+  },
+  "run": {
+    "arms": [
+      "validity",
+      "oracle"
+    ],
+    "arm_hashes": {
+      "validity": "de72faa7f7bf",
+      "oracle": "81bcd35c5a13"
+    },
+    "arm_configs": {
+      "validity": {
+        "selector": "utility with engine validity, goal terms zeroed",
+        "failure_memory": true
+      },
+      "oracle": {
+        "selector": "utility with the engine's true endpoint",
+        "failure_memory": true
+      }
+    },
+    "split": "dev",
+    "worlds": 12,
+    "roots": 1,
+    "policy_seed": 20260921,
+    "budget_usd": 3.0,
+    "host": "yonghwi-racedreamer",
+    "started": "2026-09-27T10:15:39+0000",
+    "finished": "2026-09-27T11:01:35+0000"
+  },
+  "revision": {
+    "line": "97e5d2a83590293ebf2e22372ef425a874123da9 dirty_files=0 synced=2026-09-27T08:13:47Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  },
+  "world_fingerprints": {
+    "tv000": "a837582ee526e8af",
+    "tv001": "1d693823a8afbedd",
+    "tv002": "5d355391c84c8e91",
+    "tv003": "6d31704a8e955125",
+    "tv004": "0bfa64f43bd62ca0",
+    "tv005": "796375c649b0e13b",
+    "tv006": "4e7fb4d6a88b8c17",
+    "tv007": "630440147c3949ba",
+    "tv008": "b21335d43bf24132",
+    "tv009": "4ef6a9c1a432a25a",
+    "tv010": "26ef869c24ccd3b7",
+    "tv011": "1e45bbe068849905"
+  },
+  "counts": {
+    "episodes": 24,
+    "policy_calls": 530,
+    "policy_repairs": 0,
+    "policy_fallbacks": 0,
+    "jev_calls": 0,
+    "jev_input_tokens": 0,
+    "jev_usd": 0.0,
+    "wm_seconds": 0.0
+  }
+}

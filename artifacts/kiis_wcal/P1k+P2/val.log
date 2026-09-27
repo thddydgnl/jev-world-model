@@ -1,0 +1,57 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 4/398 [00:00<00:09, 39.74it/s]Loading weights:   7%|▋         | 27/398 [00:00<00:02, 150.21it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:02, 174.63it/s]Loading weights:  17%|█▋        | 69/398 [00:00<00:01, 183.24it/s]Loading weights:  22%|██▏       | 88/398 [00:00<00:01, 181.39it/s]Loading weights:  27%|██▋       | 107/398 [00:00<00:01, 179.05it/s]Loading weights:  31%|███▏      | 125/398 [00:00<00:01, 177.50it/s]Loading weights:  36%|███▋      | 145/398 [00:00<00:01, 172.68it/s]Loading weights:  42%|████▏     | 168/398 [00:00<00:01, 186.17it/s]Loading weights:  47%|████▋     | 187/398 [00:01<00:01, 183.86it/s]Loading weights:  52%|█████▏    | 206/398 [00:01<00:01, 183.13it/s]Loading weights:  57%|█████▋    | 225/398 [00:01<00:00, 178.52it/s]Loading weights:  62%|██████▏   | 247/398 [00:01<00:00, 183.22it/s]Loading weights:  67%|██████▋   | 268/398 [00:01<00:00, 189.56it/s]Loading weights:  73%|███████▎  | 289/398 [00:01<00:00, 194.87it/s]Loading weights:  78%|███████▊  | 309/398 [00:01<00:00, 194.99it/s]Loading weights:  83%|████████▎ | 329/398 [00:01<00:00, 191.91it/s]Loading weights:  88%|████████▊ | 349/398 [00:01<00:00, 189.76it/s]Loading weights:  93%|█████████▎| 369/398 [00:02<00:00, 185.12it/s]Loading weights:  98%|█████████▊| 389/398 [00:02<00:00, 188.62it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 183.83it/s]
+loaded.
+condition 83c831589532  split=val  arms=['validity', 'oracle']
+  vav000 r0  validity=X(30)  oracle=O(6)  [1 sets]
+  vav000 r1  validity=X(30)  oracle=O(6)  [2 sets]
+  vav001 r0  validity=X(30)  oracle=O(6)  [3 sets]
+  vav001 r1  validity=X(30)  oracle=O(6)  [4 sets]
+  vav002 r0  validity=O(9)  oracle=O(9)  [5 sets]
+  vav002 r1  validity=O(7)  oracle=O(7)  [6 sets]
+  vav003 r0  validity=O(6)  oracle=O(6)  [7 sets]
+  vav003 r1  validity=O(7)  oracle=O(7)  [8 sets]
+  vav004 r0  validity=O(7)  oracle=O(7)  [9 sets]
+  vav004 r1  validity=O(5)  oracle=O(5)  [10 sets]
+  vav005 r0  validity=O(8)  oracle=O(8)  [11 sets]
+  vav005 r1  validity=O(9)  oracle=O(11)  [12 sets]
+  vav006 r0  validity=O(6)  oracle=O(6)  [13 sets]
+  vav006 r1  validity=O(7)  oracle=O(7)  [14 sets]
+  vav007 r0  validity=X(30)  oracle=X(30)  [15 sets]
+  vav007 r1  validity=O(7)  oracle=O(13)  [16 sets]
+  vav008 r0  validity=O(5)  oracle=O(5)  [17 sets]
+  vav008 r1  validity=O(9)  oracle=O(9)  [18 sets]
+  vav009 r0  validity=O(6)  oracle=O(6)  [19 sets]
+  vav009 r1  validity=O(5)  oracle=O(5)  [20 sets]
+  vav010 r0  validity=O(5)  oracle=O(5)  [21 sets]
+  vav010 r1  validity=X(30)  oracle=O(6)  [22 sets]
+  vav011 r0  validity=O(14)  oracle=O(19)  [23 sets]
+  vav011 r1  validity=O(11)  oracle=O(10)  [24 sets]
+  vav012 r0  validity=X(30)  oracle=X(30)  [25 sets]
+  vav012 r1  validity=O(5)  oracle=O(5)  [26 sets]
+  vav013 r0  validity=O(7)  oracle=O(7)  [27 sets]
+  vav013 r1  validity=O(7)  oracle=O(7)  [28 sets]
+  vav014 r0  validity=X(30)  oracle=O(6)  [29 sets]
+  vav014 r1  validity=X(30)  oracle=O(6)  [30 sets]
+  vav015 r0  validity=O(5)  oracle=O(5)  [31 sets]
+  vav015 r1  validity=O(12)  oracle=O(5)  [32 sets]
+  vav016 r0  validity=X(30)  oracle=O(5)  [33 sets]
+  vav016 r1  validity=O(6)  oracle=O(6)  [34 sets]
+  vav017 r0  validity=O(6)  oracle=O(6)  [35 sets]
+  vav017 r1  validity=O(6)  oracle=O(6)  [36 sets]
+  vav018 r0  validity=X(30)  oracle=O(6)  [37 sets]
+  vav018 r1  validity=X(30)  oracle=O(6)  [38 sets]
+  vav019 r0  validity=O(5)  oracle=O(5)  [39 sets]
+  vav019 r1  validity=O(6)  oracle=O(7)  [40 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+validity      40     70.0%     13.9      8.2%     83.3%      0      0
+oracle        40     95.0%      8.1     15.2%     96.7%      0      0
+
+분해
+  예측이 필요     oracle - validity        +25.0%
+
+policy calls=1762 repairs=0 fallbacks=0 catalog=40
+==========================================================================

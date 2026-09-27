@@ -1,0 +1,49 @@
+arm A enabled: JEV forecaster
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   3%|▎         | 11/398 [00:00<00:03, 103.30it/s]Loading weights:   9%|▉         | 36/398 [00:00<00:02, 173.16it/s]Loading weights:  14%|█▎        | 54/398 [00:00<00:01, 173.36it/s]Loading weights:  19%|█▉        | 75/398 [00:00<00:01, 186.03it/s]Loading weights:  25%|██▍       | 99/398 [00:00<00:01, 204.30it/s]Loading weights:  30%|███       | 120/398 [00:00<00:01, 203.16it/s]Loading weights:  35%|███▌      | 141/398 [00:00<00:01, 197.00it/s]Loading weights:  40%|████      | 161/398 [00:00<00:01, 197.07it/s]Loading weights:  45%|████▌     | 181/398 [00:00<00:01, 184.45it/s]Loading weights:  51%|█████     | 202/398 [00:01<00:01, 190.15it/s]Loading weights:  56%|█████▌    | 223/398 [00:01<00:00, 192.62it/s]Loading weights:  61%|██████    | 243/398 [00:01<00:00, 184.15it/s]Loading weights:  66%|██████▌   | 262/398 [00:01<00:00, 179.68it/s]Loading weights:  71%|███████   | 281/398 [00:01<00:00, 178.99it/s]Loading weights:  76%|███████▌  | 301/398 [00:01<00:00, 184.67it/s]Loading weights:  81%|████████  | 323/398 [00:01<00:00, 193.00it/s]Loading weights:  86%|████████▋ | 344/398 [00:01<00:00, 192.73it/s]Loading weights:  91%|█████████▏| 364/398 [00:01<00:00, 194.25it/s]Loading weights:  96%|█████████▋| 384/398 [00:02<00:00, 192.96it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 188.53it/s]
+loaded.
+condition 448b4fac3efe  split=test  arms=['A_jev']
+  tev000 r0  A_jev=O(6)  [1 sets]
+  tev001 r0  A_jev=O(10)  [2 sets]
+  tev002 r0  A_jev=O(10)  [3 sets]
+  tev003 r0  A_jev=O(7)  [4 sets]
+  tev004 r0  A_jev=O(6)  [5 sets]
+  tev005 r0  A_jev=X(30)  [6 sets]
+  tev006 r0  A_jev=O(8)  [7 sets]
+  tev007 r0  A_jev=O(5)  [8 sets]
+  tev008 r0  A_jev=O(10)  [9 sets]
+  tev009 r0  A_jev=O(9)  [10 sets]
+  tev010 r0  A_jev=O(5)  [11 sets]
+  tev011 r0  A_jev=X(30)  [12 sets]
+  tev012 r0  A_jev=O(19)  [13 sets]
+  tev013 r0  A_jev=O(7)  [14 sets]
+  tev014 r0  A_jev=O(4)  [15 sets]
+  tev015 r0  A_jev=O(14)  [16 sets]
+  tev016 r0  A_jev=O(6)  [17 sets]
+  tev017 r0  A_jev=O(6)  [18 sets]
+  tev018 r0  A_jev=O(10)  [19 sets]
+  tev019 r0  A_jev=O(5)  [20 sets]
+  tev020 r0  A_jev=O(6)  [21 sets]
+  tev021 r0  A_jev=O(11)  [22 sets]
+  tev022 r0  A_jev=O(8)  [23 sets]
+  tev023 r0  A_jev=O(7)  [24 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+A_jev         24     91.7%     10.0     20.5%     94.4%      0      0
+
+분해
+
+JEV: 요청 2936  에피소드당 122  conjunction bound 위반 0
+
+오류 누적 (재귀 arm, 예측 상태 vs 실제 상태)
+   depth       n       상태 완전일치       변수 정확도    beam 포함
+       1    1770         96.7%        99.4%     100.0%
+       2     983         92.5%        98.7%     100.0%
+  모순 감지 24  캐시 적중 1691
+     calls=2936 tokens=5,113,002 cost=$0.215
+
+policy calls=522 repairs=0 fallbacks=0 catalog=40
+==========================================================================

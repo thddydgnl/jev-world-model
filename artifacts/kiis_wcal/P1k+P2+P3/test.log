@@ -1,0 +1,65 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 4/398 [00:00<00:11, 34.04it/s]Loading weights:   7%|▋         | 27/398 [00:00<00:02, 140.13it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:02, 169.62it/s]Loading weights:  17%|█▋        | 69/398 [00:00<00:01, 179.11it/s]Loading weights:  22%|██▏       | 88/398 [00:00<00:01, 176.63it/s]Loading weights:  27%|██▋       | 106/398 [00:00<00:01, 170.97it/s]Loading weights:  31%|███▏      | 125/398 [00:00<00:01, 170.83it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 177.25it/s]Loading weights:  41%|████▏     | 165/398 [00:00<00:01, 179.40it/s]Loading weights:  46%|████▌     | 183/398 [00:01<00:01, 174.77it/s]Loading weights:  51%|█████     | 202/398 [00:01<00:01, 178.02it/s]Loading weights:  56%|█████▌    | 223/398 [00:01<00:00, 186.18it/s]Loading weights:  62%|██████▏   | 245/398 [00:01<00:00, 189.19it/s]Loading weights:  66%|██████▋   | 264/398 [00:01<00:00, 188.57it/s]Loading weights:  71%|███████   | 283/398 [00:01<00:00, 187.66it/s]Loading weights:  76%|███████▌  | 302/398 [00:01<00:00, 181.09it/s]Loading weights:  81%|████████  | 323/398 [00:01<00:00, 188.75it/s]Loading weights:  86%|████████▋ | 344/398 [00:01<00:00, 193.32it/s]Loading weights:  92%|█████████▏| 366/398 [00:02<00:00, 194.07it/s]Loading weights:  97%|█████████▋| 386/398 [00:02<00:00, 195.29it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 181.19it/s]
+loaded.
+condition 448b4fac3efe  split=test  arms=['validity', 'oracle']
+  tev000 r0  validity=O(6)  oracle=O(6)  [1 sets]
+  tev000 r1  validity=O(7)  oracle=O(7)  [2 sets]
+  tev001 r0  validity=O(7)  oracle=O(11)  [3 sets]
+  tev001 r1  validity=O(7)  oracle=O(10)  [4 sets]
+  tev002 r0  validity=O(22)  oracle=O(10)  [5 sets]
+  tev002 r1  validity=O(23)  oracle=O(23)  [6 sets]
+  tev003 r0  validity=X(30)  oracle=O(23)  [7 sets]
+  tev003 r1  validity=O(4)  oracle=O(4)  [8 sets]
+  tev004 r0  validity=O(6)  oracle=O(6)  [9 sets]
+  tev004 r1  validity=O(6)  oracle=O(6)  [10 sets]
+  tev005 r0  validity=X(30)  oracle=X(30)  [11 sets]
+  tev005 r1  validity=O(10)  oracle=O(10)  [12 sets]
+  tev006 r0  validity=O(7)  oracle=O(7)  [13 sets]
+  tev006 r1  validity=O(8)  oracle=O(8)  [14 sets]
+  tev007 r0  validity=O(5)  oracle=O(5)  [15 sets]
+  tev007 r1  validity=O(6)  oracle=O(6)  [16 sets]
+  tev008 r0  validity=O(10)  oracle=O(9)  [17 sets]
+  tev008 r1  validity=O(12)  oracle=O(11)  [18 sets]
+  tev009 r0  validity=O(8)  oracle=O(8)  [19 sets]
+  tev009 r1  validity=O(6)  oracle=O(6)  [20 sets]
+  tev010 r0  validity=O(5)  oracle=O(5)  [21 sets]
+  tev010 r1  validity=O(7)  oracle=O(7)  [22 sets]
+  tev011 r0  validity=X(30)  oracle=X(30)  [23 sets]
+  tev011 r1  validity=O(18)  oracle=O(18)  [24 sets]
+  tev012 r0  validity=O(7)  oracle=O(7)  [25 sets]
+  tev012 r1  validity=O(8)  oracle=O(8)  [26 sets]
+  tev013 r0  validity=O(10)  oracle=O(7)  [27 sets]
+  tev013 r1  validity=O(6)  oracle=O(6)  [28 sets]
+  tev014 r0  validity=O(6)  oracle=O(6)  [29 sets]
+  tev014 r1  validity=O(6)  oracle=O(6)  [30 sets]
+  tev015 r0  validity=X(30)  oracle=X(30)  [31 sets]
+  tev015 r1  validity=O(10)  oracle=O(10)  [32 sets]
+  tev016 r0  validity=X(30)  oracle=O(4)  [33 sets]
+  tev016 r1  validity=O(7)  oracle=O(7)  [34 sets]
+  tev017 r0  validity=O(6)  oracle=O(6)  [35 sets]
+  tev017 r1  validity=O(12)  oracle=O(6)  [36 sets]
+  tev018 r0  validity=O(10)  oracle=O(10)  [37 sets]
+  tev018 r1  validity=X(30)  oracle=O(12)  [38 sets]
+  tev019 r0  validity=O(6)  oracle=O(6)  [39 sets]
+  tev019 r1  validity=O(6)  oracle=O(6)  [40 sets]
+  tev020 r0  validity=O(7)  oracle=O(8)  [41 sets]
+  tev020 r1  validity=O(9)  oracle=O(9)  [42 sets]
+  tev021 r0  validity=X(30)  oracle=X(30)  [43 sets]
+  tev021 r1  validity=O(16)  oracle=O(14)  [44 sets]
+  tev022 r0  validity=O(7)  oracle=O(8)  [45 sets]
+  tev022 r1  validity=O(6)  oracle=O(6)  [46 sets]
+  tev023 r0  validity=O(7)  oracle=O(7)  [47 sets]
+  tev023 r1  validity=O(7)  oracle=O(7)  [48 sets]
+
+==========================================================================
+arm            n   success    steps   invalid  progress   trap  decoy
+validity      48     85.4%     11.6     14.5%     91.0%      0      0
+oracle        48     91.7%     10.2     17.5%     94.4%      0      0
+
+분해
+  예측이 필요     oracle - validity         +6.2%
+
+policy calls=2322 repairs=0 fallbacks=0 catalog=40
+==========================================================================
