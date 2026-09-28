@@ -25,17 +25,28 @@ else
 fi
 O=artifacts/kiis_k5v3$TAG; X=artifacts/kiis_x1v3$TAG
 RO=data/kiis/k5v3_rollouts$TAG.json; RX=data/kiis/x1v3_rollouts$TAG.json
-for p in $O $X $RO $RX; do
+# REUSE_ROLLOUTS=1 evaluates rollout files that an earlier start already built
+# (9/28: the first K5v3 start built them, then every eval crashed at its end).
+REUSE=${REUSE_ROLLOUTS:-0}
+for p in $O $X; do
   if [ -e "$p" ]; then echo "refusing to overwrite $p"; exit 1; fi
+done
+for p in $RO $RX; do
+  if [ "$REUSE" = "1" ] && [ ! -f "$p" ]; then echo "REUSE_ROLLOUTS=1 but $p is missing"; exit 1; fi
+  if [ "$REUSE" != "1" ] && [ -e "$p" ]; then echo "refusing to overwrite $p"; exit 1; fi
 done
 mkdir -p $O $X
 
-CUDA_VISIBLE_DEVICES=0 $PY build --world-set $MAIN_SET $MAIN_BUILD --out $RO > $O/build.log 2>&1 &
-b0=$!
-CUDA_VISIBLE_DEVICES=1 $PY build --world-set $X1_SET $X1_BUILD --out $RX > $X/build.log 2>&1 &
-b1=$!
-wait $b0 || { echo "build $MAIN_SET failed" > $O/FAILED; exit 1; }
-wait $b1 || { echo "build $X1_SET failed" > $X/FAILED; exit 1; }
+if [ "$REUSE" = "1" ]; then
+  for f in $RO $RX; do echo "reused $f sha256 $(sha256sum $f | cut -c1-16)"; done | tee $O/build.log > $X/build.log
+else
+  CUDA_VISIBLE_DEVICES=0 $PY build --world-set $MAIN_SET $MAIN_BUILD --out $RO > $O/build.log 2>&1 &
+  b0=$!
+  CUDA_VISIBLE_DEVICES=1 $PY build --world-set $X1_SET $X1_BUILD --out $RX > $X/build.log 2>&1 &
+  b1=$!
+  wait $b0 || { echo "build $MAIN_SET failed" > $O/FAILED; exit 1; }
+  wait $b1 || { echo "build $X1_SET failed" > $X/FAILED; exit 1; }
+fi
 
 ev() {   # ev <gpu or empty> <run name> <rollouts> <out> <eval args...>
   local gpu=$1 name=$2 ro=$3 out=$4; shift 4

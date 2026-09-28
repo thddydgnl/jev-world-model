@@ -413,17 +413,35 @@ def evaluate(args) -> int:
     out.mkdir(parents=True, exist_ok=True)
     rows, t0 = [], time.time()
     stats = defaultdict(int)
+    # Rows are also appended to <name>.partial.jsonl world by world, so a crash
+    # keeps what was computed; a rerun with the same name resumes after the
+    # worlds already there (their request counts are not re-added).
+    partial = out / f"{name}.partial.jsonl"
+    resumed = []
+    if partial.exists():
+        rows = [json.loads(l) for l in partial.read_text().splitlines() if l.strip()]
+        resumed = sorted({r["world"] for r in rows})
+        print(f"{name}: resuming after {len(resumed)} worlds in {partial.name}", flush=True)
+    # The worlds' positions in their set come from the manifest's order: world
+    # ids carry other digits (t3v023), so they cannot be read from the id (9/28).
+    order = list(world_set_info(world_set)[2])
+    missing = sorted(set(by_world) - set(order))
+    if missing:
+        raise SystemExit(f"rollouts name worlds outside {world_set}: {missing[:3]}")
     with tempfile.TemporaryDirectory() as d:
-        n_worlds = 1 + max(int("".join(c for c in w if c.isdigit())) for w in by_world)
+        n_worlds = 1 + max(order.index(w) for w in by_world)
         for game, meta, env in worlds(world_set, n_worlds, Path(d)):
             todo = by_world.get(meta["world_id"])
-            if not todo:
+            if not todo or meta["world_id"] in resumed:
                 env.close(); continue
             schema = state_schema(game, meta)
             goal = trap_goal_spec(game, meta)
             fc = RecursiveForecaster(None, schema, goal, step=make_step(args.model, schema, ctx))
             walk = teacher_forced_rows if args.mode == "tf" else free_running_rows
-            rows += walk(fc, env, game, schema, todo)
+            new_rows = walk(fc, env, game, schema, todo)
+            rows += new_rows
+            with partial.open("a") as f:
+                f.write("".join(json.dumps(x) + "\n" for x in new_rows))
             for k in ("requests", "parse_failures", "cache_hits", "contradictions"):
                 stats[k] += getattr(fc.stats, k)
             env.close()
@@ -440,7 +458,10 @@ def evaluate(args) -> int:
                 "revision": rev, "software": runinfo.software()}
     if "jev" in ctx:
         manifest["jev_usd"] = round(ctx["jev"].spent_usd, 4)
+    if resumed:
+        manifest["resumed_worlds"] = resumed      # stats and jev_usd cover the rest only
     (out / f"{name}.manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    partial.unlink(missing_ok=True)
     print(f"done {name}: {len(rows)} rows, {manifest['seconds']}s, {dict(stats)}")
     return 0
 

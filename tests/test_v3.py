@@ -145,6 +145,13 @@ def main() -> int:
     runner.STUCK_RETRY[0] = False
     env.close()
 
+    # 5. K5 eval finds a world's position from its set's manifest, not from the
+    #    digits of its id (t3v023 once read as 3023; 9/28)
+    import kiis_k5_rollout as k5
+    for ws, last in (("v3:test", "t3v023"), ("v3:x1", "t3v023"), ("v2:test", "tev023"), ("test", "te023")):
+        order = list(k5.world_set_info(ws)[2])
+        check(len(order) == 24 and order.index(last) == 23, f"{ws}: {last} at {order.index(last)} of {len(order)}"); n += 1
+
     # 4. hashes
     def chash(levers, hint, samples, retry=False):
         runinfo.configure_v2(levers, hint, samples, retry)
