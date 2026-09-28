@@ -1,0 +1,28 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|▏         | 5/398 [00:00<00:08, 47.67it/s]Loading weights:   8%|▊         | 31/398 [00:00<00:02, 166.37it/s]Loading weights:  13%|█▎        | 53/398 [00:00<00:01, 183.51it/s]Loading weights:  19%|█▉        | 76/398 [00:00<00:01, 196.71it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 216.74it/s]Loading weights:  31%|███       | 124/398 [00:00<00:01, 215.40it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 205.39it/s]Loading weights:  42%|████▏     | 167/398 [00:00<00:01, 204.97it/s]Loading weights:  48%|████▊     | 190/398 [00:00<00:00, 212.21it/s]Loading weights:  53%|█████▎    | 212/398 [00:01<00:00, 204.88it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:00, 206.36it/s]Loading weights:  64%|██████▍   | 256/398 [00:01<00:00, 205.12it/s]Loading weights:  70%|██████▉   | 277/398 [00:01<00:00, 193.18it/s]Loading weights:  75%|███████▌  | 300/398 [00:01<00:00, 193.07it/s]Loading weights:  81%|████████  | 322/398 [00:01<00:00, 197.99it/s]Loading weights:  86%|████████▌ | 342/398 [00:01<00:00, 193.21it/s]Loading weights:  91%|█████████ | 362/398 [00:01<00:00, 187.88it/s]Loading weights:  96%|█████████▌| 381/398 [00:01<00:00, 185.20it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 196.22it/s]
+t3v000: 34 rollouts
+t3v001: 34 rollouts
+t3v002: 34 rollouts
+t3v003: 34 rollouts
+t3v004: 34 rollouts
+t3v005: 34 rollouts
+t3v006: 34 rollouts
+t3v007: 34 rollouts
+t3v008: 34 rollouts
+t3v009: 34 rollouts
+t3v010: 34 rollouts
+t3v011: 34 rollouts
+t3v012: 34 rollouts
+t3v013: 34 rollouts
+t3v014: 34 rollouts
+t3v015: 34 rollouts
+t3v016: 32 rollouts
+t3v017: 32 rollouts
+t3v018: 32 rollouts
+t3v019: 32 rollouts
+t3v020: 32 rollouts
+t3v021: 32 rollouts
+t3v022: 32 rollouts
+t3v023: 32 rollouts
+800 rollouts -> data/kiis/k5v3_rollouts.json  policy repairs=1 fallbacks=0

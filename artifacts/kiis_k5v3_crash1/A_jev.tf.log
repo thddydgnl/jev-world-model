@@ -1,0 +1,34 @@
+A_jev.tf t3v000: 34 rollouts  13s  requests=258
+A_jev.tf t3v001: 34 rollouts  24s  requests=490
+A_jev.tf t3v002: 34 rollouts  34s  requests=738
+A_jev.tf t3v003: 34 rollouts  44s  requests=972
+A_jev.tf t3v004: 34 rollouts  55s  requests=1224
+A_jev.tf t3v005: 34 rollouts  65s  requests=1482
+A_jev.tf t3v006: 34 rollouts  76s  requests=1738
+A_jev.tf t3v007: 34 rollouts  87s  requests=1984
+A_jev.tf t3v008: 34 rollouts  97s  requests=2234
+A_jev.tf t3v009: 34 rollouts  108s  requests=2486
+A_jev.tf t3v010: 34 rollouts  119s  requests=2738
+A_jev.tf t3v011: 34 rollouts  129s  requests=2970
+A_jev.tf t3v012: 34 rollouts  141s  requests=3210
+A_jev.tf t3v013: 34 rollouts  154s  requests=3460
+A_jev.tf t3v014: 34 rollouts  165s  requests=3698
+A_jev.tf t3v015: 34 rollouts  175s  requests=3926
+A_jev.tf t3v016: 32 rollouts  187s  requests=4168
+A_jev.tf t3v017: 32 rollouts  198s  requests=4404
+A_jev.tf t3v018: 32 rollouts  210s  requests=4636
+A_jev.tf t3v019: 32 rollouts  221s  requests=4868
+A_jev.tf t3v020: 32 rollouts  233s  requests=5110
+A_jev.tf t3v021: 32 rollouts  245s  requests=5348
+A_jev.tf t3v022: 32 rollouts  256s  requests=5580
+A_jev.tf t3v023: 32 rollouts  266s  requests=5810
+Traceback (most recent call last):
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 724, in <module>
+    raise SystemExit(main())
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 719, in main
+    return {"build": build, "eval": evaluate, "report": report,
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 418, in evaluate
+    for game, meta, env in worlds(world_set, n_worlds, Path(d)):
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 88, in worlds
+    if world_fingerprint(game) != ref[meta["world_id"]]:
+KeyError: 't3v024'

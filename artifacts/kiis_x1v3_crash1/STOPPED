@@ -1,0 +1,1 @@
+2026-09-28T00:22:52Z stopped kiis_run_k5v3.sh (336401 and chains 337554/337555, evals 342152/342522): every eval crashed after its last world with KeyError t3v024 (n_worlds from the digits of t3v023 = 3024), rows are written only at the end so nothing was saved

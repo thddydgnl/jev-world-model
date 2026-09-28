@@ -1,0 +1,12 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   6%|▌         | 24/398 [00:00<00:01, 204.76it/s]Loading weights:  12%|█▏        | 47/398 [00:00<00:01, 218.60it/s]Loading weights:  17%|█▋        | 69/398 [00:00<00:01, 194.59it/s]Loading weights:  22%|██▏       | 89/398 [00:00<00:01, 185.95it/s]Loading weights:  27%|██▋       | 108/398 [00:00<00:01, 176.52it/s]Loading weights:  32%|███▏      | 126/398 [00:00<00:01, 166.98it/s]Loading weights:  37%|███▋      | 147/398 [00:00<00:01, 173.50it/s]Loading weights:  42%|████▏     | 168/398 [00:00<00:01, 177.73it/s]Loading weights:  47%|████▋     | 186/398 [00:01<00:01, 176.33it/s]Loading weights:  51%|█████▏    | 204/398 [00:01<00:01, 170.37it/s]Loading weights:  56%|█████▋    | 224/398 [00:01<00:00, 175.37it/s]Loading weights:  62%|██████▏   | 245/398 [00:01<00:00, 180.86it/s]Loading weights:  66%|██████▋   | 264/398 [00:01<00:00, 179.28it/s]Loading weights:  71%|███████   | 282/398 [00:01<00:00, 174.72it/s]Loading weights:  76%|███████▌  | 301/398 [00:01<00:00, 173.90it/s]Loading weights:  81%|████████  | 322/398 [00:01<00:00, 180.86it/s]Loading weights:  86%|████████▌ | 341/398 [00:01<00:00, 179.51it/s]Loading weights:  90%|█████████ | 359/398 [00:02<00:00, 175.80it/s]Loading weights:  95%|█████████▍| 378/398 [00:02<00:00, 177.46it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 179.97it/s]
+D0_gen t3v000: 18 rollouts  625s  requests=98
+D0_gen t3v001: 18 rollouts  1274s  requests=197
+D0_gen t3v002: 18 rollouts  1956s  requests=303
+D0_gen t3v003: 18 rollouts  2558s  requests=401
+D0_gen t3v004: 18 rollouts  3115s  requests=491
+D0_gen t3v005: 18 rollouts  3707s  requests=587
+D0_gen t3v006: 18 rollouts  4320s  requests=684
+D0_gen t3v007: 18 rollouts  5020s  requests=793
+D0_gen t3v008: 16 rollouts  5574s  requests=880

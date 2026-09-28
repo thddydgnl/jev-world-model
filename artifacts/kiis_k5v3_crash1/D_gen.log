@@ -1,0 +1,37 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|▏         | 5/398 [00:00<00:08, 45.41it/s]Loading weights:   7%|▋         | 27/398 [00:00<00:02, 136.04it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:02, 165.34it/s]Loading weights:  17%|█▋        | 69/398 [00:00<00:01, 181.42it/s]Loading weights:  22%|██▏       | 88/398 [00:00<00:01, 177.84it/s]Loading weights:  27%|██▋       | 106/398 [00:00<00:01, 175.14it/s]Loading weights:  32%|███▏      | 126/398 [00:00<00:01, 174.86it/s]Loading weights:  37%|███▋      | 147/398 [00:00<00:01, 183.49it/s]Loading weights:  42%|████▏     | 168/398 [00:00<00:01, 190.51it/s]Loading weights:  47%|████▋     | 188/398 [00:01<00:01, 192.88it/s]Loading weights:  52%|█████▏    | 208/398 [00:01<00:01, 184.07it/s]Loading weights:  57%|█████▋    | 227/398 [00:01<00:00, 178.77it/s]Loading weights:  62%|██████▏   | 245/398 [00:01<00:00, 172.67it/s]Loading weights:  67%|██████▋   | 267/398 [00:01<00:00, 179.65it/s]Loading weights:  72%|███████▏  | 286/398 [00:01<00:00, 176.83it/s]Loading weights:  76%|███████▋  | 304/398 [00:01<00:00, 175.18it/s]Loading weights:  81%|████████  | 323/398 [00:01<00:00, 172.65it/s]Loading weights:  86%|████████▋ | 344/398 [00:01<00:00, 177.28it/s]Loading weights:  91%|█████████ | 363/398 [00:02<00:00, 179.48it/s]Loading weights:  96%|█████████▌| 382/398 [00:02<00:00, 182.35it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 178.02it/s]
+D_gen t3v000: 34 rollouts  462s  requests=129
+D_gen t3v001: 34 rollouts  877s  requests=245
+D_gen t3v002: 34 rollouts  1318s  requests=370
+D_gen t3v003: 34 rollouts  1729s  requests=487
+D_gen t3v004: 34 rollouts  2168s  requests=614
+D_gen t3v005: 34 rollouts  2615s  requests=744
+D_gen t3v006: 34 rollouts  3036s  requests=872
+D_gen t3v007: 34 rollouts  3467s  requests=995
+D_gen t3v008: 34 rollouts  3909s  requests=1120
+D_gen t3v009: 34 rollouts  4346s  requests=1246
+D_gen t3v010: 34 rollouts  4781s  requests=1372
+D_gen t3v011: 34 rollouts  5179s  requests=1488
+D_gen t3v012: 34 rollouts  5601s  requests=1608
+D_gen t3v013: 34 rollouts  6035s  requests=1733
+D_gen t3v014: 34 rollouts  6445s  requests=1852
+D_gen t3v015: 34 rollouts  6846s  requests=1966
+D_gen t3v016: 32 rollouts  7265s  requests=2088
+D_gen t3v017: 32 rollouts  7668s  requests=2206
+D_gen t3v018: 32 rollouts  8063s  requests=2322
+D_gen t3v019: 32 rollouts  8457s  requests=2438
+D_gen t3v020: 32 rollouts  8871s  requests=2559
+D_gen t3v021: 32 rollouts  9261s  requests=2678
+D_gen t3v022: 32 rollouts  9685s  requests=2795
+D_gen t3v023: 32 rollouts  10090s  requests=2910
+Traceback (most recent call last):
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 724, in <module>
+    raise SystemExit(main())
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 719, in main
+    return {"build": build, "eval": evaluate, "report": report,
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 418, in evaluate
+    for game, meta, env in worlds(world_set, n_worlds, Path(d)):
+  File "/home/yonghwi/jev-wm/scripts/kiis_k5_rollout.py", line 88, in worlds
+    if world_fingerprint(game) != ref[meta["world_id"]]:
+KeyError: 't3v024'
