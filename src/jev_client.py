@@ -35,7 +35,7 @@ class BudgetExceeded(RuntimeError):
     stops at a known point instead of being cut mid-episode by a 402."""
 
 
-def _retry_delay(resp: httpx.Response, attempt: int) -> float:
+def _retry_delay(resp: httpx.Response, attempt: int, cap: float = 16.0) -> float:
     """Honour Retry-After in both numeric-seconds and HTTP-date forms."""
     raw = resp.headers.get("retry-after", "").strip()
     if raw:
@@ -53,7 +53,7 @@ def _retry_delay(resp: httpx.Response, attempt: int) -> float:
             return max(0.0, (when - now).total_seconds())
         except (TypeError, ValueError):
             pass
-    return min(2.0**attempt, 16.0)
+    return min(2.0**attempt, cap)
 
 
 def _validate(payload: dict[str, Any], out: dict[str, Any]) -> None:
@@ -95,9 +95,15 @@ def _validate(payload: dict[str, Any], out: dict[str, Any]) -> None:
 
 class JevClient:
     def __init__(self, save_raw: bool = True, max_attempts: int = 4,
-                 budget_usd: float | None = None) -> None:
+                 budget_usd: float | None = None, outage_wait_s: float = 3600.0) -> None:
         self._key = get_api_key()
         self.budget_usd = budget_usd
+        # Transient failures (timeouts, 429/529, 5xx) are retried at least
+        # max_attempts times and then, with backoff up to a minute, until the
+        # request has been failing for outage_wait_s. A 503 outage on 9/28
+        # outlasted the four quick retries and killed two K4v3 units; waiting
+        # changes nothing about the requests or their answers.
+        self.outage_wait_s = outage_wait_s
         self._client = httpx.Client(timeout=httpx.Timeout(60.0, connect=10.0))
         self._save_raw = save_raw
         self._max_attempts = max_attempts
@@ -125,7 +131,9 @@ class JevClient:
                 f"spend cap reached: ${self.spent_usd:.3f} of ${self.budget_usd:.2f} "
                 f"after {self.calls} calls")
         payload = {"model": PINNED_MODEL, "state": state, "questions": questions}
-        for attempt in range(self._max_attempts):
+        first_fail = None
+        attempt = 0
+        while True:
             try:
                 r = self._client.post(
                     ENDPOINT,
@@ -133,14 +141,18 @@ class JevClient:
                     json=payload,
                 )
             except (httpx.TimeoutException, httpx.TransportError):
-                if attempt + 1 == self._max_attempts:
+                first_fail = time.monotonic() if first_fail is None else first_fail
+                if not self._may_retry(first_fail, attempt):
                     raise
-                time.sleep(min(2.0**attempt, 16.0))
+                self._wait(min(2.0**attempt, 60.0), attempt, "transport error")
+                attempt += 1
                 continue
             if r.status_code in (429, 529) or 500 <= r.status_code < 600:
-                if attempt + 1 == self._max_attempts:
+                first_fail = time.monotonic() if first_fail is None else first_fail
+                if not self._may_retry(first_fail, attempt):
                     r.raise_for_status()
-                time.sleep(_retry_delay(r, attempt))
+                self._wait(_retry_delay(r, attempt, cap=60.0), attempt, f"HTTP {r.status_code}")
+                attempt += 1
                 continue
             r.raise_for_status()
             out = r.json()
@@ -154,7 +166,17 @@ class JevClient:
                     json.dumps({"request": payload, "response": out}, ensure_ascii=False)
                 )
             return out
-        raise JevError("Exhausted retries without a response")
+
+    def _may_retry(self, first_fail: float, attempt: int) -> bool:
+        return (attempt + 1 < self._max_attempts
+                or time.monotonic() - first_fail < self.outage_wait_s)
+
+    @staticmethod
+    def _wait(seconds: float, attempt: int, why: str) -> None:
+        if attempt >= 4 and attempt % 5 == 4:
+            import sys
+            print(f"[jev] {why}; retry {attempt + 1}, waiting {seconds:.0f}s", file=sys.stderr, flush=True)
+        time.sleep(seconds)
 
 
 def choice(instructions: str, criteria: dict[str, str]) -> dict[str, Any]:

@@ -123,6 +123,9 @@ def main() -> int:
                          "if present, overrides it while running (e.g. 1 while K5 shares the "
                          "GPUs, then 2 — written by hand, read every minute)")
     ap.add_argument("--gpus", default="0,1")
+    ap.add_argument("--gate-jobs", default=None,
+                    help="jobs that wait for the gate file (default per version; v3: generative,typed). "
+                         "9/28: zero_shot,generative,typed while K5v3 shares the GPUs")
     ap.add_argument("--gate-gpu", default=None,
                     help="GPUs used only once the gate file exists (default: 0 for v2, none for v3)")
     ap.add_argument("--adopt", action="append", default=[], help="seed:job:pid:gpu of a running unit")
@@ -130,6 +133,12 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     configure(args.version)
+    global NEEDS_GATE
+    if args.gate_jobs is not None:
+        NEEDS_GATE = {j.strip() for j in args.gate_jobs.split(",") if j.strip()}
+        unknown = NEEDS_GATE - {u[0] for u in UNITS}
+        if unknown:
+            raise SystemExit(f"unknown --gate-jobs: {sorted(unknown)}")
     gpus = [int(g) for g in args.gpus.split(",")]
     gate_gpu = args.gate_gpu if args.gate_gpu is not None else ("0" if args.version == "v2" else "")
     gated = {int(g) for g in gate_gpu.split(",") if g != ""}
