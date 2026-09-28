@@ -1,0 +1,37 @@
+{
+  "model": "D0_gen",
+  "mode": "tf",
+  "beam": 4,
+  "repeat": 0,
+  "rollouts": 400,
+  "rollouts_file": "data/kiis/x1v3_rollouts.json",
+  "rows": 1600,
+  "arm_hash": "9066bc4a0bbd",
+  "arm_config": {
+    "world_model": "recursive one-step, generative",
+    "backend": "qwen, policy weights",
+    "decoding": "greedy",
+    "max_new_tokens": 320,
+    "retry": "one sample, T=0.7 top_p=0.9, seeded by state and action",
+    "on_parse_failure": "counted; treated as not executed",
+    "parser": "v1",
+    "prompt": "50da5547e5be"
+  },
+  "stats": {
+    "requests": 2245,
+    "parse_failures": 701,
+    "cache_hits": 0,
+    "contradictions": 0
+  },
+  "seconds": 11751.4,
+  "revision": {
+    "line": "206e742574f9db986a3a2aee3ef457c92951a460 dirty_files=0 synced=2026-09-28T00:24:12Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  }
+}

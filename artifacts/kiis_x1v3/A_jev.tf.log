@@ -1,0 +1,25 @@
+A_jev.tf t3v000: 18 rollouts  9s  requests=130
+A_jev.tf t3v001: 18 rollouts  15s  requests=260
+A_jev.tf t3v002: 18 rollouts  21s  requests=386
+A_jev.tf t3v003: 18 rollouts  27s  requests=516
+A_jev.tf t3v004: 18 rollouts  34s  requests=648
+A_jev.tf t3v005: 18 rollouts  41s  requests=790
+A_jev.tf t3v006: 18 rollouts  48s  requests=928
+A_jev.tf t3v007: 18 rollouts  54s  requests=1064
+A_jev.tf t3v008: 16 rollouts  60s  requests=1180
+A_jev.tf t3v009: 16 rollouts  66s  requests=1300
+A_jev.tf t3v010: 16 rollouts  72s  requests=1418
+A_jev.tf t3v011: 16 rollouts  78s  requests=1540
+A_jev.tf t3v012: 16 rollouts  84s  requests=1656
+A_jev.tf t3v013: 16 rollouts  90s  requests=1784
+A_jev.tf t3v014: 16 rollouts  96s  requests=1898
+A_jev.tf t3v015: 16 rollouts  102s  requests=2018
+A_jev.tf t3v016: 16 rollouts  109s  requests=2144
+A_jev.tf t3v017: 16 rollouts  115s  requests=2268
+A_jev.tf t3v018: 16 rollouts  121s  requests=2382
+A_jev.tf t3v019: 16 rollouts  126s  requests=2504
+A_jev.tf t3v020: 16 rollouts  132s  requests=2622
+A_jev.tf t3v021: 16 rollouts  138s  requests=2740
+A_jev.tf t3v022: 16 rollouts  144s  requests=2862
+A_jev.tf t3v023: 16 rollouts  150s  requests=2978
+done A_jev.tf: 1600 rows, 150.2s, {'requests': 2978, 'parse_failures': 0, 'cache_hits': 0, 'contradictions': 22}

@@ -1,0 +1,25 @@
+A_jev t3v000: 18 rollouts  16s  requests=262
+A_jev t3v001: 18 rollouts  25s  requests=480
+A_jev t3v002: 18 rollouts  37s  requests=730
+A_jev t3v003: 18 rollouts  47s  requests=970
+A_jev t3v004: 18 rollouts  56s  requests=1190
+A_jev t3v005: 18 rollouts  68s  requests=1468
+A_jev t3v006: 18 rollouts  79s  requests=1710
+A_jev t3v007: 18 rollouts  91s  requests=1996
+A_jev t3v008: 16 rollouts  100s  requests=2208
+A_jev t3v009: 16 rollouts  109s  requests=2448
+A_jev t3v010: 16 rollouts  119s  requests=2678
+A_jev t3v011: 16 rollouts  129s  requests=2936
+A_jev t3v012: 16 rollouts  138s  requests=3154
+A_jev t3v013: 16 rollouts  148s  requests=3384
+A_jev t3v014: 16 rollouts  157s  requests=3610
+A_jev t3v015: 16 rollouts  166s  requests=3816
+A_jev t3v016: 16 rollouts  177s  requests=4058
+A_jev t3v017: 16 rollouts  187s  requests=4302
+A_jev t3v018: 16 rollouts  196s  requests=4500
+A_jev t3v019: 16 rollouts  206s  requests=4710
+A_jev t3v020: 16 rollouts  216s  requests=4968
+A_jev t3v021: 16 rollouts  226s  requests=5186
+A_jev t3v022: 16 rollouts  236s  requests=5414
+A_jev t3v023: 16 rollouts  246s  requests=5646
+done A_jev: 1600 rows, 245.9s, {'requests': 5646, 'parse_failures': 0, 'cache_hits': 3075, 'contradictions': 54}

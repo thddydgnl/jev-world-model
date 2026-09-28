@@ -1,0 +1,57 @@
+{
+  "model": "D_gen",
+  "mode": "tf",
+  "beam": 4,
+  "repeat": 0,
+  "rollouts": 400,
+  "rollouts_file": "data/kiis/x1v3_rollouts.json",
+  "rows": 1600,
+  "arm_hash": "7dbd9b64d0a5",
+  "arm_config": {
+    "world_model": "recursive one-step, generative",
+    "backend": "qwen, policy weights",
+    "decoding": "greedy",
+    "max_new_tokens": 320,
+    "retry": "one sample, T=0.7 top_p=0.9, seeded by state and action",
+    "on_parse_failure": "counted; treated as not executed",
+    "parser": "v1",
+    "prompt": "50da5547e5be",
+    "adapter": {
+      "weights_sha256": "16ee9b707f6b3f58",
+      "n_transitions": 6000,
+      "data_sha": "81ba823a4f7e1a2c",
+      "lora": {
+        "r": 16,
+        "lora_alpha": 32,
+        "lora_dropout": 0.05,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ]
+      },
+      "epochs": 2
+    }
+  },
+  "stats": {
+    "requests": 1528,
+    "parse_failures": 33,
+    "cache_hits": 0,
+    "contradictions": 0
+  },
+  "seconds": 8995.5,
+  "revision": {
+    "line": "206e742574f9db986a3a2aee3ef457c92951a460 dirty_files=0 synced=2026-09-28T00:24:12Z",
+    "source": "REVISION"
+  },
+  "software": {
+    "textworld": "1.7.0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "peft": "0.21.0"
+  }
+}

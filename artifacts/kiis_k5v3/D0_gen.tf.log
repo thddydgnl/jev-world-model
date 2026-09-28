@@ -1,0 +1,28 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   2%|▏         | 9/398 [00:00<00:04, 89.58it/s]Loading weights:   8%|▊         | 31/398 [00:00<00:02, 162.32it/s]Loading weights:  14%|█▎        | 54/398 [00:00<00:01, 190.23it/s]Loading weights:  19%|█▉        | 77/398 [00:00<00:01, 201.59it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 217.17it/s]Loading weights:  31%|███       | 124/398 [00:00<00:01, 211.08it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 209.99it/s]Loading weights:  42%|████▏     | 169/398 [00:00<00:01, 207.63it/s]Loading weights:  48%|████▊     | 190/398 [00:00<00:01, 206.72it/s]Loading weights:  53%|█████▎    | 211/398 [00:01<00:00, 207.22it/s]Loading weights:  58%|█████▊    | 232/398 [00:01<00:00, 201.87it/s]Loading weights:  64%|██████▎   | 253/398 [00:01<00:00, 198.48it/s]Loading weights:  69%|██████▊   | 273/398 [00:01<00:00, 191.84it/s]Loading weights:  74%|███████▎  | 293/398 [00:01<00:00, 192.64it/s]Loading weights:  79%|███████▉  | 316/398 [00:01<00:00, 203.27it/s]Loading weights:  85%|████████▍ | 337/398 [00:01<00:00, 196.38it/s]Loading weights:  92%|█████████▏| 366/398 [00:01<00:00, 217.94it/s]Loading weights:  98%|█████████▊| 389/398 [00:01<00:00, 217.96it/s]Loading weights: 100%|██████████| 398/398 [00:01<00:00, 204.81it/s]
+D0_gen.tf t3v000: 34 rollouts  559s  requests=168
+D0_gen.tf t3v001: 34 rollouts  1073s  requests=321
+D0_gen.tf t3v002: 34 rollouts  1585s  requests=485
+D0_gen.tf t3v003: 34 rollouts  2051s  requests=636
+D0_gen.tf t3v004: 34 rollouts  2581s  requests=803
+D0_gen.tf t3v005: 34 rollouts  3083s  requests=962
+D0_gen.tf t3v006: 34 rollouts  3686s  requests=1139
+D0_gen.tf t3v007: 34 rollouts  4123s  requests=1283
+D0_gen.tf t3v008: 34 rollouts  4604s  requests=1435
+D0_gen.tf t3v009: 34 rollouts  5136s  requests=1599
+D0_gen.tf t3v010: 34 rollouts  5700s  requests=1768
+D0_gen.tf t3v011: 34 rollouts  6186s  requests=1920
+D0_gen.tf t3v012: 34 rollouts  6696s  requests=2076
+D0_gen.tf t3v013: 34 rollouts  7195s  requests=2233
+D0_gen.tf t3v014: 34 rollouts  7729s  requests=2394
+D0_gen.tf t3v015: 34 rollouts  8148s  requests=2534
+D0_gen.tf t3v016: 32 rollouts  8622s  requests=2687
+D0_gen.tf t3v017: 32 rollouts  9075s  requests=2833
+D0_gen.tf t3v018: 32 rollouts  9572s  requests=2989
+D0_gen.tf t3v019: 32 rollouts  10070s  requests=3143
+D0_gen.tf t3v020: 32 rollouts  10593s  requests=3305
+D0_gen.tf t3v021: 32 rollouts  11084s  requests=3462
+D0_gen.tf t3v022: 32 rollouts  11526s  requests=3605
+D0_gen.tf t3v023: 32 rollouts  11962s  requests=3746
+done D0_gen.tf: 3200 rows, 11962.4s, {'requests': 3746, 'parse_failures': 783, 'cache_hits': 0, 'contradictions': 0}
