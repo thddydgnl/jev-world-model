@@ -81,15 +81,45 @@ def boot_ci(worlds: dict[str, list[dict]], stat, rng: random.Random,
     return point, lo, hi
 
 
-def paired_diff(eps: list[dict], a: str, b: str) -> float | None:
-    """Difference over situations where BOTH arms ran."""
+def paired_by_world(eps: list[dict], a: str, b: str) -> dict[str, list[int]]:
+    """Per world, the difference a - b in each situation where BOTH arms ran."""
     idx = defaultdict(dict)
     for e in eps:
         idx[(e["seed"], e["world_id"], e["root"])][e["arm"]] = e["success"]
-    both = [v for v in idx.values() if a in v and b in v]
-    if not both:
+    out: dict[str, list[int]] = defaultdict(list)
+    for (_seed, world, _root), v in idx.items():
+        if a in v and b in v:
+            out[world].append(int(v[a]) - int(v[b]))
+    return out
+
+
+def boot_paired(per_world: dict[str, list[int]], rng: random.Random,
+                b: int = B) -> tuple[float, float, float] | None:
+    """World-clustered bootstrap of a paired difference: worlds are drawn with
+    replacement and a world drawn twice counts twice.
+
+    Until 9/30 the paired gaps went through boot_ci with a statistic that
+    re-paired the resampled episodes by (seed, world, root), so a world drawn
+    twice collapsed into one copy. Each draw was then a subsample of the ~63%
+    distinct worlds and the intervals came out about a fifth too narrow
+    (K4v3: JEV - B0 [+1.6, +19.4] instead of [-1.7, +21.9]).
+    """
+    keys = sorted(per_world)
+    n = sum(len(v) for v in per_world.values())
+    if not n:
         return None
-    return sum(v[a] for v in both) / len(both) - sum(v[b] for v in both) / len(both)
+    sums = {k: (sum(v), len(v)) for k, v in per_world.items()}
+    point = sum(s for s, _ in sums.values()) / n
+    draws = []
+    for _ in range(b):
+        s = c = 0
+        for _ in keys:
+            x, m = sums[rng.choice(keys)]
+            s += x
+            c += m
+        draws.append(s / c)
+    draws.sort()
+    return point, draws[int(0.025 * b)], draws[int(0.975 * b)]
 
 
 def main() -> int:
@@ -191,7 +221,7 @@ def main() -> int:
     for hi, lo, label in pairs:
         if hi not in arms or lo not in arms:
             continue
-        ci = boot_ci(worlds, lambda v, h=hi, l=lo: paired_diff(v, h, l), rng)
+        ci = boot_paired(paired_by_world(eps, hi, lo), rng)
         if ci is None:
             continue
         sig = "" if ci[1] <= 0 <= ci[2] else "  *"
