@@ -1,0 +1,12 @@
+split arm           n  success  coverage  planner  trap  useful offered/step
+test3 A_jev       288      269         8       11     0                75.4%
+test3 B0_typed    288      239         0       49     0                89.2%
+test3 B_typed     288      267         6       15     0                78.3%
+test3 C           288       49        11      228     0                84.1%
+test3 C_fm        288      229         1       58     0                86.7%
+test3 D0_gen      288      170         2      116     0                82.9%
+test3 D_gen       288      267         6       15     0                78.1%
+test3 oracle      288      267         6       15     0                78.3%
+test3 validity    288      247         3       38     0                82.2%
+oracle 0-success worlds: []
+.venv/bin/python scripts/kiis_k4_ceiling.py --runs "${RUNS[@]}" --out   91.94s user 0.75s system 99% cpu 1:33.02 total

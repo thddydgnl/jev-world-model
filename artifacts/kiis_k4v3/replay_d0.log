@@ -1,0 +1,20 @@
+replayed 864 episodes on 288 roots; validity and success match the logs
+
+entered the goal room without the food (door open, food not carried)
+  C_fm      success 229/288  entered 61 (21%)  success after 3/61  never entered: success 226/227
+  B0_typed  success 239/288  entered 48 (17%)  success after 0/48  never entered: success 239/240
+  D0_gen    success 170/288  entered 115 (40%)  success after 0/115  never entered: success 170/173
+
+steps where the arm replaced C_fm's choice, by that choice
+  B0_typed  1948/4526 steps; replaced choice was valid in 1263, the arm's choice in 513
+    take food 177/371  take key 73/222  open 1253/1907  unlock 368/825  go 59/1104
+  D0_gen    1479/5336 steps; replaced choice was valid in 590, the arm's choice in 610
+    take food 517/758  take key 112/285  open 602/1297  unlock 76/657  go 167/2018
+
+after returning to the start room without the food (state 010): policy's first choice is the food
+  C_fm      0/464 steps
+  B0_typed  17/303 steps
+  D0_gen    27/746 steps
+
+D0 take-food parse failures (logged examples): {'same food in two places': 673, 'other': 86}
+.venv/bin/python scripts/kiis_k4_replay.py --logs artifacts/kiis_k4v3 --seeds  35.61s user 0.35s system 99% cpu 36.021 total

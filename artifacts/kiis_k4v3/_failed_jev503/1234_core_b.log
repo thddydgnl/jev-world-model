@@ -1,0 +1,44 @@
+arm A enabled: JEV forecaster
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   3%|▎         | 11/398 [00:00<00:03, 109.60it/s]Loading weights:   7%|▋         | 27/398 [00:00<00:02, 131.71it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:02, 162.39it/s]Loading weights:  17%|█▋        | 69/398 [00:00<00:01, 176.52it/s]Loading weights:  22%|██▏       | 87/398 [00:00<00:01, 175.12it/s]Loading weights:  26%|██▋       | 105/398 [00:00<00:01, 172.94it/s]Loading weights:  31%|███▏      | 125/398 [00:00<00:01, 180.92it/s]Loading weights:  37%|███▋      | 146/398 [00:00<00:01, 183.66it/s]Loading weights:  41%|████▏     | 165/398 [00:00<00:01, 182.59it/s]Loading weights:  47%|████▋     | 186/398 [00:01<00:01, 188.82it/s]Loading weights:  52%|█████▏    | 207/398 [00:01<00:00, 194.15it/s]Loading weights:  57%|█████▋    | 227/398 [00:01<00:00, 194.75it/s]Loading weights:  62%|██████▏   | 247/398 [00:01<00:00, 185.45it/s]Loading weights:  68%|██████▊   | 269/398 [00:01<00:00, 192.12it/s]Loading weights:  73%|███████▎  | 290/398 [00:01<00:00, 195.66it/s]Loading weights:  78%|███████▊  | 312/398 [00:01<00:00, 194.56it/s]Loading weights:  84%|████████▎ | 333/398 [00:01<00:00, 196.62it/s]Loading weights:  89%|████████▉ | 355/398 [00:01<00:00, 197.78it/s]Loading weights:  94%|█████████▍| 375/398 [00:02<00:00, 194.20it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 187.82it/s]
+loaded.
+condition 448b4fac3efe  split=test3  arms=['validity', 'oracle', 'A_jev']
+Traceback (most recent call last):
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 563, in <module>
+    raise SystemExit(main())
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 429, in main
+    res = run_episode(arm, root, game, meta, goal,
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 209, in run_episode
+    chosen = score_arm_a(fc, state, unique_prefixes(plans, HORIZON[0]), plans,
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 141, in score_arm_a
+    scored = list(pool.map(one, live))
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 621, in result_iterator
+    yield _result_or_cancel(fs.pop())
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 319, in _result_or_cancel
+    return fut.result(timeout)
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 458, in result
+    return self.__get_result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 124, in one
+    terms, n_inv = fc.score(state, key, prefix, p_first,
+  File "/home/yonghwi/jev-wm/src/wm/recursive_forecaster.py", line 278, in score
+    beam, n_invalid = self.rollout(canon, prefix, truth)
+  File "/home/yonghwi/jev-wm/src/wm/recursive_forecaster.py", line 259, in rollout
+    beam, fail_mass = self._advance_beam(beam, a)
+  File "/home/yonghwi/jev-wm/src/wm/recursive_forecaster.py", line 215, in _advance_beam
+    s2, p = self._advance(state, action)
+  File "/home/yonghwi/jev-wm/src/wm/recursive_forecaster.py", line 205, in _advance
+    return self._store(key, canon, self.step(canon, action))
+  File "/home/yonghwi/jev-wm/src/wm/recursive_forecaster.py", line 129, in __call__
+    vout = self.client.ask(s2, q2, tag=t2)
+  File "/home/yonghwi/jev-wm/src/jev_client.py", line 142, in ask
+    r.raise_for_status()
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '503 Service Unavailable' for url 'https://api.typesafe.ai/v1/systemone'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503

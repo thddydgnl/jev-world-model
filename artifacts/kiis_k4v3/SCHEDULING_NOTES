@@ -1,0 +1,8 @@
+2026-09-28T04:40:43Z held: generative/typed wait (gate removed) while K5v3 shares the GPUs; zero_shot units OOMed next to K5 X1 evals; restore after K5v3
+2026-09-28T04:42:13Z zero_shot units of seeds 20260921, 777, 1234 failed with CUDA OOM next to the K5v3 X1 D0 eval on GPU0 (1234 stopped by hand before its OOM); moved to _failed_oom/ to be re-run after K5v3 by a restarted queue
+2026-09-28T13:40:37Z JEV API 503 outage (~13:30-13:39Z) killed 777/core_b (5 roots) and 1234/core_b (0 roots); moved to _failed_jev503/. Scheduler run1 (336270) stopped; run2 re-queues core_b x2 and zero_shot x3, adopts 1234/core_a (348966), gates zero_shot,generative,typed until ADAPTERS_READY; client now waits out outages up to 1h (5da425d)
+2026-09-28T22:38:15Z gate reopened (ADAPTERS_READY) with PER_GPU=1: GPU0 has no K5 process left, GPU1 still runs the last K5 eval (B_typed.beam1 X1) next to 1234/core_b
+2026-09-28T23:14:56Z K5v3 and X1 done; PER_GPU=2
+2026-09-28T23:17:18Z two zero_shot units on GPU0 (about 14 GB each at working size) would not fit: stopped 777/zero_shot a few minutes in, moved to _stopped_mem/; PER_GPU=1 (one heavy unit per GPU)
+2026-09-28T23:17:51Z scheduler run3: adopts 20260921/zero_shot, 1234/zero_shot, 1234/core_b; re-queues 777/zero_shot; default gate (generative,typed; ADAPTERS_READY present); PER_GPU=1
+2026-09-29T22:31:09Z all 15 units complete; scheduler run3 (373003) exited. Kept PER_GPU=1 to the end: trained D used ~15 GB, trained B ~13 GB, so two units never fit on one GPU

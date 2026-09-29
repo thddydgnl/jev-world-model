@@ -1,0 +1,62 @@
+loading Qwen/Qwen3-4B on cuda:0 ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|          | 3/398 [00:00<00:13, 29.62it/s]Loading weights:   6%|▋         | 25/398 [00:00<00:02, 129.94it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:02, 164.52it/s]Loading weights:  18%|█▊        | 71/398 [00:00<00:01, 180.56it/s]Loading weights:  23%|██▎       | 91/398 [00:00<00:01, 183.55it/s]Loading weights:  28%|██▊       | 113/398 [00:00<00:01, 193.61it/s]Loading weights:  34%|███▍      | 135/398 [00:00<00:01, 193.05it/s]Loading weights:  39%|███▉      | 157/398 [00:00<00:01, 199.81it/s]Loading weights:  45%|████▍     | 178/398 [00:00<00:01, 196.09it/s]Loading weights:  51%|█████     | 201/398 [00:01<00:00, 205.83it/s]Loading weights:  56%|█████▌    | 223/398 [00:01<00:00, 207.27it/s]Loading weights:  61%|██████▏   | 244/398 [00:01<00:00, 204.42it/s]Loading weights:  67%|██████▋   | 265/398 [00:01<00:00, 191.98it/s]Loading weights:  72%|███████▏  | 285/398 [00:01<00:00, 184.19it/s]Loading weights:  78%|███████▊  | 309/398 [00:01<00:00, 199.18it/s]Loading weights:  83%|████████▎ | 330/398 [00:01<00:00, 193.56it/s]Loading weights:  88%|████████▊ | 350/398 [00:01<00:00, 182.86it/s]Loading weights:  93%|█████████▎| 369/398 [00:01<00:00, 181.86it/s]Loading weights:  98%|█████████▊| 390/398 [00:02<00:00, 189.57it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 190.02it/s]
+loaded.
+condition 448b4fac3efe  split=test3  arms=['B0_typed', 'D0_gen']
+Traceback (most recent call last):
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 563, in <module>
+    raise SystemExit(main())
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 429, in main
+    res = run_episode(arm, root, game, meta, goal,
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 204, in run_episode
+    chosen = score_batched(fc, state, unique_prefixes(plans, HORIZON[0]), plans,
+  File "/home/yonghwi/jev-wm/scripts/mvp_c_headroom.py", line 153, in score_batched
+    results = fc.score_many(state, live, truths)
+  File "/home/yonghwi/jev-wm/src/wm/recursive_forecaster.py", line 306, in score_many
+    preds = self.step.predict_batch(pairs)
+  File "/home/yonghwi/jev-wm/src/wm/llm_backends.py", line 316, in predict_batch
+    texts = self.scorer.generate(msgs, self.max_new_tokens)
+  File "/home/yonghwi/jev-wm/src/wm/llm_backends.py", line 268, in generate
+    gen = self.model.generate(**enc, **kw)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/generation/utils.py", line 2802, in generate
+    result = decoding_method(
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/generation/utils.py", line 3002, in _sample
+    outputs = self._prefill(
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/generation/utils.py", line 4109, in _prefill
+    return self(**model_inputs, return_dict=True)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 939, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 482, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/utils/generic.py", line 1068, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/utils/output_capturing.py", line 286, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 413, in forward
+    hidden_states = decoder_layer(
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/modeling_layers.py", line 109, in __call__
+    return super().__call__(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 321, in forward
+    hidden_states = self.mlp(hidden_states)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/jev-wm/.venv/lib/python3.10/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 82, in forward
+    down_proj = self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 104.00 MiB. GPU 0 has a total capacity of 23.58 GiB of which 104.19 MiB is free. Process 2001794 has 14.65 GiB memory in use. Process 2012858 has 8.81 GiB memory in use. Of the allocated memory 8.22 GiB is allocated by PyTorch, and 350.02 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

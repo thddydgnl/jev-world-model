@@ -1,0 +1,92 @@
+{
+ "started": "2026-09-28T13:40:37+00:00",
+ "phase": "running",
+ "gpus": [
+  0,
+  1
+ ],
+ "gated": [],
+ "gate": "/home/yonghwi/jev-wm/artifacts/kiis_k4v3/ADAPTERS_READY",
+ "units": {
+  "20260921/zero_shot": {
+   "phase": "running",
+   "arms": "B0_typed,D0_gen",
+   "gpu": 0,
+   "pid": 371622,
+   "started": "2026-09-28T22:39:07+00:00"
+  },
+  "777/zero_shot": {
+   "phase": "running",
+   "arms": "B0_typed,D0_gen",
+   "gpu": 0,
+   "pid": 372606,
+   "started": "2026-09-28T23:15:09+00:00"
+  },
+  "1234/zero_shot": {
+   "phase": "running",
+   "arms": "B0_typed,D0_gen",
+   "gpu": 1,
+   "pid": 372607,
+   "started": "2026-09-28T23:15:09+00:00"
+  },
+  "777/core_b": {
+   "phase": "complete",
+   "arms": "validity,oracle,A_jev",
+   "gpu": 0,
+   "pid": 359772,
+   "started": "2026-09-28T13:41:37+00:00",
+   "finished": "2026-09-28T22:34:06+00:00",
+   "exit_code": 0,
+   "episodes": 288,
+   "expected": 288,
+   "config_hash": "448b4fac3efe",
+   "revision": "5da425d8dc643c345d79377693357d3b5405c673 dirty_files=0 synced=2026-09-28T13:40:23Z",
+   "jev_usd": 0.9152
+  },
+  "1234/core_b": {
+   "phase": "running",
+   "arms": "validity,oracle,A_jev",
+   "gpu": 1,
+   "pid": 362290,
+   "started": "2026-09-28T15:58:44+00:00"
+  },
+  "20260921/generative": {
+   "phase": "queued",
+   "arms": "D_gen"
+  },
+  "777/generative": {
+   "phase": "queued",
+   "arms": "D_gen"
+  },
+  "1234/generative": {
+   "phase": "queued",
+   "arms": "D_gen"
+  },
+  "20260921/typed": {
+   "phase": "queued",
+   "arms": "B_typed"
+  },
+  "777/typed": {
+   "phase": "queued",
+   "arms": "B_typed"
+  },
+  "1234/typed": {
+   "phase": "queued",
+   "arms": "B_typed"
+  },
+  "1234/core_a": {
+   "phase": "complete",
+   "arms": "C,C_fm",
+   "pid": 348966,
+   "gpu": 1,
+   "finished": "2026-09-28T15:58:44+00:00",
+   "exit_code": null,
+   "episodes": 192,
+   "expected": 192,
+   "config_hash": "448b4fac3efe",
+   "revision": "206e742574f9db986a3a2aee3ef457c92951a460 dirty_files=0 synced=2026-09-28T00:24:12Z",
+   "jev_usd": 0.0
+  }
+ },
+ "per_gpu": 2
+}

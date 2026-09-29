@@ -1,0 +1,136 @@
+{
+ "started": "2026-09-27T17:11:17+00:00",
+ "phase": "running",
+ "gpus": [
+  0,
+  1
+ ],
+ "gated": [],
+ "gate": "/home/yonghwi/jev-wm/artifacts/kiis_k4v3/ADAPTERS_READY",
+ "units": {
+  "20260921/core_a": {
+   "phase": "complete",
+   "arms": "C,C_fm",
+   "gpu": 0,
+   "pid": 336272,
+   "started": "2026-09-27T17:11:17+00:00",
+   "finished": "2026-09-28T04:28:55+00:00",
+   "exit_code": 0,
+   "episodes": 192,
+   "expected": 192,
+   "config_hash": "448b4fac3efe",
+   "revision": "649150a4c888bea53a2090099cd916492a00ff07 dirty_files=0 synced=2026-09-27T16:26:28Z",
+   "jev_usd": 0.0
+  },
+  "777/core_a": {
+   "phase": "complete",
+   "arms": "C,C_fm",
+   "gpu": 1,
+   "pid": 336273,
+   "started": "2026-09-27T17:11:17+00:00",
+   "finished": "2026-09-28T03:41:52+00:00",
+   "exit_code": 0,
+   "episodes": 192,
+   "expected": 192,
+   "config_hash": "448b4fac3efe",
+   "revision": "649150a4c888bea53a2090099cd916492a00ff07 dirty_files=0 synced=2026-09-27T16:26:28Z",
+   "jev_usd": 0.0
+  },
+  "1234/core_a": {
+   "phase": "running",
+   "arms": "C,C_fm",
+   "gpu": 1,
+   "pid": 348966,
+   "started": "2026-09-28T03:41:52+00:00"
+  },
+  "20260921/zero_shot": {
+   "phase": "failed",
+   "arms": "B0_typed,D0_gen",
+   "gpu": 0,
+   "pid": 349506,
+   "started": "2026-09-28T04:28:55+00:00",
+   "finished": "2026-09-28T04:33:55+00:00",
+   "exit_code": 1,
+   "error": "'counts'"
+  },
+  "777/zero_shot": {
+   "phase": "failed",
+   "arms": "B0_typed,D0_gen",
+   "gpu": 0,
+   "pid": 349671,
+   "started": "2026-09-28T04:33:55+00:00",
+   "finished": "2026-09-28T04:38:55+00:00",
+   "exit_code": 1,
+   "error": "'counts'"
+  },
+  "1234/zero_shot": {
+   "phase": "failed",
+   "arms": "B0_typed,D0_gen",
+   "gpu": 0,
+   "pid": 349881,
+   "started": "2026-09-28T04:38:55+00:00",
+   "finished": "2026-09-28T04:39:56+00:00",
+   "exit_code": -15,
+   "error": "'counts'"
+  },
+  "20260921/core_b": {
+   "phase": "complete",
+   "arms": "validity,oracle,A_jev",
+   "gpu": 0,
+   "pid": 350087,
+   "started": "2026-09-28T04:40:56+00:00",
+   "finished": "2026-09-28T13:00:24+00:00",
+   "exit_code": 0,
+   "episodes": 288,
+   "expected": 288,
+   "config_hash": "448b4fac3efe",
+   "revision": "206e742574f9db986a3a2aee3ef457c92951a460 dirty_files=0 synced=2026-09-28T00:24:12Z",
+   "jev_usd": 0.9389
+  },
+  "777/core_b": {
+   "phase": "failed",
+   "arms": "validity,oracle,A_jev",
+   "gpu": 0,
+   "pid": 358498,
+   "started": "2026-09-28T13:00:24+00:00",
+   "finished": "2026-09-28T13:32:26+00:00",
+   "exit_code": 1,
+   "error": "'counts'"
+  },
+  "1234/core_b": {
+   "phase": "failed",
+   "arms": "validity,oracle,A_jev",
+   "gpu": 0,
+   "pid": 359404,
+   "started": "2026-09-28T13:32:26+00:00",
+   "finished": "2026-09-28T13:37:26+00:00",
+   "exit_code": 1,
+   "error": "'counts'"
+  },
+  "20260921/generative": {
+   "phase": "queued",
+   "arms": "D_gen"
+  },
+  "777/generative": {
+   "phase": "queued",
+   "arms": "D_gen"
+  },
+  "1234/generative": {
+   "phase": "queued",
+   "arms": "D_gen"
+  },
+  "20260921/typed": {
+   "phase": "queued",
+   "arms": "B_typed"
+  },
+  "777/typed": {
+   "phase": "queued",
+   "arms": "B_typed"
+  },
+  "1234/typed": {
+   "phase": "queued",
+   "arms": "B_typed"
+  }
+ },
+ "per_gpu": 0
+}
