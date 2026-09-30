@@ -419,8 +419,9 @@ def slots(cl: dict, ro: dict, r17: dict, r20: dict, small: dict) -> dict:
 def table1(s: dict, cl: dict) -> tuple[str, list[list[str]]]:
     # The paper defines the agents in its text, so the labels stay short enough
     # for each row to fit one line of a column.
+    # The validity reference (R7) is not discussed in the two-page text, so the table leaves it out.
     rows = [("C", "C"), ("C_fm", "C_fm"), ("A (JEV)", "A_jev"), ("B0", "B0_typed"), ("D0", "D0_gen"),
-            ("B", "B_typed"), ("D", "D_gen"), ("Validity", "validity"), ("Oracle", "oracle")]
+            ("B", "B_typed"), ("D", "D_gen"), ("Oracle", "oracle")]
     a = cl["arms"]
     body = [["Agent", "Success (%) [95% CI]", "Inv. (%)", "WM cost / ep."]]
     for label, arm in rows:
@@ -445,13 +446,14 @@ def table1(s: dict, cl: dict) -> tuple[str, list[list[str]]]:
 def fig2_svg(ro: dict) -> str:
     """Figure 2 at column width (about 80 mm): the canvas is 330 px wide, so
     its 11 px text prints near 8 pt when the figure fills one column."""
-    style = {"A_jev": ("#222222", "", "JEV (A)"), "B0_typed": ("#1f6fb4", "5,3", "Qwen typed (B0)"),
-             "B_typed": ("#1f6fb4", "", "Qwen+LoRA typed (B)"), "D0_gen": ("#c8372d", "5,3", "Qwen gen. (D0)"),
-             "D_gen": ("#c8372d", "", "Qwen+LoRA gen. (D)"), "persistence": ("#8a8a8a", "1.5,2.5", "persistence")}
+    # the paper's names: decision-style (B0, B) and generative (D0, D) uses of the LLM
+    style = {"A_jev": ("#222222", "", "JEV (A)"), "B0_typed": ("#1f6fb4", "5,3", "LLM, decision (B0)"),
+             "B_typed": ("#1f6fb4", "", "LLM+LoRA, decision (B)"), "D0_gen": ("#c8372d", "5,3", "LLM, generative (D0)"),
+             "D_gen": ("#c8372d", "", "LLM+LoRA, generative (D)"), "persistence": ("#8a8a8a", "1.5,2.5", "persistence")}
     panels = [("(a) Test worlds", ro["test"]["curves"], ("A_jev", "B0_typed", "B_typed", "D0_gen", "D_gen", "persistence")),
               ("(b) New structure", ro["x1"]["curves"], ("A_jev", "B_typed", "D_gen", "persistence"))]
-    W, pw, ph, top, left, gap = 330, 126, 116, 20, 40, 26
-    H = top + ph + 42 + 3 * 15 + 2
+    W, pw, ph, top, left, gap = 330, 126, 102, 20, 40, 26
+    H = top + ph + 42 + 3 * 14 + 2
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
            'font-family="Helvetica, Arial, sans-serif" font-size="11">',
            f'<rect width="{W}" height="{H}" fill="white"/>']
@@ -483,7 +485,7 @@ def fig2_svg(ro: dict) -> str:
     for j, m in enumerate(("A_jev", "persistence", "B_typed", "B0_typed", "D_gen", "D0_gen")):
         color, dash, label = style[m]
         lx = 8 + (j % 2) * 166
-        y = top + ph + 44 + (j // 2) * 15
+        y = top + ph + 44 + (j // 2) * 14
         dash_attr = f' stroke-dasharray="{dash}"' if dash else ""
         out.append(f'<line x1="{lx}" y1="{y}" x2="{lx + 20}" y2="{y}" stroke="{color}" stroke-width="1.6"{dash_attr}/>')
         out.append(f'<text x="{lx + 25}" y="{y + 4}">{label}</text>')
@@ -503,6 +505,7 @@ def build() -> dict:
             "bootstrap": {"draws": aa.B, "clusters": "world (24)", "seed": SEED},
             "slots": s, "verdicts": v, "sentences": sentences(v),
             "abstract_online": {"C": f"{100 * a['C']['success']:.0f}",
+                                "A": f"{100 * a['A_jev']['success']:.0f}",
                                 "world_models": "–".join(wm),
                                 "C_fm": f"{100 * a['C_fm']['success']:.0f}",
                                 "B0_minus_D0": f"{100 * cl['tests']['H2  B0 - D0']['diff']:.0f}"},

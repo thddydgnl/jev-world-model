@@ -37,15 +37,13 @@ TEMPLATE = PAPER / "KIIS2026f학술대회투고양식-word.docx"
 DOCX = PAPER / "KIIS2026f_원고.docx"
 FIGURES = {"fig1": PAPER / "fig1.svg", "fig2": RESULTS / "fig2.svg"}
 
-COL_TWIPS = 4572            # one column: (11905 - 2 * 1020 - 720) / 2
 FIG_EMU = 2_860_000         # figure width, just under the column (914400 EMU per inch)
 TABLE_WIDTHS = (740, 1540, 800, 1400)
 MJ, GD = "신명조", "HY중고딕"
 
 # What the text asserts; the build stops if slots.json says otherwise.
-EXPECTED = {"H1": "holds", "H1b": "holds", "H2": "holds", "H3": "holds", "H4": "not distinguishable",
-            "H5": "not distinguishable", "H4 k-step (test)": "holds", "H5 k-step": "holds",
-            "H7": "holds", "H8": "other"}
+EXPECTED = {"H1": "holds", "H1b": "holds", "H2": "holds", "H3": "holds", "H5": "not distinguishable",
+            "H4 k-step (test)": "holds", "H5 k-step": "holds", "H7": "holds"}
 
 
 # ------------------------------------------------------------------ numbers
@@ -62,6 +60,23 @@ def values(s: dict) -> dict[str, str]:
     if r8["B_typed - oracle"]["positive"] or r8["B_typed - oracle"]["negative"] \
             or r8["D_gen - oracle"]["positive"] or r8["D_gen - oracle"]["negative"]:
         raise SystemExit("the text says B and D match the oracle in every episode; slots.json disagrees")
+    if r8["A_jev - oracle"]["verdict"] != "not distinguishable":
+        raise SystemExit("the text says JEV is not distinguishable from the oracle; slots.json disagrees")
+    x1 = S["R16"]["x1_k4"]
+    if not (float(x1["B_typed"]) < float(x1["A_jev"]) and float(x1["D_gen"]) < float(x1["A_jev"])):
+        raise SystemExit("the text says B and D fall below JEV on the new structure; slots.json disagrees")
+    cur4 = {m: S["R11"]["curves"][m]["4"]["value"] for m in ("B0_typed", "D0_gen", "persistence")}
+    if not (cur4["B0_typed"] < cur4["persistence"] and cur4["D0_gen"] < cur4["persistence"]):
+        raise SystemExit("the text says the untrained LLM is below persistence at four steps; slots.json disagrees")
+    if r8["D0 - C_fm"]["verdict"] != "below 0":
+        raise SystemExit("the text says D0 is below C_fm; slots.json disagrees")
+    parsed = S["R12"]["content_on_parsed_rows"]["test"]["d0_parsed"]
+    if parsed["D0_gen"] < parsed["B0_typed"]:
+        raise SystemExit("the text says D0 is no less accurate than B0 on the replies that parse; slots.json disagrees")
+    if S["R11"]["k_step_tests"]["D - A"]["verdict"] != "above 0":
+        raise SystemExit("the text says the fine-tuned D predicts more accurately than JEV; slots.json disagrees")
+    if any(S["R16"]["vs_A_jev"][k]["verdict"] != "holds" for k in ("B_typed - A_jev", "D_gen - A_jev")):
+        raise SystemExit("the text says B and D drop more than JEV on the new structure; slots.json disagrees")
     mag = lambda d: d["text"].lstrip("+-")
     tf = S["R12"]["teacher_forced"]["test"]
     ent = S["R19"]["entered"]
@@ -74,7 +89,8 @@ def values(s: dict) -> dict[str, str]:
     pct = lambda pair: f"{100 * pair[0] / pair[1]:.0f}"
     return {
         "C": S["R1"]["text"], "C_fm": r15["C_fm"]["text"], "A": S["R2"]["text"], "B0": S["R3"]["text"],
-        "D0": S["R4"]["text"], "B": S["R5"]["text"], "D": S["R6"]["text"],
+        "D0": S["R4"]["text"], "B": S["R5"]["text"], "D": S["R6"]["text"], "oracle": S["R7"]["oracle"]["text"],
+        "x1_A_k4": x1["A_jev"], "x1_B_k4": x1["B_typed"], "x1_D_k4": x1["D_gen"],
         "n_ep": str(S["R1"]["n"]), "N": f"{S['R14']['n_transitions']:,}",
         "dA_Cfm": mag(a_cfm), "dA_Cfm_ci": a_cfm["ci_text"], "dBD_Cfm": mag(b_cfm), "dBD_Cfm_ci": b_cfm["ci_text"],
         "dB0_D0": mag(r8["H2  B0 - D0"]), "dB0_D0_ci": r8["H2  B0 - D0"]["ci_text"],
@@ -87,6 +103,8 @@ def values(s: dict) -> dict[str, str]:
         "starts": str(S["R11"]["rollouts"] // 2), "rollouts": str(S["R11"]["rollouts"]),
         "B_k4": cur["B_typed"]["4"]["text"], "D_k4": cur["D_gen"]["4"]["text"],
         "A_k1": cur["A_jev"]["1"]["text"], "A_k4": cur["A_jev"]["4"]["text"],
+        "B0_k4": cur["B0_typed"]["4"]["text"], "D0_k4": cur["D0_gen"]["4"]["text"],
+        "pers_k4": cur["persistence"]["4"]["text"],
         "h7_B": mag(h7["B_typed - A_jev"]), "h7_B_ci": h7["B_typed - A_jev"]["ci_text"],
         "h7_D": mag(h7["D_gen - A_jev"]), "h7_D_ci": h7["D_gen - A_jev"]["ci_text"],
         "overlap": S["R20"]["text"], "v1": f"{100 * v1['oracle'][0] / v1['oracle'][1]:.1f}",
@@ -143,8 +161,6 @@ def parse(text: str) -> tuple[dict, list]:
             flush(); blocks.append(("h2", line[3:].strip()))
         elif line.startswith("# "):
             flush(); blocks.append(("h1", line[2:].strip()))
-        elif line.strip() == "@equation":
-            flush(); blocks.append(("eq", None))
         elif line.startswith("@figure "):
             flush(); blocks.append(("fig", [x.strip() for x in line[8:].split("|")]))
         elif line.startswith("@table "):
@@ -157,9 +173,6 @@ def parse(text: str) -> tuple[dict, list]:
             para.append(line.strip())
     flush()
     return meta, blocks
-
-
-EQUATION_TEXT = "J(u) = P(G | s, u) + α·prog(s, u) − λ·E[N_inv(u)] − c·|u| + β·b_π(u)    (1)"
 
 
 def table_rows() -> list[list[str]]:
@@ -180,8 +193,6 @@ def markdown(meta: dict, blocks: list) -> str:
             out += [f"### {val}", ""]
         elif kind == "p":
             out += [md(val), ""]
-        elif kind == "eq":
-            out += [f"    {EQUATION_TEXT}", ""]
         elif kind == "fig":
             name, ko, en = val
             out += [f"![{ko}]({name}.png)", "", ko + "  ", en, ""]
@@ -216,13 +227,16 @@ def rpr(fonts: str = "", bold=False, italic=False, sz=None, szcs=None, va=None) 
 
 
 def runs(text: str, fonts: str = "", **kw) -> str:
-    """Inline markup (~sub~, ^sup^, *italic*) to runs."""
+    """Inline markup (~sub~, ^sup^, *italic*, **bold**) to runs."""
     out = []
-    for tok in re.split(r"(\*[^*]+\*|~[^~]+~|\^[^^]+\^)", text):
+    for tok in re.split(r"(\*\*[^*]+\*\*|\*[^*]+\*|~[^~]+~|\^[^^]+\^)", text):
         if not tok:
             continue
         extra = dict(kw)
-        if len(tok) > 2 and tok[0] == tok[-1] and tok[0] in "*~^":
+        if len(tok) > 4 and tok.startswith("**") and tok.endswith("**"):
+            extra["bold"] = True
+            tok = tok[2:-2]
+        elif len(tok) > 2 and tok[0] == tok[-1] and tok[0] in "*~^":
             extra.update({"*": {"italic": True}, "~": {"va": "subscript"}, "^": {"va": "superscript"}}[tok[0]])
             tok = tok[1:-1]
         out.append(f'<w:r>{rpr(fonts, **extra)}<w:t xml:space="preserve">{escape(tok)}</w:t></w:r>')
@@ -233,8 +247,8 @@ def p(ppr: str, content: str = "") -> str:
     return f"<w:p><w:pPr>{ppr}</w:pPr>{content}</w:p>"
 
 
-def blank(style: str = "a5") -> str:
-    return p(f'<w:pStyle w:val="{style}"/><w:wordWrap/>{SP}')
+def blank(style: str = "a5", keep: bool = False) -> str:
+    return p(f'<w:pStyle w:val="{style}"/>{"<w:keepNext/>" if keep else ""}<w:wordWrap/>{SP}')
 
 
 def body(text: str) -> str:
@@ -243,29 +257,18 @@ def body(text: str) -> str:
 
 
 def h1(text: str) -> str:
-    return p(f'<w:pStyle w:val="1"/>{SP}{rpr(rfonts(GD, False), szcs=22)}', runs(text, rfonts(GD), szcs=22))
+    return p(f'<w:pStyle w:val="1"/><w:keepNext/>{SP}{rpr(rfonts(GD, False), szcs=22)}', runs(text, rfonts(GD), szcs=22))
 
 
 def h2(text: str) -> str:
-    return p(f'<w:pStyle w:val="a5"/><w:wordWrap/>{SP}<w:ind w:firstLine="0"/>{rpr(rfonts(MJ, False), bold=True)}',
-             runs(text, rfonts(MJ), bold=True))
+    # keepNext: a heading never stays alone at the foot of a column
+    return p(f'<w:pStyle w:val="a5"/><w:keepNext/><w:wordWrap/>{SP}<w:ind w:firstLine="0"/>'
+             + rpr(rfonts(MJ, False), bold=True), runs(text, rfonts(MJ), bold=True))
 
 
 def centered(text: str, style: str = "a5", keep: bool = False) -> str:
     return p(f'<w:pStyle w:val="{style}"/>{"<w:keepNext/>" if keep else ""}<w:wordWrap/>{SP}<w:jc w:val="center"/>'
              + rpr(rfonts(MJ, False)), runs(text, rfonts(MJ)))
-
-
-def equation() -> str:
-    cm = '<w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>'
-    mr = lambda t, plain=False: ("<m:r>" + ('<m:rPr><m:sty m:val="p"/></m:rPr>' if plain else "")
-                                 + f'<w:rPr>{cm}</w:rPr><m:t xml:space="preserve">{escape(t)}</m:t></m:r>')
-    sub = lambda e, s: (f"<m:sSub><m:sSubPr><m:ctrlPr><w:rPr>{cm}<w:i/></w:rPr></m:ctrlPr></m:sSubPr>"
-                        f"<m:e>{e}</m:e><m:sub>{s}</m:sub></m:sSub>")
-    math = ("<m:oMath>" + mr("J(u)=P(G|s,u)+α·") + mr("prog", True) + mr("(s,u)−λ·E[")
-            + sub(mr("N"), mr("inv", True)) + mr("(u)]−c|u|+β·") + sub(mr("b"), mr("π")) + mr("(u)") + "</m:oMath>")
-    ppr = f'<w:pStyle w:val="a5"/><w:tabs><w:tab w:val="right" w:pos="{COL_TWIPS}"/></w:tabs><w:wordWrap/>{SP}'
-    return p(ppr, math + f'<w:r>{rpr(rfonts(MJ))}<w:tab/><w:t>(1)</w:t></w:r>')
 
 
 def picture(rid: str, name: str, cx: int, cy: int, uid: int) -> str:
@@ -307,8 +310,8 @@ def table(rows: list[list[str]]) -> str:
             text = text.replace("C_fm", "C~fm~")
             out.append(
                 f'<w:tc><w:tcPr><w:tcW w:w="{width}" w:type="dxa"/><w:tcBorders>{borders}</w:tcBorders>'
-                '<w:tcMar><w:top w:w="28" w:type="dxa"/><w:left w:w="45" w:type="dxa"/>'
-                '<w:bottom w:w="28" w:type="dxa"/><w:right w:w="45" w:type="dxa"/></w:tcMar>'
+                '<w:tcMar><w:top w:w="12" w:type="dxa"/><w:left w:w="45" w:type="dxa"/>'
+                '<w:bottom w:w="12" w:type="dxa"/><w:right w:w="45" w:type="dxa"/></w:tcMar>'
                 '<w:vAlign w:val="center"/></w:tcPr>'
                 + p(f'<w:pStyle w:val="a5"/>{keep}<w:wordWrap/>{SP}<w:ind w:firstLine="0"/>'
                     f'<w:jc w:val="{"left" if j == 0 and i else "center"}"/>{rpr(rfonts(MJ, False), sz=16, szcs=16)}',
@@ -390,15 +393,13 @@ def build_docx(meta: dict, blocks: list, pngs: dict) -> None:
     rels, uid, first_h1, first_ref = [], 100, True, True
     for i, (kind, val) in enumerate(blocks):
         if kind == "h1":
-            out += ([] if first_h1 else [blank(), blank()]) + [h1(val), blank()]
+            out += ([] if first_h1 else [blank(), blank()]) + [h1(val), blank(keep=True)]
             first_h1 = False
         elif kind == "h2":
             prev = blocks[i - 1][0] if i else ""
             out += ([] if prev == "h1" else [blank()]) + [h2(val)]
         elif kind == "p":
             out.append(body(val))
-        elif kind == "eq":
-            out += [blank(), equation(), blank()]
         elif kind == "fig":
             name, ko, en = val
             w, h = pngs[name][1]

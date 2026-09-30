@@ -7,7 +7,6 @@
 | D0 | 59.0 [48.6, 69.1] | 36.3 | 115 GPU-s |
 | B | 92.7 [85.8, 97.9] | 13.2 | 42 GPU-s |
 | D | 92.7 [85.8, 97.9] | 13.2 | 73 GPU-s |
-| Validity | 85.8 [77.8, 92.7] | 10.8 | – |
 | Oracle | 92.7 [85.8, 97.9] | 12.8 | – |
 
 N = 6,000 training transitions for B and D (B 13.9, D 4.5 GPU-h). Parse failures per one-step prediction: D0 26.0%, D 0.1%. B and D matched the full oracle's outcome in every episode.

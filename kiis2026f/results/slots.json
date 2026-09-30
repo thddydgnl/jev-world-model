@@ -1,5 +1,5 @@
 {
- "revision": "b7cbd2d",
+ "revision": "0776e95",
  "condition": "448b4fac3efe",
  "episodes": 2592,
  "bootstrap": {
@@ -1338,6 +1338,7 @@
  },
  "abstract_online": {
   "C": "17",
+  "A": "93",
   "world_models": "93",
   "C_fm": "80",
   "B0_minus_D0": "24"

@@ -1,37 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="330" height="166" viewBox="0 0 330 166" font-family="Helvetica, Arial, sans-serif" font-size="11">
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
-<rect width="330" height="166" fill="white"/>
-<g fill="#f4f4f4" stroke="#444" stroke-width="0.8">
-<rect x="6" y="6" width="104" height="22" rx="3"/>
-<rect x="125" y="6" width="96" height="22" rx="3"/>
-<rect x="236" y="6" width="88" height="22" rx="3"/>
-<rect x="6" y="122" width="108" height="22" rx="3"/>
-<rect x="131" y="122" width="68" height="22" rx="3"/>
-<rect x="216" y="122" width="108" height="22" rx="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="330" height="134" viewBox="0 0 330 134" font-family="Helvetica, Arial, sans-serif" font-size="10">
+<rect width="330" height="134" fill="white"/>
+<rect x="4" y="3" width="322" height="29" rx="3" fill="#f4f4f4" stroke="#444" stroke-width="0.8"/>
+<text x="10" y="14.5"><tspan font-weight="bold">State:</tspan> player in room A · apple on table · door locked</text>
+<text x="10" y="26.5"><tspan font-weight="bold">Action:</tspan> take apple from table</text>
+<rect x="4" y="36" width="159" height="94" rx="3" fill="#e8f0fa" stroke="#1f6fb4" stroke-width="0.8"/>
+<rect x="167" y="36" width="159" height="94" rx="3" fill="#fbecea" stroke="#c8372d" stroke-width="0.8"/>
+<text x="83.5" y="48" text-anchor="middle" font-weight="bold">Decision-style: JEV or LLM</text>
+<text x="10" y="61">Q: Does the command execute?</text>
+<text x="18" y="72">executes</text><rect x="61" y="66" width="42" height="6" fill="#1f6fb4"/>
+<text x="112" y="72">fails</text><rect x="135" y="66" width="4" height="6" fill="#1f6fb4"/>
+<text x="10" y="86">Q: Where is the apple then?</text>
+<text x="18" y="97">inventory</text><rect x="64" y="91" width="42" height="6" fill="#1f6fb4"/>
+<text x="112" y="97">on table</text><rect x="152" y="91" width="4" height="6" fill="#1f6fb4"/>
+<text x="18" y="108">in box</text><rect x="49" y="102" width="3" height="6" fill="#1f6fb4"/>
+<text x="60" y="108">on floor</text><rect x="99" y="102" width="3" height="6" fill="#1f6fb4"/>
+<text x="112" y="108">eaten</text><rect x="140" y="102" width="3" height="6" fill="#1f6fb4"/>
+<text x="10" y="123" font-size="9" font-style="italic">7 questions per action, fixed options</text>
+<text x="246.5" y="48" text-anchor="middle" font-weight="bold">Generative: LLM</text>
+<text x="173" y="61">Writes the next state as text:</text>
+<g font-family="Menlo, Courier, monospace" font-size="9.2">
+<text x="181" y="73">result: executes</text>
+<text x="181" y="84">on(apple, table)</text>
+<text x="181" y="95">in(apple, inventory)</text>
 </g>
-<rect x="6" y="44" width="318" height="62" rx="3" fill="white" stroke="#444" stroke-width="0.8"/>
-<rect x="14" y="64" width="146" height="35" rx="3" fill="#e8f0fa" stroke="#1f6fb4" stroke-width="0.8"/>
-<rect x="168" y="64" width="148" height="35" rx="3" fill="#fbecea" stroke="#c8372d" stroke-width="0.8"/>
-<g text-anchor="middle" fill="#111">
-<text x="58" y="21">Policy (Qwen3-4B)</text>
-<text x="173" y="21">Candidate plans</text>
-<text x="280" y="21">Failure memory</text>
-<text x="165" y="58">World model: one-step prediction, applied repeatedly</text>
-<text x="87" y="78" font-weight="bold">Typed (JEV style)</text>
-<text x="87" y="92" font-size="10">options → probabilities</text>
-<text x="242" y="78" font-weight="bold">Generative</text>
-<text x="242" y="92" font-size="10">next-state facts → parser</text>
-<text x="60" y="137">Imagined end state</text>
-<text x="165" y="137">Utility (1)</text>
-<text x="270" y="137">Execute 1st action</text>
-<text x="165" y="159" font-size="10" font-style="italic">then re-plan from the real observation</text>
-</g>
-<g stroke="#333" stroke-width="1" fill="none" marker-end="url(#arr)">
-<line x1="110" y1="17" x2="124" y2="17"/>
-<line x1="221" y1="17" x2="235" y2="17"/>
-<line x1="280" y1="28" x2="280" y2="43"/>
-<line x1="60" y1="106" x2="60" y2="121"/>
-<line x1="114" y1="133" x2="130" y2="133"/>
-<line x1="199" y1="133" x2="215" y2="133"/>
-</g>
+<text x="173" y="110" fill="#a02018" font-weight="bold">apple in two places →</text>
+<text x="173" y="122" fill="#a02018">unparseable, counted as “fails”</text>
 </svg>
