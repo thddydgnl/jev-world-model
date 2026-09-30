@@ -374,6 +374,7 @@ def slots(cl: dict, ro: dict, r17: dict, r20: dict, small: dict) -> dict:
                 "gpu_s_per_ep": {m: a[m]["wm_gpu_s_per_ep"] for m in ("B0_typed", "D0_gen", "B_typed", "D_gen")},
                 "training_gpu_h": small["R14"]["gpu_hours"]},
         "R11": {"what": "exact state match, free-running, test worlds (%)",
+                "rollouts": test["rollouts"],
                 "curves": {m: {k: {"value": c["value"], **({"ci": c["ci"]} if "ci" in c else {}),
                                    "text": pct(c["value"])} for k, c in cs.items()}
                            for m, cs in test["curves"].items()},
@@ -394,6 +395,7 @@ def slots(cl: dict, ro: dict, r17: dict, r20: dict, small: dict) -> dict:
         "R15": {"C_fm": arm("C_fm", "C_fm success (%)"),
                 **{n: diff(t[n]) for n in ("H1b A - C_fm", "H1b B - C_fm", "H1b D - C_fm")}},
         "R16": {"what": "X1: per-world drop of k=1..4 exact (test - X1), paired against JEV",
+                "rollouts": x1["rollouts"],
                 "vs_A_jev": {n: diff(d) for n, d in ro["h7"]["vs_A_jev"].items()},
                 "mean_drop": {m: pp(v) for m, v in ro["h7"]["mean_drop"].items()},
                 "x1_k4": {m: pct(x1["curves"][m][str(DEPTH)]["value"]) for m in MODELS},
@@ -415,12 +417,12 @@ def slots(cl: dict, ro: dict, r17: dict, r20: dict, small: dict) -> dict:
 
 
 def table1(s: dict, cl: dict) -> tuple[str, list[list[str]]]:
-    rows = [("Base agent, no WM (C)", "C"), ("+ failure memory, no WM (C_fm)", "C_fm"),
-            ("JEV, typed, frozen (A)", "A_jev"), ("Qwen, typed, zero-shot (B0)", "B0_typed"),
-            ("Qwen, generative, zero-shot (D0)", "D0_gen"), ("Qwen+LoRA, typed (B)", "B_typed"),
-            ("Qwen+LoRA, generative (D)", "D_gen"), ("Validity oracle", "validity"), ("Full oracle", "oracle")]
+    # The paper defines the agents in its text, so the labels stay short enough
+    # for each row to fit one line of a column.
+    rows = [("C", "C"), ("C_fm", "C_fm"), ("A (JEV)", "A_jev"), ("B0", "B0_typed"), ("D0", "D0_gen"),
+            ("B", "B_typed"), ("D", "D_gen"), ("Validity", "validity"), ("Oracle", "oracle")]
     a = cl["arms"]
-    body = [["Agent", "Success (%) [95% CI]", "Invalid (%)", "WM cost / ep."]]
+    body = [["Agent", "Success (%) [95% CI]", "Inv. (%)", "WM cost / ep."]]
     for label, arm in rows:
         if arm == "A_jev":
             cost = f"{a[arm]['wm_requests_per_ep']:.0f} req., ${cl['jev']['per_episode_usd']:.3f}"
@@ -441,46 +443,50 @@ def table1(s: dict, cl: dict) -> tuple[str, list[list[str]]]:
 
 
 def fig2_svg(ro: dict) -> str:
-    style = {"A_jev": ("#222222", "", "JEV (A)"), "B0_typed": ("#1f6fb4", "6,4", "Qwen typed (B0)"),
-             "B_typed": ("#1f6fb4", "", "Qwen+LoRA typed (B)"), "D0_gen": ("#c8372d", "6,4", "Qwen gen. (D0)"),
-             "D_gen": ("#c8372d", "", "Qwen+LoRA gen. (D)"), "persistence": ("#8a8a8a", "2,3", "persistence")}
+    """Figure 2 at column width (about 80 mm): the canvas is 330 px wide, so
+    its 11 px text prints near 8 pt when the figure fills one column."""
+    style = {"A_jev": ("#222222", "", "JEV (A)"), "B0_typed": ("#1f6fb4", "5,3", "Qwen typed (B0)"),
+             "B_typed": ("#1f6fb4", "", "Qwen+LoRA typed (B)"), "D0_gen": ("#c8372d", "5,3", "Qwen gen. (D0)"),
+             "D_gen": ("#c8372d", "", "Qwen+LoRA gen. (D)"), "persistence": ("#8a8a8a", "1.5,2.5", "persistence")}
     panels = [("(a) Test worlds", ro["test"]["curves"], ("A_jev", "B0_typed", "B_typed", "D0_gen", "D_gen", "persistence")),
-              ("(b) New structure (X1)", ro["x1"]["curves"], ("A_jev", "B_typed", "D_gen", "persistence"))]
-    W, H, pw, ph, top, left, gap = 700, 350, 280, 220, 30, 55, 60
+              ("(b) New structure", ro["x1"]["curves"], ("A_jev", "B_typed", "D_gen", "persistence"))]
+    W, pw, ph, top, left, gap = 330, 126, 116, 20, 40, 26
+    H = top + ph + 42 + 3 * 15 + 2
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
-           'font-family="Helvetica, Arial, sans-serif" font-size="12">',
+           'font-family="Helvetica, Arial, sans-serif" font-size="11">',
            f'<rect width="{W}" height="{H}" fill="white"/>']
     for i, (title, curves, models) in enumerate(panels):
         x0 = left + i * (pw + gap)
         X = lambda k: x0 + (k - 1) * pw / 3
         Y = lambda v: top + ph * (1 - v)
-        out.append(f'<text x="{x0 + pw / 2}" y="{top - 10}" text-anchor="middle" font-weight="bold">{title}</text>')
+        out.append(f'<text x="{x0 + pw / 2}" y="{top - 7}" text-anchor="middle" font-weight="bold">{title}</text>')
         for v in range(0, 101, 20):
             y = Y(v / 100)
-            out.append(f'<line x1="{x0}" y1="{y}" x2="{x0 + pw}" y2="{y}" stroke="#e5e5e5"/>')
-            out.append(f'<text x="{x0 - 6}" y="{y + 4}" text-anchor="end">{v}</text>')
+            out.append(f'<line x1="{x0}" y1="{y}" x2="{x0 + pw}" y2="{y}" stroke="#e5e5e5" stroke-width="0.7"/>')
+            if i == 0:
+                out.append(f'<text x="{x0 - 5}" y="{y + 4}" text-anchor="end">{v}</text>')
         for k in range(1, DEPTH + 1):
-            out.append(f'<text x="{X(k)}" y="{top + ph + 16}" text-anchor="middle">{k}</text>')
-        out.append(f'<rect x="{x0}" y="{top}" width="{pw}" height="{ph}" fill="none" stroke="#444"/>')
-        out.append(f'<text x="{x0 + pw / 2}" y="{top + ph + 34}" text-anchor="middle">rollout steps k</text>')
+            out.append(f'<text x="{X(k)}" y="{top + ph + 13}" text-anchor="middle">{k}</text>')
+        out.append(f'<rect x="{x0}" y="{top}" width="{pw}" height="{ph}" fill="none" stroke="#444" stroke-width="0.8"/>')
+        out.append(f'<text x="{x0 + pw / 2}" y="{top + ph + 27}" text-anchor="middle">rollout steps k</text>')
         if i == 0:
-            out.append(f'<text transform="translate({x0 - 38},{top + ph / 2}) rotate(-90)" text-anchor="middle">'
+            out.append(f'<text transform="translate(10,{top + ph / 2}) rotate(-90)" text-anchor="middle">'
                        'exact state match (%)</text>')
         for m in models:
             color, dash, _ = style[m]
-            pts = " ".join(f"{X(k)},{Y(curves[m][str(k)]['value'])}" for k in range(1, DEPTH + 1))
+            pts = " ".join(f"{X(k):.1f},{Y(curves[m][str(k)]['value']):.1f}" for k in range(1, DEPTH + 1))
             dash_attr = f' stroke-dasharray="{dash}"' if dash else ""
-            out.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2"{dash_attr}/>')
+            out.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="1.6"{dash_attr}/>')
             if m != "persistence":
                 for k in range(1, DEPTH + 1):
-                    out.append(f'<circle cx="{X(k)}" cy="{Y(curves[m][str(k)]["value"])}" r="3" fill="{color}"/>')
-    for j, m in enumerate(("A_jev", "B_typed", "D_gen", "persistence", "B0_typed", "D0_gen")):
+                    out.append(f'<circle cx="{X(k):.1f}" cy="{Y(curves[m][str(k)]["value"]):.1f}" r="2.3" fill="{color}"/>')
+    for j, m in enumerate(("A_jev", "persistence", "B_typed", "B0_typed", "D_gen", "D0_gen")):
         color, dash, label = style[m]
-        lx = left + (j % 3) * 200
-        y = top + ph + 58 + (j // 3) * 20
+        lx = 8 + (j % 2) * 166
+        y = top + ph + 44 + (j // 2) * 15
         dash_attr = f' stroke-dasharray="{dash}"' if dash else ""
-        out.append(f'<line x1="{lx}" y1="{y}" x2="{lx + 24}" y2="{y}" stroke="{color}" stroke-width="2"{dash_attr}/>')
-        out.append(f'<text x="{lx + 30}" y="{y + 4}">{label}</text>')
+        out.append(f'<line x1="{lx}" y1="{y}" x2="{lx + 20}" y2="{y}" stroke="{color}" stroke-width="1.6"{dash_attr}/>')
+        out.append(f'<text x="{lx + 25}" y="{y + 4}">{label}</text>')
     out.append("</svg>")
     return "\n".join(out) + "\n"
 

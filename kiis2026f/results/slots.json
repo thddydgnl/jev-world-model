@@ -1,5 +1,5 @@
 {
- "revision": "0d1c0dd",
+ "revision": "016b3d6",
  "condition": "448b4fac3efe",
  "episodes": 2592,
  "bootstrap": {
@@ -438,6 +438,7 @@
   },
   "R11": {
    "what": "exact state match, free-running, test worlds (%)",
+   "rollouts": 800,
    "curves": {
     "A_jev": {
      "1": {
@@ -853,6 +854,7 @@
   },
   "R16": {
    "what": "X1: per-world drop of k=1..4 exact (test - X1), paired against JEV",
+   "rollouts": 400,
    "vs_A_jev": {
     "B_typed - A_jev": {
      "value": 0.25550832312091504,
