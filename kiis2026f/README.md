@@ -51,7 +51,7 @@ KIIS 이후 저널·큰 학회로 확장하는 계획은 [`../fullpaper/`](../fu
   - [x] V0 구현 · [x] V1 보정 (dev·val, 후보 부족으로 미달 → V1b로 전환) · [x] V1b 보정 → v2 조건 P1′+P2+T3 (oracle 88.5%, validity 71.2%, 차이 +17.3%p, C 7.7%) · [x] V2 동결 (C_fm·X1·H7 추가, smoke 통과) · [x] V3 B·D 재학습 (9/27, B0 63.0% → B 100%, D0 39.5% → D 99.5%, 점검 14/14) · [x] V4 K4v2 → **9/27 중단, v2 pilot** (test에서 oracle 56.8%, JEV 79.5% > oracle — 보정이 test로 옮겨지지 않음)
 - [x] **v3 재보정** (9/27 결정, [실험계획.md](실험계획.md) §4 W): T3 제거, G1 ≥ 90%·G5 단조성, 이름이 다양한 보정 세트, P3(반복 깨기), 새 test 어휘, B·D는 v1 어댑터 재사용 후보
   - [x] W0 구현 · [x] W1 보정 (W-b = P1′+P2+P3, G1–G5 통과: oracle 94%, cal_test 91.7%, 차이 +16%p) · [x] W2 v3 동결 (F3 `448b4fac3efe`, v1 어댑터 재사용 B 100%·D 99.5%, smoke 통과) · [x] W3 K4v3 (9/30 07:31 완료: oracle 92.7% · A 93.4% · B·D 92.7% (oracle과 288 episode 모두 같음) · B0 83.0% · D0 59.0% · C_fm 79.5%; H1·H1b·H2·H3 성립, H4·H5 구분 안 됨, [결과](../artifacts/kiis_k4v3/README.md)) · [x] W4 K5v3+X1+H8 (9/29 08:05 완료: H7 성립, H8 구분 안 됨, [결과](../artifacts/kiis_k5v3/README.md))
-- [ ] K6 분석 — 표 1, 그림 2, 슬롯 채움
+- [x] K6 분석 (9/30) — `scripts/kiis_report.py` → [results/](results/README.md): `slots.json`(R1–R20·판정·§5 문장), 표 1, 그림 2. 추가 실험 없음 (사용자 결정)
 - [ ] K7 집필 → 최종 제출 (10/23)
 
 ## 흔들리지 않기 위한 규칙 세 가지

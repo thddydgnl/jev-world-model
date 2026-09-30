@@ -139,18 +139,18 @@ def replay_all(logs, seeds):
     return out
 
 
-def report(R):
-    n_roots = len({(x["seed"], x["world"], x["root"]) for x in R})
-    print(f"replayed {len(R)} episodes on {n_roots} roots; validity and success match the logs")
-    print("\nentered the goal room without the food (door open, food not carried)")
+def summarize(R) -> dict:
+    """The numbers report() prints, for kiis_report.py."""
+    out = {"episodes": len(R), "roots": len({(x["seed"], x["world"], x["root"]) for x in R}),
+           "goal_room_without_food": {}, "overrides": {}, "back_in_start_room": {}}
     for arm in ARMS:
         xs = [x for x in R if x["arm"] == arm]
         hit = [x for x in xs if any(r["c_atoms"][0] == "0" and r["c_atoms"][2] == "1" for r in x["rows"])]
         miss = [x for x in xs if x not in hit]
         sr = lambda v: sum(x["episode"]["success"] for x in v)
-        print(f"  {arm:9s} success {sr(xs)}/{len(xs)}  entered {len(hit)} ({100 * len(hit) / len(xs):.0f}%)"
-              f"  success after {sr(hit)}/{len(hit)}  never entered: success {sr(miss)}/{len(miss)}")
-    print("\nsteps where the arm replaced C_fm's choice, by that choice")
+        out["goal_room_without_food"][arm] = {
+            "n": len(xs), "success": sr(xs), "entered": len(hit), "success_after": sr(hit),
+            "never_entered": len(miss), "success_never_entered": sr(miss)}
     for arm in ("B0_typed", "D0_gen"):
         n, o = Counter(), Counter()
         rows = [r for x in R if x["arm"] == arm for r in x["rows"]]
@@ -158,10 +158,11 @@ def report(R):
             n[kind(r["default"])] += 1
             o[kind(r["default"])] += r["override"]
         ov = [r for r in rows if r["override"]]
-        print(f"  {arm:9s} {len(ov)}/{len(rows)} steps; replaced choice was valid in "
-              f"{sum(r['d_valid'] for r in ov)}, the arm's choice in {sum(r['c_valid'] for r in ov)}")
-        print("    " + "  ".join(f"{k} {o[k]}/{n[k]}" for k in ("take food", "take key", "open", "unlock", "go") if n[k]))
-    print("\nafter returning to the start room without the food (state 010): policy's first choice is the food")
+        out["overrides"][arm] = {"steps": len(rows), "overrides": len(ov),
+                                 "replaced_valid": sum(r["d_valid"] for r in ov),
+                                 "chosen_valid": sum(r["c_valid"] for r in ov),
+                                 "by_policy_choice": {k: [o[k], n[k]] for k in
+                                                      ("take food", "take key", "open", "unlock", "go") if n[k]}}
     for arm in ARMS:
         steps = food = 0
         for x in R:
@@ -172,7 +173,7 @@ def report(R):
                     and any(q["c_atoms"][2] == "1" for q in rows[:i])]
             steps += len(back)
             food += sum(kind(rows[i]["default"]) == "take food" for i in back)
-        print(f"  {arm:9s} {food}/{steps} steps")
+        out["back_in_start_room"][arm] = {"steps": steps, "food_first": food}
     why = Counter()
     for x in R:
         for ex in x["episode"].get("parse_failure_examples", []):
@@ -180,7 +181,27 @@ def report(R):
                 continue
             locs = Counter(m.group(2) for m in re.finditer(r"\b(in|on|at)\((f_\d+)\s*,", ex["reply"]))
             why["same food in two places" if any(v > 1 for v in locs.values()) else "other"] += 1
-    print(f"\nD0 take-food parse failures (logged examples): {dict(why)}")
+    out["take_food_parse_failures"] = dict(why)
+    return out
+
+
+def report(R):
+    s = summarize(R)
+    print(f"replayed {s['episodes']} episodes on {s['roots']} roots; validity and success match the logs")
+    print("\nentered the goal room without the food (door open, food not carried)")
+    for arm, g in s["goal_room_without_food"].items():
+        print(f"  {arm:9s} success {g['success']}/{g['n']}  entered {g['entered']} ({100 * g['entered'] / g['n']:.0f}%)"
+              f"  success after {g['success_after']}/{g['entered']}  never entered: success "
+              f"{g['success_never_entered']}/{g['never_entered']}")
+    print("\nsteps where the arm replaced C_fm's choice, by that choice")
+    for arm, g in s["overrides"].items():
+        print(f"  {arm:9s} {g['overrides']}/{g['steps']} steps; replaced choice was valid in "
+              f"{g['replaced_valid']}, the arm's choice in {g['chosen_valid']}")
+        print("    " + "  ".join(f"{k} {a}/{b}" for k, (a, b) in g["by_policy_choice"].items()))
+    print("\nafter returning to the start room without the food (state 010): policy's first choice is the food")
+    for arm, g in s["back_in_start_room"].items():
+        print(f"  {arm:9s} {g['food_first']}/{g['steps']} steps")
+    print(f"\nD0 take-food parse failures (logged examples): {s['take_food_parse_failures']}")
 
 
 def k5_table(k5_dir, rollouts):
