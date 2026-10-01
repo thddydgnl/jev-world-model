@@ -182,7 +182,8 @@ def table_rows() -> list[list[str]]:
 
 def markdown(meta: dict, blocks: list) -> str:
     md = lambda t: re.sub(r"\^([^^]+)\^", r"<sup>\1</sup>", re.sub(r"~([^~]+)~", r"<sub>\1</sub>", t))
-    out = [f"# {meta['title']}", "", f"**{meta['title_en']}**", "", md(meta["authors"]), "", meta["authors_en"], ""]
+    title, title_en = (meta[k].replace("<br>", " ").replace("  ", " ") for k in ("title", "title_en"))
+    out = [f"# {title}", "", f"**{title_en}**", "", md(meta["authors"]), "", meta["authors_en"], ""]
     out += [md(a.replace(" | ", " · ")) for a in meta["affil"]]
     out += ["", "## 요 약", "", md(meta["abstract"]), "", f"**키워드:** {meta['keywords']}", ""]
     ref_head = False
@@ -241,6 +242,12 @@ def runs(text: str, fonts: str = "", **kw) -> str:
             tok = tok[1:-1]
         out.append(f'<w:r>{rpr(fonts, **extra)}<w:t xml:space="preserve">{escape(tok)}</w:t></w:r>')
     return "".join(out)
+
+
+def lines(text: str, fonts: str = "", **kw) -> str:
+    """Runs with a line break wherever the text has <br> (titles broken at the colon)."""
+    br = f"<w:r>{rpr(fonts, **kw)}<w:br/></w:r>"
+    return br.join(runs(part.strip(), fonts, **kw) for part in text.split("<br>"))
 
 
 def p(ppr: str, content: str = "") -> str:
@@ -352,9 +359,9 @@ def title_table(tbl: str, meta: dict) -> str:
     keyword_ppr = (f'<w:pStyle w:val="keyword"/><w:wordWrap/>{SP}<w:ind w:left="0" w:firstLineChars="200" '
                    f'w:firstLine="340"/>' + rpr(rfonts(MJ, False), bold=True, sz=17, szcs=17))
     return head + "".join([
-        row(0, [p(f'<w:pStyle w:val="ab"/>{SP}{rpr(rfonts(GD, False))}', runs(meta["title"], rfonts(GD)))]),
+        row(0, [p(f'<w:pStyle w:val="ab"/>{SP}{rpr(rfonts(GD, False))}', lines(meta["title"], rfonts(GD)))]),
         row(1, [p(f'<w:pStyle w:val="a4"/><w:wordWrap/>{SP}<w:jc w:val="center"/>'
-                  + rpr(rfonts(GD, False), bold=True, sz=24), runs(meta["title_en"], rfonts(GD), bold=True, sz=24))]),
+                  + rpr(rfonts(GD, False), bold=True, sz=24), lines(meta["title_en"], rfonts(GD), bold=True, sz=24))]),
         row(2, [p(f'<w:pStyle w:val="-6"/>{SP}{rpr(rfonts(GD, False))}', runs(meta["authors"], rfonts(GD))),
                 p(f'<w:pStyle w:val="-6"/>{SP}{rpr(rfonts(MJ, False))}', runs(meta["authors_en"], rfonts(MJ)))]),
         row(3, affil),
