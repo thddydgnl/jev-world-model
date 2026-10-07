@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the paper below."
+title: "A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents"
+type: software
+authors:
+  - family-names: Song
+    given-names: Yong-Hwi
+    affiliation: "School of Information and Communication Engineering, Chungbuk National University"
+    email: thddydgnl1937@gmail.com
+repository-code: "https://github.com/thddydgnl/jev-world-model"
+license: MIT
+date-released: "2026-10-08"
+keywords:
+  - world model
+  - LLM agent
+  - decision model
+  - fine-tuning
+  - TextWorld
+preferred-citation:
+  type: conference-paper
+  title: "A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents"
+  authors:
+    - family-names: Song
+      given-names: Yong-Hwi
+      affiliation: "School of Information and Communication Engineering, Chungbuk National University"
+  conference:
+    name: "KIIS 2026 Fall Conference (Korean Institute of Intelligent Systems)"
+    date-start: "2026-11-26"
+    date-end: "2026-11-28"
+  year: 2026
+  month: 11
+  notes: "Oral presentation. Korean title: 결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교"
