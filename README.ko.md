@@ -1,13 +1,13 @@
-# 결정 모델을 월드 모델로
+# LLM 에이전트의 월드모델
 
-**LLM 에이전트에서 JEV와 생성형 LLM의 비교**
-(A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents)
+**결정모델과 범용 LLM의 비교**
+(A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs)
 
 [English](README.md) | 한국어
 
-**한국지능시스템학회(KIIS) 2026 추계학술대회**(구두발표 부문, 2026년 11월 26–28일)에 투고한 논문의 코드·데이터·실행 기록·분석·원고 저장소입니다. 단독 저자: **송용휘** (충북대학교 정보통신공학부).
+**한국지능시스템학회(KIIS) 2026 추계학술대회**(구두발표 부문, 2026년 11월 26–28일)에 투고한 논문의 코드·데이터·실행 기록·분석·원고 저장소입니다. 저자: **송용휘** (충북대학교 정보통신공학부), **이건명** (충북대학교 소프트웨어학부).
 
-> 최종 제출본 PDF는 최종 논문 제출(2026-10-23) 뒤 [`kiis2026f/paper/`](kiis2026f/paper/)에 추가합니다. 그 전까지는 [`KIIS2026f_원고.pdf`](kiis2026f/paper/KIIS2026f_원고.pdf)(대체 글꼴로 렌더링한 원고)와 [`원고.md`](kiis2026f/paper/원고.md)(같은 글의 Markdown)를 보시면 됩니다.
+> **논문:** [`KIIS2026f_원고.pdf`](kiis2026f/paper/KIIS2026f_원고.pdf)가 완성 원고(2026-10-08, A4 2쪽, 학회 양식)이고, [`KIIS2026f_원고.docx`](kiis2026f/paper/KIIS2026f_원고.docx)는 제출용 파일, [`원고.md`](kiis2026f/paper/원고.md)는 같은 글의 Markdown입니다. PDF는 macOS에서 대체 글꼴로 렌더링한 것이라 학회 인쇄본과 줄바꿈이 조금 다를 수 있습니다.
 
 ---
 
@@ -40,10 +40,11 @@ LLM 에이전트는 행동의 결과를 모른 채 행동을 고르기 때문에
 
 | | |
 |---|---|
-| 국문 제목 | 결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교 |
-| 영문 제목 | A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents |
+| 국문 제목 | LLM 에이전트의 월드모델: 결정모델과 범용 LLM의 비교 |
+| 영문 제목 | A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs |
+| 저자 | 송용휘¹ · 이건명² — ¹충북대학교 정보통신공학부, ²충북대학교 소프트웨어학부 |
 | 학회 | 한국지능시스템학회 2026 추계학술대회, 구두발표 부문, 논문번호 00027 |
-| 상태 | 요약문 제출 2026-10-01 · 최종 논문 제출 10-23 · 학술대회 11-26~28 (김포대학교 글로벌캠퍼스) |
+| 상태 | 요약문 제출 2026-10-01 · 원고 완성 10-08 · 최종 논문 제출 10-23 · 학술대회 11-26~28 (김포대학교 글로벌캠퍼스) · Proceedings of KIIS Fall Conference 2026, Vol. 36, No. 2 |
 | 형식 | A4 2쪽, 2단, 학회 Word 양식 |
 | 키워드 | 월드 모델, LLM 에이전트, 결정 모델, 파인튜닝, TextWorld |
 
@@ -268,7 +269,7 @@ for t in tests/test_*.py; do .venv/bin/python "$t" || break; done
 | 9/27–28 | v3 (W) | 새 test 어휘, 더 엄격한 기준(oracle ≥ 90 %, 단조성), 반복을 깨는 프롬프트 레버. v1 어댑터가 v3 val 재사용 점검을 통과. |
 | 9/28–30 | K4v3, K5v3, X1 | seed 3개로 closed-loop 2,592 episode와 rollout 1,200개 × 모델 5개. API 장애, OOM, 스케줄러 수정을 모두 기록하며 완료. |
 | 9/30 | K6, K7 | 모든 수치를 로그에서 `slots.json`으로 계산. 짝차이 bootstrap을 world가 두 번 뽑히면 두 번 세도록 수정. 원고 초고와 개정. |
-| 10/1–8 | 제출 | 요약문 제출(논문번호 00027). 연구 설명서 작성. |
+| 10/1–8 | 제출 | 요약문 제출(논문번호 00027). 연구 설명서 작성. 제목·저자 확정, 원고 완성(10/8). |
 
 ---
 
@@ -283,12 +284,12 @@ for t in tests/test_*.py; do .venv/bin/python "$t" || break; done
 ## 10. 인용
 
 ```bibtex
-@inproceedings{song2026decisionworldmodel,
-  title     = {A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents},
-  author    = {Song, Yong-Hwi},
-  booktitle = {Proceedings of the KIIS 2026 Fall Conference (Korean Institute of Intelligent Systems)},
+@inproceedings{song2026worldmodel,
+  title     = {A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs},
+  author    = {Song, Yong Hwi and Lee, Keon Myung},
+  booktitle = {Proceedings of the KIIS 2026 Fall Conference (Korean Institute of Intelligent Systems), Vol. 36, No. 2},
   year      = {2026},
-  note      = {Oral presentation. Korean title: 결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교}
+  note      = {Oral presentation. Korean title: LLM 에이전트의 월드모델: 결정모델과 범용 LLM의 비교}
 }
 ```
 
@@ -296,6 +297,6 @@ for t in tests/test_*.py; do .venv/bin/python "$t" || break; done
 
 ## 11. 라이선스와 감사
 
-코드는 [MIT License](LICENSE)로 공개합니다. 원고·그림·보고서는 © 2026 송용휘. TextWorld는 MIT(Microsoft), Qwen3-4B는 Apache-2.0(Alibaba)이며, JEV는 TypeSafe AI의 상용 API로 원시 출력은 여기서 재배포하지 않습니다.
+코드는 [MIT License](LICENSE)로 공개합니다. 원고·그림·보고서는 © 2026 저자. TextWorld는 MIT(Microsoft), Qwen3-4B는 Apache-2.0(Alibaba)이며, JEV는 TypeSafe AI의 상용 API로 원시 출력은 여기서 재배포하지 않습니다.
 
-**연락처:** 송용휘 (Yong-Hwi Song) · thddydgnl1937@gmail.com · [github.com/thddydgnl](https://github.com/thddydgnl)
+**연락처:** 송용휘 (Yong Hwi Song) · thddydgnl1937@gmail.com · [github.com/thddydgnl](https://github.com/thddydgnl)

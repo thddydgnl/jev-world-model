@@ -1,13 +1,13 @@
-# A Decision Model as a World Model
+# A World Model for LLM Agents
 
-**Comparing JEV with Generative LLMs for LLM Agents**
-(결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교)
+**Comparing a Decision Model with General-Purpose LLMs**
+(LLM 에이전트의 월드모델: 결정모델과 범용 LLM의 비교)
 
 English | [한국어](README.ko.md)
 
-Code, data, run logs, analysis and manuscript for a paper submitted to the **KIIS 2026 Fall Conference** (Korean Institute of Intelligent Systems, oral presentation track, Nov 26–28, 2026). Sole author: **Yong-Hwi Song** (School of Information and Communication Engineering, Chungbuk National University).
+Code, data, run logs, analysis and manuscript for a paper submitted to the **KIIS 2026 Fall Conference** (Korean Institute of Intelligent Systems, oral presentation track, Nov 26–28, 2026). Authors: **Yong Hwi Song** (School of Information and Communication Engineering, Chungbuk National University) and **Keon Myung Lee** (School of Software, Chungbuk National University).
 
-> The camera-ready PDF will be added to [`kiis2026f/paper/`](kiis2026f/paper/) after the final submission (Oct 23, 2026). Until then, [`KIIS2026f_원고.pdf`](kiis2026f/paper/KIIS2026f_원고.pdf) is the manuscript rendered with substitute fonts, and [`원고.md`](kiis2026f/paper/원고.md) is the same text in Markdown.
+> **Paper:** [`KIIS2026f_원고.pdf`](kiis2026f/paper/KIIS2026f_원고.pdf) is the completed manuscript (Oct 8, 2026; two pages, society template), [`KIIS2026f_원고.docx`](kiis2026f/paper/KIIS2026f_원고.docx) the submission file and [`원고.md`](kiis2026f/paper/원고.md) the same text in Markdown. The PDF was rendered on macOS with substitute fonts, so line breaks may differ slightly from the society's print version.
 
 ---
 
@@ -40,10 +40,11 @@ Every agent shares the same policy (Qwen3-4B), the same candidate plans, the sam
 
 | | |
 |---|---|
-| Title (KO) | 결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교 |
-| Title (EN) | A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents |
+| Title (KO) | LLM 에이전트의 월드모델: 결정모델과 범용 LLM의 비교 |
+| Title (EN) | A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs |
+| Authors | Yong Hwi Song¹ · Keon Myung Lee² — ¹School of Information and Communication Engineering, ²School of Software, Chungbuk National University |
 | Venue | KIIS 2026 Fall Conference (한국지능시스템학회 2026 추계학술대회), oral presentation track, paper no. 00027 |
-| Status | Abstract submitted Oct 1, 2026 · camera-ready due Oct 23 · conference Nov 26–28 (Gimpo University Global Campus) |
+| Status | Abstract submitted Oct 1, 2026 · manuscript completed Oct 8 · camera-ready due Oct 23 · conference Nov 26–28 (Gimpo University Global Campus) · Proceedings of KIIS Fall Conference 2026, Vol. 36, No. 2 |
 | Format | A4, two pages, two columns, society Word template |
 | Keywords | World Model, LLM Agent, Decision Model, Fine-tuning, TextWorld |
 
@@ -268,7 +269,7 @@ The repository keeps the full record of design changes, including the ones that 
 | Sep 27–28 | v3 (W) | New test vocabulary, stricter criteria (oracle ≥ 90 %, monotonicity), a prompt lever against repetition; the v1 adapters passed reuse checks on v3 validation. |
 | Sep 28–30 | K4v3, K5v3, X1 | 2,592 closed-loop episodes over three seeds and 1,200 rollouts × 5 models, through an API outage, an OOM and a scheduler fix, all recorded. |
 | Sep 30 | K6, K7 | Every number computed from logs into `slots.json`; paired bootstrap corrected to count a world drawn twice twice; manuscript drafted and revised. |
-| Oct 1–8 | Submission | Abstract submitted (paper 00027); extended technical report written. |
+| Oct 1–8 | Submission | Abstract submitted (paper 00027); extended technical report written; title and author list finalized and manuscript completed (Oct 8). |
 
 ---
 
@@ -283,12 +284,12 @@ The planned extension ([`fullpaper/`](fullpaper/README.md), [`kiis2026f/공개_L
 ## 10. Citation
 
 ```bibtex
-@inproceedings{song2026decisionworldmodel,
-  title     = {A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents},
-  author    = {Song, Yong-Hwi},
-  booktitle = {Proceedings of the KIIS 2026 Fall Conference (Korean Institute of Intelligent Systems)},
+@inproceedings{song2026worldmodel,
+  title     = {A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs},
+  author    = {Song, Yong Hwi and Lee, Keon Myung},
+  booktitle = {Proceedings of the KIIS 2026 Fall Conference (Korean Institute of Intelligent Systems), Vol. 36, No. 2},
   year      = {2026},
-  note      = {Oral presentation. Korean title: 결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교}
+  note      = {Oral presentation. Korean title: LLM 에이전트의 월드모델: 결정모델과 범용 LLM의 비교}
 }
 ```
 
@@ -296,6 +297,6 @@ See also [`CITATION.cff`](CITATION.cff).
 
 ## 11. License and acknowledgements
 
-Code is released under the [MIT License](LICENSE). The manuscript, figures and reports are © 2026 Yong-Hwi Song. TextWorld is MIT-licensed (Microsoft); Qwen3-4B is Apache-2.0 (Alibaba); JEV is a commercial API of TypeSafe AI and its raw outputs are not redistributed here.
+Code is released under the [MIT License](LICENSE). The manuscript, figures and reports are © 2026 the authors. TextWorld is MIT-licensed (Microsoft); Qwen3-4B is Apache-2.0 (Alibaba); JEV is a commercial API of TypeSafe AI and its raw outputs are not redistributed here.
 
-**Contact:** Yong-Hwi Song · thddydgnl1937@gmail.com · [github.com/thddydgnl](https://github.com/thddydgnl)
+**Contact:** Yong Hwi Song · thddydgnl1937@gmail.com · [github.com/thddydgnl](https://github.com/thddydgnl)

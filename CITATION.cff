@@ -1,12 +1,15 @@
 cff-version: 1.2.0
 message: "If you use this code or these results, please cite the paper below."
-title: "A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents"
+title: "A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs"
 type: software
 authors:
   - family-names: Song
-    given-names: Yong-Hwi
+    given-names: Yong Hwi
     affiliation: "School of Information and Communication Engineering, Chungbuk National University"
     email: thddydgnl1937@gmail.com
+  - family-names: Lee
+    given-names: Keon Myung
+    affiliation: "School of Software, Chungbuk National University"
 repository-code: "https://github.com/thddydgnl/jev-world-model"
 license: MIT
 date-released: "2026-10-08"
@@ -18,15 +21,21 @@ keywords:
   - TextWorld
 preferred-citation:
   type: conference-paper
-  title: "A Decision Model as a World Model: Comparing JEV with Generative LLMs for LLM Agents"
+  title: "A World Model for LLM Agents: Comparing a Decision Model with General-Purpose LLMs"
   authors:
     - family-names: Song
-      given-names: Yong-Hwi
+      given-names: Yong Hwi
       affiliation: "School of Information and Communication Engineering, Chungbuk National University"
+    - family-names: Lee
+      given-names: Keon Myung
+      affiliation: "School of Software, Chungbuk National University"
   conference:
     name: "KIIS 2026 Fall Conference (Korean Institute of Intelligent Systems)"
     date-start: "2026-11-26"
     date-end: "2026-11-28"
+  collection-title: "Proceedings of KIIS Fall Conference 2026"
+  volume: 36
+  issue: 2
   year: 2026
   month: 11
-  notes: "Oral presentation. Korean title: 결정 모델을 월드 모델로: LLM 에이전트에서 JEV와 생성형 LLM의 비교"
+  notes: "Oral presentation. Korean title: LLM 에이전트의 월드모델: 결정모델과 범용 LLM의 비교"

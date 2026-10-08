@@ -34,3 +34,6 @@ venv/
 
 # --- server sync marker (scripts/sync_server.sh) ---
 REVISION
+
+# --- Word lock files ---
+~$*.docx
