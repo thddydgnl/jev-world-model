@@ -53,7 +53,7 @@ LLM 에이전트는 행동의 결과를 모른 채 행동을 고르기 때문에
 - [`원고.tmpl.md`](kiis2026f/paper/원고.tmpl.md) — 원고의 글. 숫자는 모두 이름 붙은 슬롯이고 `results/slots.json`에서 채워집니다. 숫자나 글이 전제한 판정이 바뀌면 빌드가 멈춥니다.
 - [`원고.md`](kiis2026f/paper/원고.md), [`KIIS2026f_원고.docx`](kiis2026f/paper/KIIS2026f_원고.docx), [`KIIS2026f_원고.pdf`](kiis2026f/paper/KIIS2026f_원고.pdf) — 빌드 산출물 (`scripts/kiis_paper.py`).
 - [`fig1.svg`](kiis2026f/paper/fig1.svg) (두 방식의 한 step 예측 예), [`fig2.png`](kiis2026f/paper/fig2.png) (rollout 정확도), [`fig_architecture.svg`](kiis2026f/paper/fig_architecture.svg) (시스템 구조도, 발표용).
-- [`professor_report/`](kiis2026f/professor_report/) — 배경·방법·설정·결과·해석을 담은 12쪽 분량의 연구 설명서(docx). 같은 `slots.json`에서 만듭니다.
+- [`report/LLM_에이전트의_월드모델_설명.docx`](kiis2026f/report/LLM_에이전트의_월드모델_설명.docx) — 배경·비교 설계·방법·설정·결과·해석을 담은 12쪽 분량의 연구 설명서(docx). 같은 `slots.json`에서 만듭니다 ([`report/README.md`](kiis2026f/report/README.md)).
 
 ### 요약
 
@@ -198,7 +198,7 @@ J = conj + 0.25·progress − 0.1·E[무효 명령 수] − 0.01·h + 0.05·정�
 ├── kiis2026f/            논문 작업 폴더
 │   ├── paper/            원고 소스, 빌드 산출물, 그림
 │   ├── results/          slots.json, 표 1, 그림 2 — scripts/kiis_report.py가 생성
-│   ├── professor_report/ 연구 설명서(docx)와 빌더
+│   ├── report/           12쪽 연구 설명서(docx)와 빌더
 │   ├── 실험계획.md         실험 계획: 에이전트 정의, 고정 조건, 단계 K0–K7, 가설, 변경 기록
 │   ├── 논문구성안.md       논문 구성안: 결과 슬롯 R1–R20, 쓰지 않을 주장, 발표 구성
 │   ├── 전체_실험_해설.md   모든 실험·결정·이유의 해설서
